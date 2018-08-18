@@ -1,0 +1,16 @@
+#!/bin/bash
+
+# Start in root always
+if [ ! -f .isroot ]
+then
+    echo "Must be run from root of project."; exit
+fi
+
+if [ "$1" = "--no-cache" ]
+then
+    cache_opt='--no-cache'
+else
+    cache_opt=''
+fi
+
+docker build $cache_opt -t pipeline -f docker/Dockerfile .
