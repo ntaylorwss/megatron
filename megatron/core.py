@@ -38,14 +38,44 @@ class Feature:
         self.output = observations
 
 
-class Transformation:
+class Lambda:
     def __init__(self, function, **hyperparameters):
+        self.function = function
+        self.hyperparameters = hyperparameters
+
+    def __call__(self, *inputs):
+        return self.function(*inputs, **self.hyperparameters)
+
+    def __str__(self):
+        hp_values = [str(hp) for hp in self.hyperparameters.values()]
+        return '{}({})'.format(self.__class__.__name__, ','.join(hp_values))
+
+
+class Transformer:
+    def __init__(self, **hyperparameters):
+        self.hyperparameters = hyperparameters
+
+    def __call__(self, *inputs):
+        return self.transform(*inputs)
+
+    def __str__(self):
+        hp_values = [str(hp) for hp in self.hyperparameters.values()]
+        return '{}({})'.format(self.__class__.__name__, ','.join(hp_values))
+
+    def fit(self):
+        return self
+
+    def transform(self, *inputs):
+        return inputs
+
+
+class Transformation:
+    def __init__(self, transformer):
         self.input_nodes = []
         self.output = None
         self.graph = None
         self.str = None
-        self.function = function
-        self.hyperparameters = hyperparameters
+        self.transformer = transformer
 
     def _check_same_graph(self):
         if len(set([node.graph for node in self.input_nodes])) > 1:
@@ -54,7 +84,7 @@ class Transformation:
     def __str__(self):
        if not self.str:
            s = inspect.getsource(self.function)
-           s += str(self.hyperparameters)
+           s += str(self.transformer)
            self.str = md5_hash(s)
        return self.str
 
@@ -75,7 +105,7 @@ class Transformation:
         if self.output is not None:
             return
         inputs = [node.output for node in self.input_nodes]
-        self.output = self.function(*inputs, **self.hyperparameters)
+        self.output = self.transformer(*inputs)
 
 
 class Graph:
@@ -84,11 +114,11 @@ class Graph:
         if not os.path.exists(self.cache_path):
             os.mkdir(self.cache_path)
         self.eager = False
-        self.features = {}
+        self.features = set()
         self.transformations = set()
 
     def add_feature(self, feature):
-        self.features[feature.name] = feature
+        self.features.add(feature)
 
     def add_transformation(self, transformation):
         self.transformations.add(transformation)
