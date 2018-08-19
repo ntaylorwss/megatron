@@ -65,12 +65,18 @@ class Graph:
         self.transformations.add(transformation)
 
     def run(self, output_nodes, feed_dict):
-        output_nodes = listify(output_nodes)
-        paths = list(map(self._postorder_traversal, output_nodes))
-        for path in paths:
+        def run_path(output_node):
+            path = self._postorder_traversal(output_node)
             for node in path:
                 if isinstance(node, Feature):
                     node.run(feed_dict[node.name])
                 elif isinstance(node, Transformation):
                     node.run()
-        return [node.output for node in output_nodes]
+            return node.output
+
+        if isinstance(output_nodes, list):
+            out = list(map(run_path, output_nodes))
+        else:
+            out = run_path(output_nodes)
+        return out
+
