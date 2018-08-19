@@ -4,6 +4,12 @@ import inspect
 from .utils import listify, md5_hash
 
 
+class EagerRunException(Exception):
+    def __init__(self):
+        message = "Graph.run() should not be called when running in Eager Execution mode."
+        super().__init__(message)
+
+
 class Feature:
     def __init__(self, graph, name, n_dims):
         self.input_nodes = []
@@ -95,7 +101,7 @@ class Graph:
             result.append(output_node)
         return result
 
-    def _run_path(self, output_node, feed_dict):
+    def _run_path_with_caching(self, output_node, feed_dict):
         full_path = self._postorder_traversal(output_node)
         # run just the Feature nodes to get the data hashes
         node_index = 0
@@ -129,9 +135,23 @@ class Graph:
         # return the terminal node's resulting data
         return out
 
-    def run(self, output_nodes, feed_dict):
+    def _run_path(self, output_node, feed_dict):
+        full_path = self._postorder_traversal(output_node)
+        for node in full_path:
+            if isinstance(node, Feature):
+                node.run(feed_dict[node.name])
+            else:
+                node.run()
+        return full_path[-1].output
+
+    def run(self, output_nodes, feed_dict, cache=True):
+        if self.eager:
+            raise EagerRunException()
         out = []
         output_nodes = listify(output_nodes)
         for output_node in output_nodes:
-            out.append(self._run_path(output_node, feed_dict))
+            if cache:
+                out.append(self._run_path_with_caching(output_node, feed_dict))
+            else:
+                out.append(self._run_path(output_node, feed_dict))
         return out[0] if len(out) == 1 else out
