@@ -1,5 +1,8 @@
-import skimage
 import numpy as np
+try:
+    import skimage
+except ImportError:
+    pass
 
 
 def rgb_to_grey(X, method='luminosity'):

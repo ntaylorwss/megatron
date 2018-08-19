@@ -1,5 +1,8 @@
 import numpy as np
-from nltk.corpus import stopwords
+try:
+    from nltk.corpus import stopwords
+except ImportError:
+    pass
 
 
 def remove_stopwords(X, language="english"):

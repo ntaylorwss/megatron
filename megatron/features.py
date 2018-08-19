@@ -17,11 +17,11 @@ class FeatureSet(Feature):
 
     def validate_input(self, X):
         if len(X.shape) != 2:
-            msg = "{} has incorrect number of dimensions. Should be 2-dimensional array."
-            raise ValueError(msg.format(self.name))
+            msg = "{} has incorrect number of dimensions; is {}-dimensional, should be 2-dimensional."
+            raise ValueError(msg.format(self.name, len(X.shape)))
         if X.shape[1] != self.n_dims:
-            msg = "{} has incorrect number of features, should have {}."
-            raise ValueError(msg.format(self.name, self.n_dims))
+            msg = "{} has incorrect number of features; has {}, should have {}."
+            raise ValueError(msg.format(self.name, X.shape[1], self.n_dims))
 
 
 class TextFeature(Feature):
@@ -40,8 +40,8 @@ class ImageFeature(Feature):
 
     def validate_input(self, X):
         if len(X.shape) != 3:
-            msg = "{} has incorrect number of dimensions. Should be 3-dimensional array."
-            raise ValueError(msg.format(self.name))
+            msg = "{} has incorrect number of dimensions; is {}-dimensional, should be 3-dimensional."
+            raise ValueError(msg.format(self.name, len(X.shape)))
         if X.shape[1:] != self.shape:
-            msg = "{} has incorrect image shape, should be {}."
-            raise ValueError(msg.format(self.name, self.shape))
+            msg = "{} has incorrect image shape; is {}, should be {}."
+            raise ValueError(msg.format(self.name, X.shape[1:], self.shape))
