@@ -1,28 +1,42 @@
-def whiten(X):
-    return (X - X.mean(axis=-1)) / X.std(axis=-1)
+from ..core import Transformer
 
 
-def add(X, add_this):
-    return X + add_this
+class Whiten(Transformer):
+    def fit(self, X):
+        #self.metadata['mean'] = X.mean(axis=0)
+        self.metadata['sd'] = X.std(axis=0)
+
+    def transform(self, X):
+        return (X - self.metadata['mean']) / self.metadata['sd']
 
 
-def multiply(X, factor):
-    return factor * X
+class Add(Transformer):
+    def transform(self, X):
+        return X + self.kwargs['add_this']
 
 
-def dot(X, W):
-    return np.dot(W, X)
+class Multiply(Transformer):
+    def transform(self, X):
+        return self.kwargs['factor'] * X
 
 
-def add_dim(X, axis=-1):
-    return np.expand_dims(X, axis)
+class Dot(Transformer):
+    def transform(self, X):
+        return np.dot(self.kwargs['W'], X)
 
 
-def one_hot(X, max_val=None, min_val=0):
-    if not max_val:
-        max_val = X.max() + 1
-    return (np.arange(min_val, max_val) == X[..., None]) * 1
+class AddDim(Transformer):
+    def transform(self, X):
+        return np.expand_dims(X, self.kwargs['axis'])
 
 
-def reshape(X, new_shape=None):
-    return np.reshape(X, new_shape)
+class OneHot(Transformer):
+    def transform(self, X):
+        if not self.kwargs['max_val']:
+            self.kwargs['max_val'] = X.max() + 1
+        return (np.arange(self.kwargs['min_val'], self.kwargs['max_val']) == X[..., None]) * 1
+
+
+class Reshape(Transformer):
+    def transform(self, X):
+        return np.reshape(X, self.kwargs['new_shape'])
