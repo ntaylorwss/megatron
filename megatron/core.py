@@ -35,16 +35,17 @@ class Input:
 
 
 class Lambda:
-    def __init__(self, function, **kwargs):
-        self.function = function
+    def __init__(self, transform, **kwargs):
+        self.transform = transform
         self.kwargs = kwargs
 
     def __call__(self, *inputs):
-        return self.function(*inputs, **self.kwargs)
+        return self.transform(*inputs, **self.kwargs)
 
     def __str__(self):
-        kw_values = [str(hp) for hp in self.kwargs.values()]
-        return '{}({})'.format(self.__class__.__name__, ','.join(kw_values))
+        out = [str(hp) for hp in self.kwargs.values()]
+        out.append(inspect.getsource(self.transform))
+        return ''.join(out)
 
 
 class Transformer:
@@ -59,12 +60,8 @@ class Transformer:
         return self.transform(*inputs)
 
     def __str__(self):
-        kwargs = self.__dict__.copy()
-        kwargs.pop('is_fitted')
-        metadata = kwargs.pop('metadata')
-        kwargs_str = ''.join([utils.md5_hash(kwarg) for kwarg in kwargs.values()])
-        metadata_str = ''.join([utils.md5_hash(metadatum) for metadatum in metadata.values()])
-        return ''.join([self.__class__.__name__, kwargs_str, metadata_str])
+        members = ''.join([utils.md5_hash(member) for member in self.__dict__.values()])
+        return '{}{}'.format(inspect.getsource(self.transform), members)
 
     def fit(self, *inputs):
         pass
@@ -87,9 +84,7 @@ class Transformation:
 
     def __str__(self):
        if not self.str:
-           s = inspect.getsource(self.transformer.transform)
-           s += str(self.transformer)
-           self.str = utils.md5_hash(s)
+           self.str = utils.md5_hash(str(self.transformer))
        return self.str
 
     def __call__(self, *input_nodes):
@@ -135,23 +130,23 @@ class Graph:
 
     def _run_path(self, path, feed_dict, cache_result):
         # run just the Input nodes to get the data hashes
-        node_index = 0
-        while node_index < len(path) and isinstance(path[node_index], Input):
-            node = path[node_index]
-            node.run(feed_dict[node.name])
-            node_index += 1
-        # skip to end, walk the path backwards, check each subgraph for cached version
+        inputs_loaded = 0
+        for node in path:
+            if isinstance(node, Input):
+                node.run(feed_dict[node.name])
+                inputs_loaded += 1
+            if inputs_loaded == len(self.inputs):
+                break
+
+        # walk the path backwards from the end, check each subgraph for cached version
         # if none are cached, cache this one
-        node_index = len(path) - 1
-        while path[node_index].output is None:
+        for node_index in range(len(path)-1, -1, -1):
             path_hash = utils.md5_hash(''.join(str(node) for node in path[:node_index+1]))
             filepath = "{}/{}.npz".format(self.cache_dir, path_hash)
             if os.path.exists(filepath):
                 path[node_index].output = np.load(filepath)['arr']
                 print("Loading node number {} in path from cache".format(node_index))
                 break
-            else:
-                node_index -= 1
         # walk forwards again, running nodes to get output until reaching terminal
         while True:
             if isinstance(path[node_index], Transformation):
