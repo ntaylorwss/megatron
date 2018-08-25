@@ -15,6 +15,6 @@ CMD jupyter notebook
 RUN mkdir /home/piper/work
 WORKDIR /home/piper/work
 
-COPY pipeline/ /usr/local/lib/python3.6/dist-packages/pipeline
+COPY megatron/ /usr/local/lib/python3.6/dist-packages/megatron
 COPY tests/ /tmp
 #RUN python -m pytest /tmp

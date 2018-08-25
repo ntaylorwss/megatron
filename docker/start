@@ -6,7 +6,7 @@ then
     echo "Must be run from root of project."; exit
 fi
 
-docker rm -f pipeline 2> /dev/null
+docker rm -f megatron 2> /dev/null
 
 # will first try port 8888; if it's otherwise occupied, decrement until finding an open port
 jup_port="8888"
@@ -15,7 +15,7 @@ do
     echo "Trying port $jup_port"
     netstat -ntpl 2> /dev/null | grep $jup_port -q 
     if [ $? -eq 1 ]; then
-        docker run --name pipeline -d -v $PWD:/home/piper/work -p $jup_port:8888 pipeline
+        docker run --name megatron -d -v $PWD:/home/megatron/work -p $jup_port:8888 megatron
         echo "Using port $jup_port"
         break
     else

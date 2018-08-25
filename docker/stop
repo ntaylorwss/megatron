@@ -1,2 +1,2 @@
 #!/bin/bash
-docker rm -f pipeline
+docker rm -f megatron

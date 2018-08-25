@@ -13,4 +13,4 @@ else
     cache_opt=''
 fi
 
-docker build $cache_opt -t pipeline -f docker/Dockerfile .
+docker build $cache_opt -t megatron -f docker/Dockerfile .
