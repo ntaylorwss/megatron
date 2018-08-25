@@ -1,5 +1,5 @@
 import numpy as np
-from ..core import Transformer
+from ..core import Transformation
 from ..utils import initializer
 try:
     import skimage
@@ -7,7 +7,7 @@ except ImportError:
     pass
 
 
-class RGBtoGrey(Transformer):
+class RGBtoGrey(Transformation):
     @initializer
     def __init__(self, method='luminosity'):
         super().__init__()
@@ -23,12 +23,12 @@ class RGBtoGrey(Transformer):
             raise ValueError("Invalid averaging method for rgb_to_grey.")
 
 
-class RGBtoBinary(Transformer):
+class RGBtoBinary(Transformation):
     def transform(self, X):
         return (X.max(axis=2) > 0).astype(int)[:, :, np.newaxis]
 
 
-class Downsample(Transformer):
+class Downsample(Transformation):
     @initializer
     def __init__(self, new_shape):
         super().__init__()
@@ -39,7 +39,7 @@ class Downsample(Transformer):
         return skimage.transform.resize(X, self.new_shape)
 
 
-class Upsample(Transformer):
+class Upsample(Transformation):
     @initializer
     def __init__(self, new_shape):
         super().__init__()

@@ -1,9 +1,9 @@
 import numpy as np
-from ..core import Transformer
+from ..core import Transformation
 from ..utils import initializer
 
 
-class Whiten(Transformer):
+class Whiten(Transformation):
     def fit(self, X):
         #self.metadata['mean'] = X.mean(axis=0)
         self.metadata['sd'] = X.std(axis=0)
@@ -12,12 +12,12 @@ class Whiten(Transformer):
         return (X - self.metadata['mean']) / self.metadata['sd']
 
 
-class Add(Transformer):
+class Add(Transformation):
     def transform(self, *arrays):
         return np.add(*arrays)
 
 
-class Multiply(Transformer):
+class Multiply(Transformation):
     @initializer
     def __init__(self, factor):
         super().__init__()
@@ -26,7 +26,7 @@ class Multiply(Transformer):
         return self.factor * X
 
 
-class Dot(Transformer):
+class Dot(Transformation):
     @initializer
     def __init__(self, W):
         super().__init__()
@@ -35,7 +35,7 @@ class Dot(Transformer):
         return np.dot(self.W, X)
 
 
-class AddDim(Transformer):
+class AddDim(Transformation):
     @initializer
     def __init__(self, axis):
         super().__init__()
@@ -44,7 +44,7 @@ class AddDim(Transformer):
         return np.expand_dims(X, self.axis)
 
 
-class OneHot(Transformer):
+class OneHot(Transformation):
     @initializer
     def __init__(self, max_val, min_val=0):
         super().__init__()
@@ -55,7 +55,7 @@ class OneHot(Transformer):
         return (np.arange(self.min_val, self.max_val) == X[..., None]) * 1
 
 
-class Reshape(Transformer):
+class Reshape(Transformation):
     @initializer
     def __init__(self, new_shape):
         super().__init__()

@@ -4,19 +4,44 @@ import inspect
 from . import utils
 
 
+class Node:
+    def __init__(self, transformation, input_nodes):
+        self.transformation = transformation
+        self.graph = input_nodes[0].graph
+        self.graph.add_node(self)
+        self.input_nodes = input_nodes
+        self.output = None
+        self.is_fitted = False
+
+    def run(self):
+        inputs = [node.output for node in self.input_nodes]
+        if not self.is_fitted:
+            self.transformation.fit(*inputs)
+            self.is_fitted = True
+        self.output = self.transformation.transform(*inputs)
+
+    def __str__(self):
+        return str(self.transformation)
+
+
 class Input:
     def __init__(self, graph, name, input_shape=(1,)):
-        self.input_nodes = []
-        self.output = None
-        self.str = None
         self.graph = graph
+        self.graph.add_node(self)
         self.name = name
+        self.input_nodes = []
         self.input_shape = input_shape
-        self.graph.add_input(self)
+        self.str = None
+        self.output = None
+        self.is_fitted = False
 
     def validate_input(self, X):
         if list(X.shape[1:]) != list(self.input_shape):
             raise utils.ShapeError(self.name, self.input_shape, X.shape[1:])
+
+    def run(self, observations):
+        self.validate_input(observations)
+        self.output = observations
 
     def __call__(self, observations):
         self.run(observations)
@@ -26,82 +51,52 @@ class Input:
     def __str__(self):
         if self.str is None:
             self.str = utils.md5_hash(self.output)
-            self.str += utils.md5_hash(self.input_shape)
         return self.str
-
-    def run(self, observations):
-        self.validate_input(observations)
-        self.output = observations
 
 
 class Lambda:
-    def __init__(self, transform, **kwargs):
-        self.transform = transform
+    def __init__(self, transform_fn, **kwargs):
+        self.transform_fn = transform_fn
         self.kwargs = kwargs
 
     def __call__(self, *inputs):
-        return self.transform(*inputs, **self.kwargs)
+        node = Node(self, input_nodes)
+        if node.graph.eager:
+            node.run()
+        return node
 
     def __str__(self):
         out = [str(hp) for hp in self.kwargs.values()]
         out.append(inspect.getsource(self.transform))
         return ''.join(out)
 
+    def fit(self, *inputs):
+        pass
 
-class Transformer:
+    def transform(self, *inputs):
+        return self.transform_fn(*inputs)
+
+
+class Transformation:
     def __init__(self):
         self.metadata = utils.MetadataDict()
         self.is_fitted = False
 
-    def __call__(self, *inputs):
-        if not self.is_fitted:
-            self.fit(*inputs)
-            self.is_fitted = True
-        return self.transform(*inputs)
+    def __call__(self, *input_nodes):
+        node = Node(self, input_nodes)
+        if node.graph.eager:
+            node.run()
+        return node
 
     def __str__(self):
-        members = ''.join([utils.md5_hash(member) for member in self.__dict__.values()])
-        return '{}{}'.format(inspect.getsource(self.transform), members)
+        metadata = ''.join([utils.md5_hash(metadata) for metadata in self.metadata.values()])
+        return '{}{}'.format(inspect.getsource(self.transform), metadata)
 
     def fit(self, *inputs):
         pass
 
     def transform(self, *inputs):
         return inputs
-
-
-class Transformation:
-    def __init__(self, transformer):
-        self.input_nodes = []
-        self.output = None
-        self.graph = None
-        self.str = None
-        self.transformer = transformer
-
-    def _check_same_graph(self):
-        if len(set([node.graph for node in self.input_nodes])) > 1:
-            raise ValueError("Input nodes from different graphs provided to one transformation")
-
-    def __str__(self):
-       if not self.str:
-           self.str = utils.md5_hash(str(self.transformer))
-       return self.str
-
-    def __call__(self, *input_nodes):
-        self.input_nodes = input_nodes
-        self._check_same_graph()
-
-        self.graph = self.input_nodes[0].graph
-        self.graph.add_transformation(self)
-
-        if self.graph.eager:
-            self.run()
-
-        return self
-
-    def run(self):
-        inputs = [node.output for node in self.input_nodes]
-        self.output = self.transformer(*inputs)
 
 
 class Graph:
@@ -111,14 +106,10 @@ class Graph:
         if not os.path.exists(self.cache_dir):
             os.mkdir(self.cache_dir)
         self.eager = False
-        self.inputs = set()
-        self.transformations = set()
+        self.nodes = set()
 
-    def add_input(self, new_input):
-        self.inputs.add(new_input)
-
-    def add_transformation(self, transformation):
-        self.transformations.add(transformation)
+    def add_node(self, node):
+        self.nodes.add(node)
 
     def _postorder_traversal(self, output_node):
         result = []
@@ -131,11 +122,12 @@ class Graph:
     def _run_path(self, path, feed_dict, cache_result):
         # run just the Input nodes to get the data hashes
         inputs_loaded = 0
+        num_inputs = sum(1 for node in self.nodes if isinstance(node, Input))
         for node in path:
             if isinstance(node, Input):
                 node.run(feed_dict[node.name])
                 inputs_loaded += 1
-            if inputs_loaded == len(self.inputs):
+            if inputs_loaded == num_inputs:
                 break
 
         # walk the path backwards from the end, check each subgraph for cached version
@@ -149,7 +141,7 @@ class Graph:
                 break
         # walk forwards again, running nodes to get output until reaching terminal
         while True:
-            if isinstance(path[node_index], Transformation):
+            if isinstance(path[node_index], Node):
                 path[node_index].run()
             if node_index == len(path) - 1:
                 break
@@ -158,15 +150,15 @@ class Graph:
         out = path[-1].output
         if cache_result:
             path_hash = utils.md5_hash(''.join(str(node) for node in path))
-            if not os.path.exists(path_hash):
-                np.savez_compressed('{}/{}.npz'.format(self.cache_dir, path_hash), arr=out)
+            filepath = '{}/{}.npz'.format(self.cache_dir, path_hash)
+            if not os.path.exists(filepath):
+                np.savez_compressed(filepath, arr=out)
         return out
 
     def save(self, filepath):
         # store ref to data, None the ref in the Node
         data = {}
-        nodes = self.inputs.union(self.transformations)
-        for node in nodes:
+        for node in self.nodes:
             data[node] = node.output
             node.output = None
         with open(filepath, 'wb') as f:
@@ -183,7 +175,7 @@ class Graph:
             path = self._postorder_traversal(output_node)
             if refit:
                 for node in path:
-                    node.transformer.is_fitted = False
+                    node.transformation.is_fitted = False
             out.append(self._run_path(path, feed_dict, cache_result))
         return out[0] if len(out) == 1 else out
 

@@ -1,5 +1,5 @@
 import numpy as np
-from ..core import Transformer
+from ..core import Transformation
 from ..utils import initializer
 
 try:
@@ -8,7 +8,7 @@ except ImportError:
     pass
 
 
-class RemoveStopwords(Transformer):
+class RemoveStopwords(Transformation):
     @initializer
     def __init__(self, language='english'):
         super().__init__()

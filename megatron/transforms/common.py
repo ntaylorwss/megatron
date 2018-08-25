@@ -1,9 +1,9 @@
 import numpy as np
-from ..core import Transformer
+from ..core import Transformation
 from ..utils import initializer
 
 
-class TimeSeries(Transformer):
+class TimeSeries(Transformation):
     @initializer
     def __init__(self, window_size, time_axis=1, reverse=False):
         super().__init__()
