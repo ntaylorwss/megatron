@@ -381,7 +381,7 @@ class Graph:
         filepath : str
             the desired location of the stored nodes, filename included.
         """
-        # store ref to data, None the ref in the Node
+        # store ref to data outside of Graph and remove ref to data in Nodes
         data = {}
         for node in self.nodes:
             data[node] = node.output
@@ -389,6 +389,7 @@ class Graph:
             node.graph = None
         with open(filepath, 'wb') as f:
             pickle.dump(self.nodes, f)
+        # reinsert data into Graph
         for node in nodes:
             node.output = data[node]
 
