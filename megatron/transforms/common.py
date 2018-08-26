@@ -4,6 +4,18 @@ from ..utils import initializer
 
 
 class TimeSeries(Transformation):
+    """Adds a time dimension to a dataset by rolling a window over the data.
+
+    Parameters
+    ----------
+    window_size : int
+        length of the window; number of timesteps in the time series.
+    time_axis : int
+        on which axis in the array to place the time dimension.
+    reverse : bool
+        if True, oldest data is first; if False, newest data is first.
+    """
+
     @initializer
     def __init__(self, window_size, time_axis=1, reverse=False):
         super().__init__()

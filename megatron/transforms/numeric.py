@@ -4,8 +4,9 @@ from ..utils import initializer
 
 
 class Whiten(Transformation):
+    """Bring mean to 0 and standard deviation to 1."""
     def fit(self, X):
-        #self.metadata['mean'] = X.mean(axis=0)
+        self.metadata['mean'] = X.mean(axis=0)
         self.metadata['sd'] = X.std(axis=0)
 
     def transform(self, X):
@@ -13,11 +14,19 @@ class Whiten(Transformation):
 
 
 class Add(Transformation):
+    """Add up arrays element-wise."""
     def transform(self, *arrays):
         return np.add(*arrays)
 
 
 class Multiply(Transformation):
+    """Multiply array by a given scalar.
+
+    Parameters
+    ----------
+    factor : float
+        multiplier.
+    """
     @initializer
     def __init__(self, factor):
         super().__init__()
@@ -27,6 +36,13 @@ class Multiply(Transformation):
 
 
 class Dot(Transformation):
+    """Multiply array by a given matrix, as matrix mulitplication.
+
+    Parameters
+    ----------
+    W : np.array
+        matrix by which to multiply.
+    """
     @initializer
     def __init__(self, W):
         super().__init__()
@@ -36,6 +52,13 @@ class Dot(Transformation):
 
 
 class AddDim(Transformation):
+    """Add a dimension to an array.
+
+    Parameters
+    ----------
+    axis : int
+        the axis along which to place the new dimension.
+    """
     @initializer
     def __init__(self, axis):
         super().__init__()
@@ -45,6 +68,15 @@ class AddDim(Transformation):
 
 
 class OneHot(Transformation):
+    """One-hot encode an array for given range of values.
+
+    Parameters
+    ----------
+    max_val : int
+        maximum possible value.
+    min_val : int (default: 0)
+        minimum possible value.
+    """
     @initializer
     def __init__(self, max_val, min_val=0):
         super().__init__()
@@ -56,6 +88,13 @@ class OneHot(Transformation):
 
 
 class Reshape(Transformation):
+    """Reshape an array to a given new shape.
+
+    Parameters
+    ----------
+    new_shape : tuple of int
+        desired new shape for array.
+    """
     @initializer
     def __init__(self, new_shape):
         super().__init__()

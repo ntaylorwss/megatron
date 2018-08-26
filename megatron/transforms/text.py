@@ -9,6 +9,13 @@ except ImportError:
 
 
 class RemoveStopwords(Transformation):
+    """Remove common, low-information words from all elements of text array.
+
+    Parameters
+    ----------
+    language : str (default: english)
+        the language in which the text is written.
+    """
     @initializer
     def __init__(self, language='english'):
         super().__init__()

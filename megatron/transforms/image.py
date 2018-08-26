@@ -8,6 +8,12 @@ except ImportError:
 
 
 class RGBtoGrey(Transformation):
+    """Convert an RGB array representation of an image to greyscale.
+
+    Parameters
+    ----------
+    method : {'luminosity', 'lightness', 'average'}
+    """
     @initializer
     def __init__(self, method='luminosity'):
         super().__init__()
@@ -24,11 +30,19 @@ class RGBtoGrey(Transformation):
 
 
 class RGBtoBinary(Transformation):
+    """Convert image to binary mask where a 1 indicates a non-black cell."""
     def transform(self, X):
         return (X.max(axis=2) > 0).astype(int)[:, :, np.newaxis]
 
 
 class Downsample(Transformation):
+    """Shrink an image to a given size proportionally.
+
+    Parameters
+    ----------
+    new_shape : tuple of int
+        the target shape for the new image.
+    """
     @initializer
     def __init__(self, new_shape):
         super().__init__()
@@ -40,6 +54,13 @@ class Downsample(Transformation):
 
 
 class Upsample(Transformation):
+    """Expand an image to a given size proportionally.
+
+    Parameters
+    ----------
+    new_shape : tuple of int
+        the target shape for the new image.
+    """
     @initializer
     def __init__(self, new_shape):
         super().__init__()

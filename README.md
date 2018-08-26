@@ -1,6 +1,17 @@
-# Megatron: Computation Graphs for Feature Engineering
+# Megatron: Computation Graphs for Feature Engineering in Machine Learning
 
 Megatron is a library that facilitates fully customizable pipelines for feature engineering by implementing the process as a directed acyclic graph. Based in Numpy, it provides a comprehensive suite of transformations, as well as the ability to apply user-defined transformations, provided they accept and return particular data types, which are listed below.
+
+## Installation and Requirements
+Megatron comes with a Docker image that provides a minimal environment with all its required dependencies and a Jupyter environment. If you wish to use the package on its own, it can be installed via pip:
+
+`pip install megatron`
+
+And the dependencies are as follows:
+
+- Numpy (required)
+- NLTK (optional: only if using `megatron.transforms.text` module)
+- Scikit-Image (optional: only if using `megatron.transforms.image` module)
 
 ## Transforms
 Megatron supports arbitrary transformations, so long as they return valid Numpy arrays. The transformation can use other data structures as intermediate tools, but each transformation must receive and return a Numpy array.
@@ -17,24 +28,24 @@ Megatron provides a growing suite of transformation functions, and these are gro
 All functions are used by being passed to a `megatron.Transformation` object, which takes in as parameters a transformation function and any Configuration Parameters necessary.
 
 ### Configuration Parameters
-Each transformation function takes in the data it will operate on as its first positional arguments. It can act on as many data arguments as is necessary. Following that, it takes in any "hyperparameters", or static configuration parameters. These are passed to the transformation function as keyword arguments to the Transformation object.
+Transformation functions, which are any built-ins, or custom functions that are stateful, take keyword arguments in their initialization. These are like "hyperparameters" for the function, those that stay the same for each execution and which can be customized by the user. These functions are then called on data (arrays), which are passed as individual arguments. Transformations should take in arguments using list expansion syntax, e.g. `*inputs`, so that this can be facilitated.
 
-As an example, here's the setup for the `time_series` function from `megatron.transforms.common`, which takes in a `window_size` parameter and operates on one data argument:
+As an example, here's the usage for the `TimeSeries` function from `megatron.transforms.common`, which takes in a `window_size` parameter and operates on one data argument:
 
 ```
-out = megatron.Transformation(megatron.transforms.time_series, window_size=5)(X)
+out = megatron.transforms.TimeSeries(window_size=5, time_axis=-1)(X)
 ```
 
 ## Eager Execution
-Megatron supports eager execution with a very simple adjustment to the code. When you define a Feature variable (or any child class), you can call it as a function and pass it a Numpy array as data. Doing this will result in the graph being executed eagerly; the results for each Node can be found in its `output` attribute. An example to state the comparison:
+Megatron supports eager execution with a very simple adjustment to the code. When you define an Input node, you can call it as a function and pass it a Numpy array as data. Doing this will result in the graph being executed eagerly; the results for each Node can be found in its `output` attribute. An example to state the comparison:
 
 ```
 # lazy
 G = megatron.Graph(cache_path='megatron/cache')
-X = megatron.FeatureSet(G, 'X', 10)
-Y = megatron.FeatureSet(G, 'Y', 10)
+X = megatron.Input(G, 'X', (10,))
+Y = megatron.Input(G, 'Y', (10,))
 
-Z = megatron.Transformation(megatron.transforms.time_series, window_size=5)(X)
+Z = megatron.transforms.TimeSeries(window_size=5)(X)
 
 data = {'X': np.ones((50, 10)),
         'Y': np.ones((50, 10))}
@@ -47,9 +58,9 @@ data = {'X': np.random.random((50, 10)),
         'Y': np.random.random((50, 10))}
 
 G = megatron.Graph()
-X = megatron.FeatureSet(G, 'X', 10)(data['X'])
-Y = megatron.FeatureSet(G, 'Y', 10)(data['Y'])
-Z = megatron.Transformation(megatron.transforms.time_series, window_size=5)(X)
+X = megatron.Input(G, 'X', (10,))(data['X'])
+Y = megatron.Input(G, 'Y', (10,))(data['Y'])
+Z = megatron.transforms.TimeSeries(window_size=5)(X)
 print(Z.output.shape) # >>> (45, 5, 10)
 ```
 
@@ -61,11 +72,3 @@ Megatron will, by default, cache the results of an execution of a Node in a spac
 Caching can be avoided by executing `Graph.run` with the keyword `cache=False`.
 
 Caching does not apply in the case of eager execution.
-
-## Data Types
-Feature transformers act on and return data only in the following types, which aim to cover all forms of features one might use in a machine learning model:
-
-- NumericFeature: A single column of numeric data; a 1-dimensional array.
-- FeatureSet: Multiple related but independent columns of numeric data; a 2-dimensional array.
-- Image: A representation of an image in either greyscale, RGB, or RGBA format; a 3-dimensional array.
-- Text: A single column of text data; a 1-dimensional array.
