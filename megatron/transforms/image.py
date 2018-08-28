@@ -68,4 +68,4 @@ class Upsample(Transformation):
     def transform(self, X):
         if any(self.new_shape[i] < X.shape[i] for i in range(len(self.new_shape))):
             raise ValueError("New shape is smaller than current in at least one dimension.")
-        return resize(X, self.new_shape)
+        return skimage.transform.resize(X, self.new_shape)
