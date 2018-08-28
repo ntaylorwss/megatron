@@ -22,34 +22,6 @@ def initializer(func):
     return wrapper
 
 
-class MetadataDict(dict):
-    class MetadataKeyError(Exception):
-        def __init__(self, key):
-            message = ("Transforming call attempted to access metadata '{}' that "
-                       "was not calculated in fit()")
-            super().__init__(message.format(key))
-
-    def __getitem__(self, key):
-        try:
-            return super().__getitem__(key)
-        except KeyError:
-            raise MetadataDict.MetadataKeyError(key)
-
-
-class KwargsDict(dict):
-    class KwargKeyError(Exception):
-        def __init__(self, key):
-            message = ("Transforming call attempted to access keyword argument '{}' that "
-                       "was not passed to Transformation initialization")
-            super().__init__(message.format(key))
-
-    def __getitem__(self, key):
-        try:
-            return super().__getitem__(key)
-        except KeyError:
-            raise KwargsDict.KwargKeyError(key)
-
-
 class EagerRunException(Exception):
     def __init__(self):
         message = "Graph.run() should not be called when running in Eager Execution mode."

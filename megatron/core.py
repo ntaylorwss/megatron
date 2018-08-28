@@ -100,8 +100,8 @@ class Input:
         megatron.utils.ShapeError
             error indicating that the shape of the data does not match the shape of the node.
         """
-        if list(X.shape[1:]) != list(self.input_shape):
-            raise utils.ShapeError(self.name, self.input_shape, X.shape[1:])
+        if list(observations.shape[1:]) != list(self.input_shape):
+            raise utils.ShapeError(self.name, self.input_shape, observations.shape[1:])
 
     def run(self, observations):
         """Validate and store the data passed in.
@@ -213,12 +213,9 @@ class Transformation:
     ----------
     metadata : dict
         stores any necessary metadata, which is defined by child class.
-    is_fitted : bool
-        indicates whether the needed metadata is calculated or requires (re-)calculation.
     """
     def __init__(self):
-        self.metadata = utils.MetadataDict()
-        self.is_fitted = False
+        self.metadata = {}
 
     def __call__(self, *input_nodes):
         """Creates a Node associated with this Transformation and the given input Nodes.
@@ -315,7 +312,7 @@ class Graph:
         path = []
         if output_node:
             for child in output_node.input_nodes:
-                result += self._postorder_traversal(child)
+                path += self._postorder_traversal(child)
             path.append(output_node)
         return path
 
@@ -415,7 +412,7 @@ class Graph:
             path = self._postorder_traversal(output_node)
             if refit:
                 for node in path:
-                    node.transformation.is_fitted = False
+                    node.is_fitted = False
             out.append(self._run_path(path, feed_dict, cache_result))
         return out[0] if len(out) == 1 else out
 
