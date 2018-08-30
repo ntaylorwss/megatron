@@ -100,7 +100,7 @@ class Input:
         megatron.utils.ShapeError
             error indicating that the shape of the data does not match the shape of the node.
         """
-        if list(observations.shape[1:]) != list(self.input_shape):
+        if hasattr(observations, 'shape') and (list(observations.shape[1:]) != list(self.input_shape)):
             raise utils.ShapeError(self.name, self.input_shape, observations.shape[1:])
 
     def run(self, observations):
@@ -395,8 +395,8 @@ class Graph:
 
         Parameters
         ----------
-        output_nodes : list of Node
-            the terminal nodes for which to return data.
+        output_nodes : list of Node or str
+            the terminal nodes, or node names, for which to return data.
         feed_dict : dict of Numpy array
             the input data to be passed to Input Nodes to begin execution.
         cache_result : bool
