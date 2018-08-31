@@ -155,14 +155,22 @@ class Lambda:
     transform_fn : function
         the function to be applied, which accepts one or more
         Numpy arrays as positional arguments.
+    name : str or None
+        optional custom name for the node. If none given, default name is
+        [name of transform_fn]:[index], where index is a unique identifier for
+        multiple nodes with the same transform_fn.
     **kwargs
         keyword arguments to whatever custom function is passed in as transform_fn.
 
-    Arguments
+    Attributes
     ----------
     transform_fn : function
         the function to be applied, which accepts one or more
         Numpy arrays as positional arguments.
+    name : str or None
+        optional custom name for the node. If none given, default name is
+        [name of transform_fn]:[index], where index is a unique identifier for
+        multiple nodes with the same transform_fn.
     **kwargs
         keyword arguments to whatever custom function is passed in as transform_fn.
     """
@@ -213,6 +221,13 @@ class Transformation:
 
     For custom functions that are stateful, and thus require to be fit,
     writing a Transformation subclass is required rather than using a Lambda wrapper.
+
+    Parameters
+    ----------
+    name : str or None
+        optional custom name for the node. If none given, default name is
+        [name of class]:[index], where index is a unique identifier for
+        multiple nodes of the same object.
 
     Attributes
     ----------
@@ -302,10 +317,27 @@ class Graph:
         ----------
         node : Node / Input
             the node to be added, whether an Input or Node.
+        name : str
+            the name of the node to be added.
         """
         self.nodes[name].append(node)
 
     def _lookup_node(self, node):
+        """Get node by name as string, or just give back the node itself.
+
+        Parameters
+        ----------
+        node : Node or str
+            if Node, return node; if str, lookup node associated with str.
+            str format should be '[transformation/input name]:[index].
+            if the same transformation/input name is used more than once, subsequent instances
+            are made unique by their index.
+
+        Returns
+        -------
+        Node
+            either the node given as an argument, or the node associated with the string argument.
+        """
         if isinstance(node, str):
             if node.find(':') >= 0:
                 name, index = node.split(':')
