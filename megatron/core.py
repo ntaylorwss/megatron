@@ -1,6 +1,7 @@
 import os
 import numpy as np
 import inspect
+from collections import defaultdict
 from . import utils
 
 
@@ -29,10 +30,10 @@ class Node:
         indicates whether the Transformation inside the Node
         has, if necessary, been fit to data.
     """
-    def __init__(self, transformation, input_nodes):
+    def __init__(self, transformation, input_nodes, name=None):
         self.transformation = transformation
         self.graph = input_nodes[0].graph
-        self.graph._add_node(self)
+        self.graph._add_node(self, name)
         self.input_nodes = input_nodes
         self.output = None
         self.is_fitted = False
@@ -80,7 +81,7 @@ class Input:
     """
     def __init__(self, graph, name, input_shape=(1,)):
         self.graph = graph
-        self.graph._add_node(self)
+        self.graph._add_node(self, name)
         self.name = name
         self.input_nodes = []
         self.input_shape = input_shape
@@ -165,9 +166,13 @@ class Lambda:
     **kwargs
         keyword arguments to whatever custom function is passed in as transform_fn.
     """
-    def __init__(self, transform_fn, **kwargs):
+    def __init__(self, transform_fn, name=None, **kwargs):
         self.transform_fn = transform_fn
         self.kwargs = kwargs
+        if name:
+            self.name = name
+        else:
+            self.name = transform_fn.__name__
 
     def __call__(self, *input_nodes):
         """Creates a Node associated with this Lambda Transformation and the given input Nodes.
@@ -177,7 +182,7 @@ class Lambda:
         *input_nodes : megatron.Node(s) / megatron.Input(s)
             the input nodes, whose data are to be passed to transform_fn when run.
         """
-        node = Node(self, input_nodes)
+        node = Node(self, input_nodes, self.name)
         if node.graph.eager:
             node.run()
         return node
@@ -214,8 +219,12 @@ class Transformation:
     metadata : dict
         stores any necessary metadata, which is defined by child class.
     """
-    def __init__(self):
+    def __init__(self, name=None):
         self.metadata = {}
+        if name:
+            self.name = name
+        else:
+            self.name = self.__class__.__name__
 
     def __call__(self, *input_nodes):
         """Creates a Node associated with this Transformation and the given input Nodes.
@@ -225,7 +234,7 @@ class Transformation:
         *input_nodes : megatron.Node(s) / megatron.Input(s)
             the input nodes, whose data are to be passed to transform_fn when run.
         """
-        node = Node(self, input_nodes)
+        node = Node(self, input_nodes, self.name)
         if node.graph.eager:
             node.run()
         return node
@@ -284,9 +293,9 @@ class Graph:
         if not os.path.exists(self.cache_dir):
             os.mkdir(self.cache_dir)
         self.eager = False
-        self.nodes = set()
+        self.nodes = defaultdict(list)
 
-    def _add_node(self, node):
+    def _add_node(self, node, name):
         """Add a node to the graph.
 
         Parameters
@@ -294,7 +303,18 @@ class Graph:
         node : Node / Input
             the node to be added, whether an Input or Node.
         """
-        self.nodes.add(node)
+        self.nodes[name].append(node)
+
+    def _lookup_node(self, node):
+        if isinstance(node, str):
+            if node.find(':') >= 0:
+                name, index = node.split(':')
+            else:
+                name = node
+                index = '0'
+            return self.nodes[name][int(index)]
+        else:
+            return node
 
     def _postorder_traversal(self, output_node):
         """Returns the path to the desired Node through the Graph.
@@ -309,6 +329,7 @@ class Graph:
         list of Node
             the path from input to output that arrives at the output_node.
         """
+        output_node = self._lookup_node(output_node)
         path = []
         if output_node:
             for child in output_node.input_nodes:
