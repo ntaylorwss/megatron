@@ -1,5 +1,5 @@
 .. Megatron documentation master file, created by
-   sphinx-quickstart on Fri Aug 31 10:59:28 2018.
+   sphinx-quickstart on Fri Aug 31 16:43:25 2018.
    You can adapt this file completely to your liking, but it should at least
    contain the root `toctree` directive.
 

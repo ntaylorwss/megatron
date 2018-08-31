@@ -1,0 +1,7 @@
+matplotlib==2.2.2
+pandas==0.23.0
+bleach==1.5.0
+pytest==3.6.3
+scikit-image==0.14.0
+sphinx==1.7.5
+sphinxcontrib-napoleon==0.6.1
