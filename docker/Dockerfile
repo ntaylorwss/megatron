@@ -16,5 +16,3 @@ RUN mkdir /home/megatron/work
 WORKDIR /home/megatron/work
 
 COPY megatron/ /usr/local/lib/python3.6/dist-packages/megatron
-COPY tests/ /tmp
-#RUN python -m pytest /tmp
