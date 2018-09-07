@@ -8,7 +8,7 @@ class SklearnTransformation(Transformation):
         if name:
             self.name = name
         else:
-            self.name = self.__class__.__name__
+            self.name = self.transformation.__class__.__name__
 
     def __str__(self):
         # when there's no metadata, string will be empty, which is like a unique null hash
