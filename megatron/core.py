@@ -38,6 +38,8 @@ class Node:
         self.output = None
         self.is_fitted = False
 
+        self.name = name or self.transformation.__class__.__name__
+
     def run(self):
         """Stores result of given Transformation on input Nodes in output variable."""
         inputs = [node.output for node in self.input_nodes]
