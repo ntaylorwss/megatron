@@ -182,7 +182,7 @@ class Lambda:
         else:
             self.name = transform_fn.__name__
 
-    def __call__(self, *input_nodes):
+    def __call__(self, input_nodes):
         """Creates a Node associated with this Lambda Transformation and the given input Nodes.
 
         Parameters
@@ -190,6 +190,7 @@ class Lambda:
         *input_nodes : megatron.Node(s) / megatron.Input(s)
             the input nodes, whose data are to be passed to transform_fn when run.
         """
+        input_nodes = utils.listify(input_nodes)
         node = Node(self, input_nodes, self.name)
         if node.graph.eager:
             node.run()
@@ -241,7 +242,7 @@ class Transformation:
         else:
             self.name = self.__class__.__name__
 
-    def __call__(self, *input_nodes):
+    def __call__(self, input_nodes):
         """Creates a Node associated with this Transformation and the given input Nodes.
 
         Parameters
@@ -249,6 +250,7 @@ class Transformation:
         *input_nodes : megatron.Node(s) / megatron.Input(s)
             the input nodes, whose data are to be passed to transform_fn when run.
         """
+        input_nodes = utils.listify(input_nodes)
         node = Node(self, input_nodes, self.name)
         if node.graph.eager:
             node.run()
