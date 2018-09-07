@@ -184,7 +184,7 @@ class Lambda:
         else:
             self.name = transform_fn.__name__
 
-    def __call__(self, *input_nodes):
+    def __call__(self, input_nodes):
         """Creates a Node associated with this Lambda Transformation and the given input Nodes.
 
         Parameters
@@ -192,6 +192,7 @@ class Lambda:
         *input_nodes : megatron.Node(s) / megatron.Input(s)
             the input nodes, whose data are to be passed to transform_fn when run.
         """
+        input_nodes = utils.listify(input_nodes)
         node = Node(self, input_nodes, self.name)
         if node.graph.eager:
             node.run()
@@ -213,7 +214,7 @@ class Lambda:
         Parameters
         ----------
         inputs : np.ndarray(s)
-            input data to be passed to transform_fn.
+            input data to be passed to transform_fn; could be one array or a list of arrays.
         """
         return self.transform_fn(*inputs)
 
@@ -243,7 +244,7 @@ class Transformation:
         else:
             self.name = self.__class__.__name__
 
-    def __call__(self, *input_nodes):
+    def __call__(self, input_nodes):
         """Creates a Node associated with this Transformation and the given input Nodes.
 
         Parameters
@@ -251,6 +252,7 @@ class Transformation:
         *input_nodes : megatron.Node(s) / megatron.Input(s)
             the input nodes, whose data are to be passed to transform_fn when run.
         """
+        input_nodes = utils.listify(input_nodes)
         node = Node(self, input_nodes, self.name)
         if node.graph.eager:
             node.run()
@@ -266,8 +268,8 @@ class Transformation:
 
         Parameters
         ----------
-        *inputs : numpy.ndarray(s)
-            the input data to be fit to.
+        inputs : numpy.ndarray(s)
+            the input data to be fit to; could be one array or a list of arrays.
         """
         pass
 
@@ -277,7 +279,7 @@ class Transformation:
         Parameters
         ----------
         inputs : np.ndarray(s)
-            input data to be transformed.
+            input data to be transformed; could be one array or a list of arrays.
         """
         return inputs
 
@@ -346,7 +348,10 @@ class Graph:
             else:
                 name = node
                 index = '0'
-            return self.nodes[name][int(index)]
+            if name in self.nodes:
+                return self.nodes[name][int(index)]
+            else:
+                raise ValueError("node not found in graph")
         else:
             return node
 

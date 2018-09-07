@@ -16,8 +16,8 @@ class SklearnTransformation(Transformation):
         metadata = ''.join([utils.md5_hash(metadata) for metadata in metadata.values()])
         return '{}{}'.format(self.transformation.__class__.__name__, metadata)
 
-    def fit(self, *inputs):
-        self.transformation.fit(*inputs)
+    def fit(self, inputs):
+        self.transformation.fit(inputs)
 
-    def transform(self, *inputs):
-        return self.transformation.transform(*inputs)
+    def transform(self, inputs):
+        return self.transformation.transform(inputs)
