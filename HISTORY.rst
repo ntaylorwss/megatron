@@ -1,5 +1,11 @@
 # Release History
 
+## 0.1.2
+
+### Changes
+- Added visualization module for the computation graph. Contributed by @jeremyjordan.
+- Calling method on layers takes a list of nodes rather than individual positional arguments.
+
 ## 0.1.1
 
 ### Changes
@@ -13,4 +19,5 @@
 
 
 ## 0.1.0
+
 Initial release.
