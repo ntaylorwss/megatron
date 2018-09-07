@@ -42,6 +42,10 @@ def listify(x):
     return x if isinstance(x, list) else [x]
 
 
+def delistify(x):
+    return x[0] if isinstance(x, list) else x
+
+
 def md5_hash(x):
     if x.__class__.__name__ == 'ndarray':
         x = bytes(x)

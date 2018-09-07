@@ -214,7 +214,7 @@ class Lambda:
         Parameters
         ----------
         inputs : np.ndarray(s)
-            input data to be passed to transform_fn.
+            input data to be passed to transform_fn; could be one array or a list of arrays.
         """
         return self.transform_fn(*inputs)
 
@@ -268,8 +268,8 @@ class Transformation:
 
         Parameters
         ----------
-        *inputs : numpy.ndarray(s)
-            the input data to be fit to.
+        inputs : numpy.ndarray(s)
+            the input data to be fit to; could be one array or a list of arrays.
         """
         pass
 
@@ -279,7 +279,7 @@ class Transformation:
         Parameters
         ----------
         inputs : np.ndarray(s)
-            input data to be transformed.
+            input data to be transformed; could be one array or a list of arrays.
         """
         return inputs
 
@@ -348,7 +348,10 @@ class Graph:
             else:
                 name = node
                 index = '0'
-            return self.nodes[name][int(index)]
+            if name in self.nodes:
+                return self.nodes[name][int(index)]
+            else:
+                raise ValueError("node not found in graph")
         else:
             return node
 
