@@ -13,4 +13,9 @@ else
     cache_opt=''
 fi
 
-docker build $cache_opt -t megatron -f docker/Dockerfile .
+docker build $cache_opt -t ntaylor22/megatron:latest -f docker/Dockerfile .
+
+# build dev version
+head -n -2 docker/Dockerfile > docker/Dockerfile2
+docker build $cache_opt -t ntaylor22/megatron-dev:latest -f docker/Dockerfile2 .
+rm docker/Dockerfile2

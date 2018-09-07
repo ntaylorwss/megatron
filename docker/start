@@ -8,6 +8,13 @@ fi
 
 docker rm -f megatron 2> /dev/null
 
+if [ "$1" = "--dev" ]
+then
+    dev='-dev'
+else
+    dev=''
+fi
+
 # will first try port 8888; if it's otherwise occupied, decrement until finding an open port
 jup_port="8888"
 while true;
@@ -15,7 +22,7 @@ do
     echo "Trying port $jup_port"
     netstat -ntpl 2> /dev/null | grep $jup_port -q 
     if [ $? -eq 1 ]; then
-        docker run --name megatron -d -v $PWD:/home/megatron/work -p $jup_port:8888 megatron
+        docker run --name megatron -d -v $PWD:/home/megatron/work -p $jup_port:8888 ntaylor22/megatron$dev:latest
         echo "Using port $jup_port"
         break
     else
