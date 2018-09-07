@@ -87,7 +87,7 @@ def pipeline_to_dot(graph, output_nodes, rankdir='TB'):
     return dot
 
 
-def plot_pipeline(graph, output_nodes, save_path='model.png', rankdir='TB'):
+def plot_pipeline(graph, output_nodes, save_path='pipeline.png', rankdir='TB'):
     '''
     Save visualization of graph to an image file.
 
