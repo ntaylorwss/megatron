@@ -26,6 +26,9 @@ setup(name='Megatron',
       download_url='https://github.com/ntaylorwss/megatron/archive/master.zip',
       license='MIT',
       packages=find_packages(),
+      install_requires=[
+        'dill',
+      ],
       classifiers=[
         'Programming Language :: Python :: 3',
         'License :: OSI Approved :: MIT License',
