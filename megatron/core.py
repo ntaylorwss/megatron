@@ -1,5 +1,6 @@
 import os
 import numpy as np
+import pandas as pd
 import inspect
 from collections import defaultdict
 import dill as pickle
@@ -82,7 +83,7 @@ class Input:
     output : np.ndarray
         is None until node is run; when run, the Numpy array passed in is stored here.
     """
-    def __init__(self, graph, name, input_shape=(1,)):
+    def __init__(self, graph, name, input_shape=()):
         self.graph = graph
         self.graph._add_node(self, name)
         self.name = name
@@ -455,7 +456,6 @@ class Graph:
         for node in self.nodes:
             node.output = data[node]
 
-
     def run(self, output_nodes, feed_dict, cache_result=True, refit=False):
         """Execute a path terminating at (a) given Node(s) with some input data.
 
@@ -470,6 +470,9 @@ class Graph:
         refit : bool
             applies to Transformation nodes; if True, recalculate metadata based on this data.
         """
+        if isinstance(feed_dict, pd.DataFrame):
+            feed_dict = dict(zip(feed_dict.columns, feed_dict.T.values))
+
         if self.eager:
             raise utils.EagerRunException()
         out = []
