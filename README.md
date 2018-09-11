@@ -10,6 +10,7 @@ Megatron comes with a Docker image that provides a minimal environment with all 
 And the dependencies are as follows:
 
 - Numpy (required)
+- Sklearn (optional: only if using transformation functions from sklearn with the `SklearnTransformer` wrapper)
 - NLTK (optional: only if using `megatron.transforms.text` module)
 - Scikit-Image (optional: only if using `megatron.transforms.image` module)
 
