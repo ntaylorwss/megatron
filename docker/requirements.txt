@@ -7,3 +7,4 @@ scikit-image==0.14.0
 pydot==1.2.4
 sphinx==1.7.5
 sphinxcontrib-napoleon==0.6.1
+dill==0.2.8

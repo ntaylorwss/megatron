@@ -1,8 +1,5 @@
 FROM ntaylor22/tensorflow-cpu
 
-COPY docker/requirements.txt /tmp/requirements.txt
-RUN pip install -r /tmp/requirements.txt
-
 RUN rm -f /usr/bin/python && ln -s /usr/bin/python3.6 /usr/bin/python
 
 RUN useradd -ms /bin/bash megatron
@@ -14,5 +11,8 @@ USER megatron
 CMD jupyter notebook
 RUN mkdir /home/megatron/work
 WORKDIR /home/megatron/work
+
+COPY docker/requirements.txt /tmp/requirements.txt
+RUN pip install --user -r /tmp/requirements.txt
 
 COPY megatron/ /usr/local/lib/python3.6/dist-packages/megatron
