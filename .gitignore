@@ -6,3 +6,4 @@ notebooks/.ipynb_checkpoints/
 /build/
 dist/
 Megatron.egg-info/
+data/

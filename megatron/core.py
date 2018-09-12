@@ -37,6 +37,7 @@ class Node:
         self.graph = input_nodes[0].graph
         self.graph._add_node(self, name)
         self.input_nodes = input_nodes
+        self.output_nodes = []
         self.output = None
         self.is_fitted = False
 
@@ -90,6 +91,7 @@ class Input:
         self.input_nodes = []
         self.input_shape = input_shape
         self.str = None
+        self.output_nodes = []
         self.output = None
 
     def validate_input(self, observations):
@@ -196,6 +198,8 @@ class Lambda:
         """
         input_nodes = utils.listify(input_nodes)
         node = Node(self, input_nodes, self.name)
+        for in_node in input_nodes:
+            in_node.output_nodes.append(node)
         if node.graph.eager:
             node.run()
         return node
@@ -256,6 +260,8 @@ class Transformation:
         """
         input_nodes = utils.listify(input_nodes)
         node = Node(self, input_nodes, self.name)
+        for in_node in input_nodes:
+            in_node.output_nodes.append(node)
         if node.graph.eager:
             node.run()
         return node
@@ -424,6 +430,11 @@ class Graph:
         while node_index < len(path):
             if isinstance(path[node_index], Node):
                 path[node_index].run()
+            # clear data from nodes once they've been used by all output nodes
+            for node in path[:node_index]:
+                if (node.output is not None
+                        and all(out_node.output is not None for out_node in node.output_nodes)):
+                    node.output = None
             node_index += 1
         # optionally cache full path as compressed file for future use
         out = path[-1].output

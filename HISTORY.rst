@@ -7,6 +7,7 @@
 - Calling method on layers takes a list of nodes rather than individual positional arguments.
 - Loading and saving Graph functionality uses Dill to correctly pickle functions.
 - Added adapters for Pandas data as both Input node creator based on colnames, and as feed dict based on colnames.
+- Save memory by removing data from output member of nodes during run when they're not needed anymore.
 
 ## 0.1.1
 
