@@ -24,19 +24,17 @@ def _check_pydot():
 
 
 def pipeline_to_dot(graph, output_nodes, rankdir='TB'):
-    '''
+    """
     Convert a megatron Graph to dot format for visualization.
 
-    Usage
+    Example
     -----
-    To inspect within a notebook, use:
+    To inspect within a notebook, use::
 
-    ```
-    from IPython.display import SVG
-    from megatron.visuals import pipeline_to_dot
+        from IPython.display import SVG
+        from megatron.visuals import pipeline_to_dot
 
-    SVG(pipeline_to_dot(graph).create(prog='dot', format='svg'))
-    ```
+        SVG(pipeline_to_dot(graph).create(prog='dot', format='svg'))
 
     Otherwise, use the megatron.visuals.plot_pipeline(graph, output_nodes) method to
     save graph as a PNG file.
@@ -56,7 +54,7 @@ def pipeline_to_dot(graph, output_nodes, rankdir='TB'):
     -------
     pydot.Dot
         Dot representation of the Graph.
-    '''
+    """
 
     _check_pydot()
     dot = pydot.Dot()

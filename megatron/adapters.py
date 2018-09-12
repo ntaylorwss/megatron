@@ -1,4 +1,4 @@
-from ..core import Input
+from .core import Input
 
 
 def from_dataframe(df, graph, eager=False):
