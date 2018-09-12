@@ -6,11 +6,18 @@ Subpackages
 
 .. toctree::
 
-    megatron.adapters
     megatron.transforms
 
 Submodules
 ----------
+
+megatron.adapters module
+------------------------
+
+.. automodule:: megatron.adapters
+    :members:
+    :undoc-members:
+    :show-inheritance:
 
 megatron.core module
 --------------------

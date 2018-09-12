@@ -80,12 +80,12 @@
               <div class="local-toc"><ul>
 <li><a class="reference internal" href="#">megatron.transforms package</a><ul>
 <li><a class="reference internal" href="#submodules">Submodules</a></li>
-<li><a class="reference internal" href="#megatron-transforms-common-module">megatron.transforms.common module</a></li>
-<li><a class="reference internal" href="#megatron-transforms-image-module">megatron.transforms.image module</a></li>
-<li><a class="reference internal" href="#megatron-transforms-numeric-module">megatron.transforms.numeric module</a></li>
-<li><a class="reference internal" href="#megatron-transforms-text-module">megatron.transforms.text module</a></li>
-<li><a class="reference internal" href="#megatron-transforms-wrappers-module">megatron.transforms.wrappers module</a></li>
-<li><a class="reference internal" href="#module-contents">Module contents</a></li>
+<li><a class="reference internal" href="#module-megatron.transforms.common">megatron.transforms.common module</a></li>
+<li><a class="reference internal" href="#module-megatron.transforms.image">megatron.transforms.image module</a></li>
+<li><a class="reference internal" href="#module-megatron.transforms.numeric">megatron.transforms.numeric module</a></li>
+<li><a class="reference internal" href="#module-megatron.transforms.text">megatron.transforms.text module</a></li>
+<li><a class="reference internal" href="#module-megatron.transforms.wrappers">megatron.transforms.wrappers module</a></li>
+<li><a class="reference internal" href="#module-megatron.transforms">Module contents</a></li>
 </ul>
 </li>
 </ul>
@@ -157,23 +157,424 @@
 <div class="section" id="submodules">
 <h2>Submodules<a class="headerlink" href="#submodules" title="Permalink to this headline">¶</a></h2>
 </div>
-<div class="section" id="megatron-transforms-common-module">
-<h2>megatron.transforms.common module<a class="headerlink" href="#megatron-transforms-common-module" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="module-megatron.transforms.common">
+<span id="megatron-transforms-common-module"></span><h2>megatron.transforms.common module<a class="headerlink" href="#module-megatron.transforms.common" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="megatron.transforms.common.TimeSeries">
+<em class="property">class </em><code class="descclassname">megatron.transforms.common.</code><code class="descname">TimeSeries</code><span class="sig-paren">(</span><em>window_size</em>, <em>time_axis=1</em>, <em>reverse=False</em><span class="sig-paren">)</span><a class="headerlink" href="#megatron.transforms.common.TimeSeries" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="megatron.html#megatron.core.Transformation" title="megatron.core.Transformation"><code class="xref py py-class docutils literal notranslate"><span class="pre">megatron.core.Transformation</span></code></a></p>
+<p>Adds a time dimension to a dataset by rolling a window over the data.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>window_size</strong> (<em>int</em>) – length of the window; number of timesteps in the time series.</li>
+<li><strong>time_axis</strong> (<em>int</em>) – on which axis in the array to place the time dimension.</li>
+<li><strong>reverse</strong> (<em>bool</em>) – if True, oldest data is first; if False, newest data is first.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<dl class="method">
+<dt id="megatron.transforms.common.TimeSeries.transform">
+<code class="descname">transform</code><span class="sig-paren">(</span><em>X</em><span class="sig-paren">)</span><a class="headerlink" href="#megatron.transforms.common.TimeSeries.transform" title="Permalink to this definition">¶</a></dt>
+<dd><p>Apply transformation to given input data.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>inputs</strong> (<em>np.ndarray</em><em>(</em><em>s</em><em>)</em>) – input data to be transformed; could be one array or a list of arrays.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
 </div>
-<div class="section" id="megatron-transforms-image-module">
-<h2>megatron.transforms.image module<a class="headerlink" href="#megatron-transforms-image-module" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="module-megatron.transforms.image">
+<span id="megatron-transforms-image-module"></span><h2>megatron.transforms.image module<a class="headerlink" href="#module-megatron.transforms.image" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="megatron.transforms.image.Downsample">
+<em class="property">class </em><code class="descclassname">megatron.transforms.image.</code><code class="descname">Downsample</code><span class="sig-paren">(</span><em>new_shape</em><span class="sig-paren">)</span><a class="headerlink" href="#megatron.transforms.image.Downsample" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="megatron.html#megatron.core.Transformation" title="megatron.core.Transformation"><code class="xref py py-class docutils literal notranslate"><span class="pre">megatron.core.Transformation</span></code></a></p>
+<p>Shrink an image to a given size proportionally.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>new_shape</strong> (<em>tuple of int</em>) – the target shape for the new image.</td>
+</tr>
+</tbody>
+</table>
+<dl class="method">
+<dt id="megatron.transforms.image.Downsample.transform">
+<code class="descname">transform</code><span class="sig-paren">(</span><em>X</em><span class="sig-paren">)</span><a class="headerlink" href="#megatron.transforms.image.Downsample.transform" title="Permalink to this definition">¶</a></dt>
+<dd><p>Apply transformation to given input data.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>inputs</strong> (<em>np.ndarray</em><em>(</em><em>s</em><em>)</em>) – input data to be transformed; could be one array or a list of arrays.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="megatron.transforms.image.RGBtoBinary">
+<em class="property">class </em><code class="descclassname">megatron.transforms.image.</code><code class="descname">RGBtoBinary</code><span class="sig-paren">(</span><em>name=None</em><span class="sig-paren">)</span><a class="headerlink" href="#megatron.transforms.image.RGBtoBinary" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="megatron.html#megatron.core.Transformation" title="megatron.core.Transformation"><code class="xref py py-class docutils literal notranslate"><span class="pre">megatron.core.Transformation</span></code></a></p>
+<p>Convert image to binary mask where a 1 indicates a non-black cell.</p>
+<dl class="method">
+<dt id="megatron.transforms.image.RGBtoBinary.transform">
+<code class="descname">transform</code><span class="sig-paren">(</span><em>X</em><span class="sig-paren">)</span><a class="headerlink" href="#megatron.transforms.image.RGBtoBinary.transform" title="Permalink to this definition">¶</a></dt>
+<dd><p>Apply transformation to given input data.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>inputs</strong> (<em>np.ndarray</em><em>(</em><em>s</em><em>)</em>) – input data to be transformed; could be one array or a list of arrays.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="megatron.transforms.image.RGBtoGrey">
+<em class="property">class </em><code class="descclassname">megatron.transforms.image.</code><code class="descname">RGBtoGrey</code><span class="sig-paren">(</span><em>method='luminosity'</em><span class="sig-paren">)</span><a class="headerlink" href="#megatron.transforms.image.RGBtoGrey" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="megatron.html#megatron.core.Transformation" title="megatron.core.Transformation"><code class="xref py py-class docutils literal notranslate"><span class="pre">megatron.core.Transformation</span></code></a></p>
+<p>Convert an RGB array representation of an image to greyscale.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>method</strong> (<em>{'luminosity'</em><em>, </em><em>'lightness'</em><em>, </em><em>'average'}</em>) – </td>
+</tr>
+</tbody>
+</table>
+<dl class="method">
+<dt id="megatron.transforms.image.RGBtoGrey.transform">
+<code class="descname">transform</code><span class="sig-paren">(</span><em>X</em><span class="sig-paren">)</span><a class="headerlink" href="#megatron.transforms.image.RGBtoGrey.transform" title="Permalink to this definition">¶</a></dt>
+<dd><p>Apply transformation to given input data.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>inputs</strong> (<em>np.ndarray</em><em>(</em><em>s</em><em>)</em>) – input data to be transformed; could be one array or a list of arrays.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="megatron.transforms.image.Upsample">
+<em class="property">class </em><code class="descclassname">megatron.transforms.image.</code><code class="descname">Upsample</code><span class="sig-paren">(</span><em>new_shape</em><span class="sig-paren">)</span><a class="headerlink" href="#megatron.transforms.image.Upsample" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="megatron.html#megatron.core.Transformation" title="megatron.core.Transformation"><code class="xref py py-class docutils literal notranslate"><span class="pre">megatron.core.Transformation</span></code></a></p>
+<p>Expand an image to a given size proportionally.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>new_shape</strong> (<em>tuple of int</em>) – the target shape for the new image.</td>
+</tr>
+</tbody>
+</table>
+<dl class="method">
+<dt id="megatron.transforms.image.Upsample.transform">
+<code class="descname">transform</code><span class="sig-paren">(</span><em>X</em><span class="sig-paren">)</span><a class="headerlink" href="#megatron.transforms.image.Upsample.transform" title="Permalink to this definition">¶</a></dt>
+<dd><p>Apply transformation to given input data.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>inputs</strong> (<em>np.ndarray</em><em>(</em><em>s</em><em>)</em>) – input data to be transformed; could be one array or a list of arrays.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
 </div>
-<div class="section" id="megatron-transforms-numeric-module">
-<h2>megatron.transforms.numeric module<a class="headerlink" href="#megatron-transforms-numeric-module" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="module-megatron.transforms.numeric">
+<span id="megatron-transforms-numeric-module"></span><h2>megatron.transforms.numeric module<a class="headerlink" href="#module-megatron.transforms.numeric" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="megatron.transforms.numeric.Add">
+<em class="property">class </em><code class="descclassname">megatron.transforms.numeric.</code><code class="descname">Add</code><span class="sig-paren">(</span><em>name=None</em><span class="sig-paren">)</span><a class="headerlink" href="#megatron.transforms.numeric.Add" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="megatron.html#megatron.core.Transformation" title="megatron.core.Transformation"><code class="xref py py-class docutils literal notranslate"><span class="pre">megatron.core.Transformation</span></code></a></p>
+<p>Add up arrays element-wise.</p>
+<dl class="method">
+<dt id="megatron.transforms.numeric.Add.transform">
+<code class="descname">transform</code><span class="sig-paren">(</span><em>*arrays</em><span class="sig-paren">)</span><a class="headerlink" href="#megatron.transforms.numeric.Add.transform" title="Permalink to this definition">¶</a></dt>
+<dd><p>Apply transformation to given input data.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>inputs</strong> (<em>np.ndarray</em><em>(</em><em>s</em><em>)</em>) – input data to be transformed; could be one array or a list of arrays.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="megatron.transforms.numeric.AddDim">
+<em class="property">class </em><code class="descclassname">megatron.transforms.numeric.</code><code class="descname">AddDim</code><span class="sig-paren">(</span><em>axis</em><span class="sig-paren">)</span><a class="headerlink" href="#megatron.transforms.numeric.AddDim" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="megatron.html#megatron.core.Transformation" title="megatron.core.Transformation"><code class="xref py py-class docutils literal notranslate"><span class="pre">megatron.core.Transformation</span></code></a></p>
+<p>Add a dimension to an array.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>axis</strong> (<em>int</em>) – the axis along which to place the new dimension.</td>
+</tr>
+</tbody>
+</table>
+<dl class="method">
+<dt id="megatron.transforms.numeric.AddDim.transform">
+<code class="descname">transform</code><span class="sig-paren">(</span><em>X</em><span class="sig-paren">)</span><a class="headerlink" href="#megatron.transforms.numeric.AddDim.transform" title="Permalink to this definition">¶</a></dt>
+<dd><p>Apply transformation to given input data.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>inputs</strong> (<em>np.ndarray</em><em>(</em><em>s</em><em>)</em>) – input data to be transformed; could be one array or a list of arrays.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="megatron.transforms.numeric.Dot">
+<em class="property">class </em><code class="descclassname">megatron.transforms.numeric.</code><code class="descname">Dot</code><span class="sig-paren">(</span><em>W</em><span class="sig-paren">)</span><a class="headerlink" href="#megatron.transforms.numeric.Dot" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="megatron.html#megatron.core.Transformation" title="megatron.core.Transformation"><code class="xref py py-class docutils literal notranslate"><span class="pre">megatron.core.Transformation</span></code></a></p>
+<p>Multiply array by a given matrix, as matrix mulitplication.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>W</strong> (<em>np.array</em>) – matrix by which to multiply.</td>
+</tr>
+</tbody>
+</table>
+<dl class="method">
+<dt id="megatron.transforms.numeric.Dot.transform">
+<code class="descname">transform</code><span class="sig-paren">(</span><em>X</em><span class="sig-paren">)</span><a class="headerlink" href="#megatron.transforms.numeric.Dot.transform" title="Permalink to this definition">¶</a></dt>
+<dd><p>Apply transformation to given input data.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>inputs</strong> (<em>np.ndarray</em><em>(</em><em>s</em><em>)</em>) – input data to be transformed; could be one array or a list of arrays.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="megatron.transforms.numeric.Multiply">
+<em class="property">class </em><code class="descclassname">megatron.transforms.numeric.</code><code class="descname">Multiply</code><span class="sig-paren">(</span><em>factor</em><span class="sig-paren">)</span><a class="headerlink" href="#megatron.transforms.numeric.Multiply" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="megatron.html#megatron.core.Transformation" title="megatron.core.Transformation"><code class="xref py py-class docutils literal notranslate"><span class="pre">megatron.core.Transformation</span></code></a></p>
+<p>Multiply array by a given scalar.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>factor</strong> (<em>float</em>) – multiplier.</td>
+</tr>
+</tbody>
+</table>
+<dl class="method">
+<dt id="megatron.transforms.numeric.Multiply.transform">
+<code class="descname">transform</code><span class="sig-paren">(</span><em>X</em><span class="sig-paren">)</span><a class="headerlink" href="#megatron.transforms.numeric.Multiply.transform" title="Permalink to this definition">¶</a></dt>
+<dd><p>Apply transformation to given input data.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>inputs</strong> (<em>np.ndarray</em><em>(</em><em>s</em><em>)</em>) – input data to be transformed; could be one array or a list of arrays.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="megatron.transforms.numeric.OneHot">
+<em class="property">class </em><code class="descclassname">megatron.transforms.numeric.</code><code class="descname">OneHot</code><span class="sig-paren">(</span><em>max_val</em>, <em>min_val=0</em><span class="sig-paren">)</span><a class="headerlink" href="#megatron.transforms.numeric.OneHot" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="megatron.html#megatron.core.Transformation" title="megatron.core.Transformation"><code class="xref py py-class docutils literal notranslate"><span class="pre">megatron.core.Transformation</span></code></a></p>
+<p>One-hot encode an array for given range of values.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>max_val</strong> (<em>int</em>) – maximum possible value.</li>
+<li><strong>min_val</strong> (<em>int</em><em> (</em><em>default: 0</em><em>)</em>) – minimum possible value.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<dl class="method">
+<dt id="megatron.transforms.numeric.OneHot.transform">
+<code class="descname">transform</code><span class="sig-paren">(</span><em>X</em><span class="sig-paren">)</span><a class="headerlink" href="#megatron.transforms.numeric.OneHot.transform" title="Permalink to this definition">¶</a></dt>
+<dd><p>Apply transformation to given input data.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>inputs</strong> (<em>np.ndarray</em><em>(</em><em>s</em><em>)</em>) – input data to be transformed; could be one array or a list of arrays.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="megatron.transforms.numeric.Reshape">
+<em class="property">class </em><code class="descclassname">megatron.transforms.numeric.</code><code class="descname">Reshape</code><span class="sig-paren">(</span><em>new_shape</em><span class="sig-paren">)</span><a class="headerlink" href="#megatron.transforms.numeric.Reshape" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="megatron.html#megatron.core.Transformation" title="megatron.core.Transformation"><code class="xref py py-class docutils literal notranslate"><span class="pre">megatron.core.Transformation</span></code></a></p>
+<p>Reshape an array to a given new shape.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>new_shape</strong> (<em>tuple of int</em>) – desired new shape for array.</td>
+</tr>
+</tbody>
+</table>
+<dl class="method">
+<dt id="megatron.transforms.numeric.Reshape.transform">
+<code class="descname">transform</code><span class="sig-paren">(</span><em>X</em><span class="sig-paren">)</span><a class="headerlink" href="#megatron.transforms.numeric.Reshape.transform" title="Permalink to this definition">¶</a></dt>
+<dd><p>Apply transformation to given input data.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>inputs</strong> (<em>np.ndarray</em><em>(</em><em>s</em><em>)</em>) – input data to be transformed; could be one array or a list of arrays.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="megatron.transforms.numeric.Whiten">
+<em class="property">class </em><code class="descclassname">megatron.transforms.numeric.</code><code class="descname">Whiten</code><span class="sig-paren">(</span><em>name=None</em><span class="sig-paren">)</span><a class="headerlink" href="#megatron.transforms.numeric.Whiten" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="megatron.html#megatron.core.Transformation" title="megatron.core.Transformation"><code class="xref py py-class docutils literal notranslate"><span class="pre">megatron.core.Transformation</span></code></a></p>
+<p>Bring mean to 0 and standard deviation to 1.</p>
+<dl class="method">
+<dt id="megatron.transforms.numeric.Whiten.fit">
+<code class="descname">fit</code><span class="sig-paren">(</span><em>X</em><span class="sig-paren">)</span><a class="headerlink" href="#megatron.transforms.numeric.Whiten.fit" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculates and overwrites metadata based on current inputs.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>inputs</strong> (<em>numpy.ndarray</em><em>(</em><em>s</em><em>)</em>) – the input data to be fit to; could be one array or a list of arrays.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="megatron.transforms.numeric.Whiten.transform">
+<code class="descname">transform</code><span class="sig-paren">(</span><em>X</em><span class="sig-paren">)</span><a class="headerlink" href="#megatron.transforms.numeric.Whiten.transform" title="Permalink to this definition">¶</a></dt>
+<dd><p>Apply transformation to given input data.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>inputs</strong> (<em>np.ndarray</em><em>(</em><em>s</em><em>)</em>) – input data to be transformed; could be one array or a list of arrays.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
 </div>
-<div class="section" id="megatron-transforms-text-module">
-<h2>megatron.transforms.text module<a class="headerlink" href="#megatron-transforms-text-module" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="module-megatron.transforms.text">
+<span id="megatron-transforms-text-module"></span><h2>megatron.transforms.text module<a class="headerlink" href="#module-megatron.transforms.text" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="megatron.transforms.text.RemoveStopwords">
+<em class="property">class </em><code class="descclassname">megatron.transforms.text.</code><code class="descname">RemoveStopwords</code><span class="sig-paren">(</span><em>language='english'</em><span class="sig-paren">)</span><a class="headerlink" href="#megatron.transforms.text.RemoveStopwords" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="megatron.html#megatron.core.Transformation" title="megatron.core.Transformation"><code class="xref py py-class docutils literal notranslate"><span class="pre">megatron.core.Transformation</span></code></a></p>
+<p>Remove common, low-information words from all elements of text array.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>language</strong> (<em>str</em><em> (</em><em>default: english</em><em>)</em>) – the language in which the text is written.</td>
+</tr>
+</tbody>
+</table>
+<dl class="attribute">
+<dt id="megatron.transforms.text.RemoveStopwords.transform">
+<code class="descname">transform</code><em class="property"> = &lt;numpy.lib.function_base.vectorize object&gt;</em><a class="headerlink" href="#megatron.transforms.text.RemoveStopwords.transform" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
 </div>
-<div class="section" id="megatron-transforms-wrappers-module">
-<h2>megatron.transforms.wrappers module<a class="headerlink" href="#megatron-transforms-wrappers-module" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="module-megatron.transforms.wrappers">
+<span id="megatron-transforms-wrappers-module"></span><h2>megatron.transforms.wrappers module<a class="headerlink" href="#module-megatron.transforms.wrappers" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="megatron.transforms.wrappers.SklearnTransformation">
+<em class="property">class </em><code class="descclassname">megatron.transforms.wrappers.</code><code class="descname">SklearnTransformation</code><span class="sig-paren">(</span><em>transformation</em>, <em>name=None</em><span class="sig-paren">)</span><a class="headerlink" href="#megatron.transforms.wrappers.SklearnTransformation" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="megatron.html#megatron.core.Transformation" title="megatron.core.Transformation"><code class="xref py py-class docutils literal notranslate"><span class="pre">megatron.core.Transformation</span></code></a></p>
+<dl class="method">
+<dt id="megatron.transforms.wrappers.SklearnTransformation.fit">
+<code class="descname">fit</code><span class="sig-paren">(</span><em>inputs</em><span class="sig-paren">)</span><a class="headerlink" href="#megatron.transforms.wrappers.SklearnTransformation.fit" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculates and overwrites metadata based on current inputs.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>inputs</strong> (<em>numpy.ndarray</em><em>(</em><em>s</em><em>)</em>) – the input data to be fit to; could be one array or a list of arrays.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="megatron.transforms.wrappers.SklearnTransformation.transform">
+<code class="descname">transform</code><span class="sig-paren">(</span><em>inputs</em><span class="sig-paren">)</span><a class="headerlink" href="#megatron.transforms.wrappers.SklearnTransformation.transform" title="Permalink to this definition">¶</a></dt>
+<dd><p>Apply transformation to given input data.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>inputs</strong> (<em>np.ndarray</em><em>(</em><em>s</em><em>)</em>) – input data to be transformed; could be one array or a list of arrays.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
 </div>
-<div class="section" id="module-contents">
-<h2>Module contents<a class="headerlink" href="#module-contents" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="module-megatron.transforms">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-megatron.transforms" title="Permalink to this headline">¶</a></h2>
 </div>
 </div>
 
