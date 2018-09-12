@@ -14,8 +14,9 @@ fi
 
 # update sphinx docs
 echo "Rebuilding docs..."
-sphinx-apidoc -f -o docs/source .
-sphinx-build -b html docs/source docs/build
+docker/start
+docker exec megatron bash -c "sphinx-apidoc -f -o docs/source . && sphinx-build -b html docs/source docs/build"
+docker/stop
 git add docs
 git commit -m "Documentation update in preparation for version bump"
 git push origin master
