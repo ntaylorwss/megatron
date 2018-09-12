@@ -12,6 +12,8 @@ CMD jupyter notebook
 RUN mkdir /home/megatron/work
 WORKDIR /home/megatron/work
 
+ENV PATH "/home/megatron/.local/bin:${PATH}"
+
 COPY docker/requirements.txt /tmp/requirements.txt
 RUN pip install --user -r /tmp/requirements.txt
 
