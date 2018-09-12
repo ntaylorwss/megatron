@@ -5,6 +5,8 @@
 ### Changes
 - Added visualization module for the computation graph. Contributed by @jeremyjordan.
 - Calling method on layers takes a list of nodes rather than individual positional arguments.
+- Loading and saving Graph functionality uses Dill to correctly pickle functions.
+- Added adapters for Pandas data as both Input node creator based on colnames, and as feed dict based on colnames.
 
 ## 0.1.1
 
