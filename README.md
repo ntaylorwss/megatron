@@ -1,9 +1,9 @@
-# Megatron: Computation Graphs for Feature Engineering in Machine Learning
+# Megatron: Feature Engineering Pipelines
 
-Megatron is a library that facilitates fully customizable pipelines for feature engineering by implementing the process as a directed acyclic graph. Based in Numpy, it provides a comprehensive suite of transformations, as well as the ability to apply user-defined transformations, provided they accept and return particular data types, which are listed below.
+Megatron is a library that facilitates fully customizable pipelines for feature engineering by implementing the process as a graph of functions on Numpy/Pandas data. It can be used to clearly define complex feature engineering concepts as a series of simple functions; it also allows for clear visualization as a graph, fast re-use through caching, and the ability to fit to training data and apply fitted transformations to testing data. It supports eager execution for transparency at every step. It provides a comprehensive suite of transformations, as well as the ability to apply user-defined transformations, and transformations from other libraries like Sklearn. With a design heavily inspired by the Keras Functional API, Megatron aims to be the simplest interface to both straightforward and arbitrarily complex feature engineering.
 
 ## Installation and Requirements
-Megatron comes with a Docker image that provides a minimal environment with all its required dependencies and a Jupyter environment. If you wish to use the package on its own, it can be installed via pip:
+Megatron comes with a Docker image that provides a minimal environment with all its required dependencies and Jupyter. If you wish to use the package on its own, it can be installed via pip:
 
 `pip install megatron`
 
@@ -14,19 +14,10 @@ And the dependencies are as follows:
 - NLTK (optional: only if using `megatron.transforms.text` module)
 - Scikit-Image (optional: only if using `megatron.transforms.image` module)
 
-## Transforms
-Megatron supports arbitrary transformations, so long as they return valid Numpy arrays. The transformation can use other data structures as intermediate tools, but each transformation must receive and return a Numpy array.
+## 
+Megatron supports arbitrary functions as transformations, so long as they return valid Numpy arrays. Megatron provides a growing suite of built-in transformation functions for standard things like scaling, whitening, imputing, and math.
 
-Megatron provides a growing suite of transformation functions, and these are grouped by data type under `megatron.transforms`. This means that at present, the modules are:
 
-- `megatron.transforms.numeric`
-- `megatron.transforms.image`
-- `megatron.transforms.text`
-- `megatron.transforms.common`
-
-`megatron.transforms.common` holds those transformations that apply generally to any data type, such as the `time_series` function that converts an array of observations into an array of time series observations by sliding a window over the data.
-
-All functions are used by being passed to a `megatron.Transformation` object, which takes in as parameters a transformation function and any Configuration Parameters necessary.
 
 ### Configuration Parameters
 Transformation functions, which are any built-ins, or custom functions that are stateful, take keyword arguments in their initialization. These are like "hyperparameters" for the function, those that stay the same for each execution and which can be customized by the user. These functions are then called on data (arrays), which are passed as individual arguments. Transformations should take in arguments using list expansion syntax, e.g. `*inputs`, so that this can be facilitated.
