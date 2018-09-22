@@ -2,6 +2,8 @@ FROM ntaylor22/tensorflow-cpu
 
 RUN rm -f /usr/bin/python && ln -s /usr/bin/python3.6 /usr/bin/python
 
+RUN apt-get update && apt-get install -y graphviz
+
 RUN useradd -ms /bin/bash megatron
 RUN mkdir /home/megatron/.jupyter && \
     echo "c.NotebookApp.token = u''" > /home/megatron/.jupyter/jupyter_notebook_config.py
