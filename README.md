@@ -20,13 +20,15 @@ Megatron supports arbitrary functions as transformations, so long as they return
 
 
 ### Configuration Parameters
-Transformation functions, which are any built-ins, or custom functions that are stateful, take keyword arguments in their initialization. These are like "hyperparameters" for the function, those that stay the same for each execution and which can be customized by the user. These functions are then called on data (arrays), which are passed as individual arguments. Transformations should take in arguments using list expansion syntax, e.g. `*inputs`, so that this can be facilitated.
+Transformations take keyword arguments in their initialization. These are like "hyperparameters" for the function, those that stay the same for each execution and which can be customized by the user. These functions are then called on other Nodes if in lazy execution, or on data if in eager execution. Multiple arguments are passed as a list.
 
-As an example, here's the usage for the `TimeSeries` function from `megatron.transforms.common`, which takes in a `window_size` parameter and operates on one data argument:
+As an example, here's the usage for the `TimeSeries` function from `megatron.transforms.common`, which takes in a `window_size` parameter and operates on one node:
 
-```
-out = megatron.transforms.TimeSeries(window_size=5, time_axis=-1)(X)
-```
+`out = megatron.transforms.TimeSeries(window_size=5)(X)`
+
+And a `Divide` function from `megatron.transforms.numeric`, which takes in no parameters, and operates on two nodes:
+
+`out = megatron.transforms.Divide()([X, Y])`
 
 ## Eager Execution
 Megatron supports eager execution with a very simple adjustment to the code. When you define an Input node, you can call it as a function and pass it a Numpy array as data. Doing this will result in the graph being executed eagerly; the results for each Node can be found in its `output` attribute. An example to state the comparison:
