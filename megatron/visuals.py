@@ -2,8 +2,8 @@
 # https://github.com/keras-team/keras/blob/master/keras/utils/vis_utils.py
 
 import os
-
 from . import utils
+from IPython.display import SVG
 
 # check for pydot
 try:
@@ -13,7 +13,7 @@ except ImportError:
 
 
 def _check_pydot():
-    '''Raise errors if `pydot` or GraphViz are not properly installed.'''
+    """Raise errors if `pydot` or GraphViz are not properly installed."""
     if pydot is None:
         raise ImportError('Failed to import `pydot`. Please install `pydot` in your '
                           'current environment.')
@@ -24,20 +24,7 @@ def _check_pydot():
 
 
 def pipeline_to_dot(graph, output_nodes, rankdir='TB'):
-    """
-    Convert a megatron Graph to dot format for visualization.
-
-    Example
-    -----
-    To inspect within a notebook, use::
-
-        from IPython.display import SVG
-        from megatron.visuals import pipeline_to_dot
-
-        SVG(pipeline_to_dot(graph).create(prog='dot', format='svg'))
-
-    Otherwise, use the megatron.visuals.plot_pipeline(graph, output_nodes) method to
-    save graph as a PNG file.
+    """Convert a megatron Graph to dot format for visualization.
 
     Parameters
     ----------
@@ -85,9 +72,30 @@ def pipeline_to_dot(graph, output_nodes, rankdir='TB'):
     return dot
 
 
-def plot_pipeline(graph, output_nodes, save_path='pipeline.png', rankdir='TB'):
-    '''
-    Save visualization of graph to an image file.
+def graph_imshow(graph, output_nodes, rankdir='TB'):
+    """Create visualization of graph within Jupyter Notebook.
+
+    Parameters
+    ----------
+    graph : megatron.Graph
+        Feature pipeline defined as a graph.
+    output_nodes : megatron.Node or list of megatron.Node
+        The output nodes of the pipeline determine your feature-space. Include a list
+        of all nodes which you would like to be included as features in the output.
+    rankdir : str ['TB' or 'LR']
+        Direction of graph to plot (top to bottom or left to right).
+
+    Returns
+    -------
+    IPython.display.SVG
+        Display of graph.
+    """
+    dot = pipeline_to_dot(graph, output_nodes, rankdir)
+    return SVG(dot.create(prog='dot', format='svg'))
+
+
+def save_image(graph, output_nodes, save_path='pipeline.png', rankdir='TB'):
+    """Save visualization of graph to an image file.
 
     Parameters
     ----------
@@ -100,7 +108,7 @@ def plot_pipeline(graph, output_nodes, save_path='pipeline.png', rankdir='TB'):
         Specify where to save the graph visualization.
     rankdir : str ['TB' or 'LR']
         Direction of graph to plot (top to bottom or left to right).
-    '''
+    """
     dot = pipeline_to_dot(graph, output_nodes, rankdir)
     _, extension = os.path.splitext(save_path)
     if not extension:
