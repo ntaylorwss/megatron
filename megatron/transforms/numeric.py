@@ -16,7 +16,7 @@ class Whiten(Transformation):
 class Add(Transformation):
     """Add up arrays element-wise."""
     def transform(self, *arrays):
-        return np.add(*arrays)
+        return np.sum(arrays, axis=0)
 
 
 class Multiply(Transformation):
@@ -28,11 +28,27 @@ class Multiply(Transformation):
         multiplier.
     """
     @initializer
-    def __init__(self, factor):
-        super().__init__()
+    def __init__(self, factor, name=None):
+        super().__init__(name=name)
 
     def transform(self, X):
         return self.factor * X
+
+
+class Divide(Transformation):
+    """Divide given array by another given array element-wise.
+
+    Parameters
+    ----------
+    impute : int/float or None
+        the value to impute when encountering a divide by zero.
+    """
+    @initializer
+    def __init__(self, impute=None, name=None):
+        super().__init__(name=name)
+
+    def transform(self, X1, X2):
+        return np.divide(X1.astype(np.float16), X2, out=np.zeros_like(X1).astype(np.float16), where=X2!=0)
 
 
 class Dot(Transformation):
@@ -44,8 +60,8 @@ class Dot(Transformation):
         matrix by which to multiply.
     """
     @initializer
-    def __init__(self, W):
-        super().__init__()
+    def __init__(self, W, name=None):
+        super().__init__(name=name)
 
     def transform(self, X):
         return np.dot(self.W, X)
@@ -60,7 +76,7 @@ class AddDim(Transformation):
         the axis along which to place the new dimension.
     """
     @initializer
-    def __init__(self, axis):
+    def __init__(self, axis, name=None):
         super().__init__()
 
     def transform(self, X):
@@ -78,8 +94,8 @@ class OneHot(Transformation):
         minimum possible value.
     """
     @initializer
-    def __init__(self, max_val, min_val=0):
-        super().__init__()
+    def __init__(self, max_val, min_val=0, name=None):
+        super().__init__(name=name)
 
     def transform(self, X):
         if not self.max_val:
@@ -96,8 +112,8 @@ class Reshape(Transformation):
         desired new shape for array.
     """
     @initializer
-    def __init__(self, new_shape):
-        super().__init__()
+    def __init__(self, new_shape, name=None):
+        super().__init__(name=name)
 
     def transform(self, X):
         return np.reshape(X, self.new_shape)

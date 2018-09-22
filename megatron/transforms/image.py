@@ -15,8 +15,8 @@ class RGBtoGrey(Transformation):
     method : {'luminosity', 'lightness', 'average'}
     """
     @initializer
-    def __init__(self, method='luminosity'):
-        super().__init__()
+    def __init__(self, method='luminosity', name=None):
+        super().__init__(name=name)
 
     def transform(self, X):
         if self.method == 'lightness':
@@ -44,8 +44,8 @@ class Downsample(Transformation):
         the target shape for the new image.
     """
     @initializer
-    def __init__(self, new_shape):
-        super().__init__()
+    def __init__(self, new_shape, name=None):
+        super().__init__(name=name)
 
     def transform(self, X):
         if any(self.new_shape[i] > X.shape[i] for i in range(len(self.new_shape))):
@@ -62,8 +62,8 @@ class Upsample(Transformation):
         the target shape for the new image.
     """
     @initializer
-    def __init__(self, new_shape):
-        super().__init__()
+    def __init__(self, new_shape, name=None):
+        super().__init__(name=name)
 
     def transform(self, X):
         if any(self.new_shape[i] < X.shape[i] for i in range(len(self.new_shape))):

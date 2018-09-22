@@ -17,8 +17,8 @@ class RemoveStopwords(Transformation):
         the language in which the text is written.
     """
     @initializer
-    def __init__(self, language='english'):
-        super().__init__()
+    def __init__(self, language='english', name=None):
+        super().__init__(name=name)
 
     def transform(self, X):
         stops = set(stopwords.words(self.language))

@@ -17,10 +17,30 @@ class TimeSeries(Transformation):
     """
 
     @initializer
-    def __init__(self, window_size, time_axis=1, reverse=False):
-        super().__init__()
+    def __init__(self, window_size, time_axis=1, reverse=False, name=None):
+        if name is None:
+            name = 'window({})'.format(window_size)
+        super().__init__(name=name)
 
     def transform(self, X):
         steps = [np.roll(X, i, axis=0) for i in range(self.window_size)]
         out = np.moveaxis(np.stack(steps), 0, self.time_axis)[self.window_size:]
         return np.flip(out, axis=-1) if self.reverse else out
+
+
+class Retype(Transformation):
+    """Re-defines the data type for a Numpy array's contents.
+
+    Parameters
+    ----------
+    new_type : type
+        the new type for the array to be cast to.
+    """
+    @initializer
+    def __init__(self, new_type, name=None):
+        if name is None:
+            name = new_type.__name__
+        super().__init__(name=name)
+
+    def transform(self, X):
+        return X.astype(self.new_type)
