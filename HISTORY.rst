@@ -8,6 +8,14 @@
 - Loading and saving Graph functionality uses Dill to correctly pickle functions.
 - Added adapters for Pandas data as both Input node creator based on colnames, and as feed dict based on colnames.
 - Save memory by removing data from output member of nodes during run when they're not needed anymore.
+- Remove custom naming option from nodes and transformations (not Input).
+- Remove ability to run nodes by string name; must be actual Node variable.
+- Add FeatureSet, a grouping of Nodes for mapping transformations onto.
+- Structural change of the package, breaking up core into its components.
+
+### Bug Fixes
+- Previously was not applying kwargs passed to Lambda init on to transform method.
+- Fix postorder traversal so it doesn't duplicate nodes.
 
 ## 0.1.1
 
