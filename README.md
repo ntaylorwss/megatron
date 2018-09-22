@@ -15,7 +15,7 @@ And the dependencies are as follows:
 - Scikit-Image (optional: only if using `megatron.transforms.image` module)
 
 ## Using Transformations
-Transformations take keyword arguments in their initialization. These are like "hyperparameters" for the function, those that stay the same for each execution and which can be customized by the user. These functions are then called on other Nodes if in lazy execution, or on data if in eager execution. Multiple arguments are passed as a list.
+Transformations take keyword arguments in their initialization. These are like "hyperparameters" for the function, those that stay the same for each execution and which can be customized by the user. These functions are then called on other Nodes if in lazy execution, or on data if in eager execution (see below for a discussion on Eager Execution). Multiple arguments are passed as a list.
 
 As an example, here's the usage for the `TimeSeries` function from `megatron.transforms.common`, which takes in a `window_size` parameter and operates on one node:
 
