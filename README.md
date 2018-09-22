@@ -59,8 +59,5 @@ print(Z.output.shape) # >>> (45, 5, 10)
 As you can see, the Node `Z` had its value computed on creation, and it was stored in `Z.output`. The same is true of all Nodes in the Graph. `Graph.run` is not used when eager execution is being applied.
 
 ## Caching
-Megatron will, by default, cache the results of an execution of a Node in a space-efficient compressed file. When a Node in a computation graph is run, it checks to see if at any point along the path, a particular Node's subpath has already been previously computed and stored, and if it has, it reloads that Node and begins from that point. This will happen at the latest possible point in the executed path, including potentially the executed Node itself. This is meant to be time-efficient at the potential cost of space, though space was conserved as best as possible through compression.
-
-Caching can be avoided by executing `Graph.run` with the keyword `cache=False`.
-
-Caching does not apply in the case of eager execution.
+Megatron will, by default, cache the results of an execution of a Node in a space-efficient compressed file. Any Nodes extending from this cached Node will begin from the cached data, rather than re-computing it. If the same pipeline is run twice with the same data, the second execution will simply load from the cache.
+Caching can be avoided by executing `Graph.run` with the keyword `cache=False`. Caching does not apply in the case of eager execution.
