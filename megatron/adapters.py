@@ -1,9 +1,11 @@
-from .core import Input
+from .core import Input, FeatureSet
 
 
-def from_dataframe(df, graph, eager=False):
+def from_dataframe(df, graph, eager=False, exclude_cols=[]):
+    exclude_cols = set(exclude_cols)
+    cols = [col for col in df.columns if not col in exclude_cols]
     if eager:
-        out = {col: Input(graph=graph, name=col)(df[col].values) for col in df.columns}
+        nodes = [Input(graph=graph, name=col)(df[col].values) for col in cols]
     else:
-        out = {col: Input(graph=graph, name=col) for col in df.columns}
-    return out
+        nodes = [Input(graph=graph, name=col) for col in cols]
+    return FeatureSet(nodes, cols)

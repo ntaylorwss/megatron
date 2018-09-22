@@ -32,16 +32,15 @@ class Node:
         indicates whether the Transformation inside the Node
         has, if necessary, been fit to data.
     """
-    def __init__(self, transformation, input_nodes, name=None):
+    def __init__(self, transformation, input_nodes):
+        self.name = transformation.name
         self.transformation = transformation
         self.graph = input_nodes[0].graph
-        self.graph._add_node(self, name)
+        self.graph._add_node(self)
         self.input_nodes = input_nodes
         self.output_nodes = []
         self.output = None
         self.is_fitted = False
-
-        self.name = name or self.transformation.__class__.__name__
 
     def run(self):
         """Stores result of given Transformation on input Nodes in output variable."""
@@ -86,7 +85,7 @@ class Input:
     """
     def __init__(self, graph, name, input_shape=()):
         self.graph = graph
-        self.graph._add_node(self, name)
+        self.graph._add_node(self)
         self.name = name
         self.input_nodes = []
         self.input_shape = input_shape
@@ -150,6 +149,31 @@ class Input:
         return self.str
 
 
+class FeatureSet:
+    def __init__(self, nodes, names):
+        self.nodes = nodes
+        self.names = list(names)
+        self.name_to_index = {name: i for i, name in enumerate(self.names)}
+
+    def get(self, key):
+        if isinstance(key, str):
+            return self.nodes[self.name_to_index[key]]
+        else:
+            raise KeyError("Invalid key type; must be str")
+
+    def __getitem__(self, key):
+        if isinstance(key, list):
+            return [self.get(k) for k in key]
+        else:
+            return self.get(key)
+
+    def __setitem__(self, key, node):
+        if isinstance(key, str):
+            self.nodes[self.name_to_index[key]] = node
+        else:
+            raise KeyError("Invalid key type; must be str")
+
+
 class Lambda:
     """A wrapper for a stateless custom function.
 
@@ -161,10 +185,6 @@ class Lambda:
     transform_fn : function
         the function to be applied, which accepts one or more
         Numpy arrays as positional arguments.
-    name : str or None
-        optional custom name for the node. If none given, default name is
-        [name of transform_fn]:[index], where index is a unique identifier for
-        multiple nodes with the same transform_fn.
     **kwargs
         keyword arguments to whatever custom function is passed in as transform_fn.
 
@@ -173,36 +193,41 @@ class Lambda:
     transform_fn : function
         the function to be applied, which accepts one or more
         Numpy arrays as positional arguments.
-    name : str or None
-        optional custom name for the node. If none given, default name is
-        [name of transform_fn]:[index], where index is a unique identifier for
-        multiple nodes with the same transform_fn.
     **kwargs
         keyword arguments to whatever custom function is passed in as transform_fn.
     """
     def __init__(self, transform_fn, name=None, **kwargs):
         self.transform_fn = transform_fn
+        self.name = name if name else self.transform_fn.__name__
         self.kwargs = kwargs
-        if name:
-            self.name = name
-        else:
-            self.name = transform_fn.__name__
+
+    def _call_on_nodes(self, input_nodes):
+        node = Node(self, input_nodes)
+        for in_node in input_nodes:
+            in_node.output_nodes.append(node)
+        if node.graph.eager:
+            node.run()
+        return node
+
+    def _call_on_feature_set(self, feature_set):
+        new_nodes = []
+        for input_node in feature_set:
+            new_nodes.append(self._call_on_nodes(input_node))
+        return FeatureSet(new_nodes, feature_set.names)
 
     def __call__(self, input_nodes):
         """Creates a Node associated with this Lambda Transformation and the given input Nodes.
 
         Parameters
         ----------
-        *input_nodes : megatron.Node(s) / megatron.Input(s)
+        input_nodes : megatron.Node(s) or megatron.FeatureSet
             the input nodes, whose data are to be passed to transform_fn when run.
         """
         input_nodes = utils.listify(input_nodes)
-        node = Node(self, input_nodes, self.name)
-        for in_node in input_nodes:
-            in_node.output_nodes.append(node)
-        if node.graph.eager:
-            node.run()
-        return node
+        if isinstance(input_nodes[0], Node):
+            return self._call_on_nodes(input_nodes)
+        else:
+            return self._call_on_feature_set(input_nodes)
 
     def __str__(self):
         """Used in caching subgraphs."""
@@ -222,7 +247,7 @@ class Lambda:
         inputs : np.ndarray(s)
             input data to be passed to transform_fn; could be one array or a list of arrays.
         """
-        return self.transform_fn(*inputs)
+        return self.transform_fn(*inputs, **self.kwargs)
 
 
 class Transformation:
@@ -231,13 +256,6 @@ class Transformation:
     For custom functions that are stateful, and thus require to be fit,
     writing a Transformation subclass is required rather than using a Lambda wrapper.
 
-    Parameters
-    ----------
-    name : str or None
-        optional custom name for the node. If none given, default name is
-        [name of class]:[index], where index is a unique identifier for
-        multiple nodes of the same object.
-
     Attributes
     ----------
     metadata : dict
@@ -245,26 +263,33 @@ class Transformation:
     """
     def __init__(self, name=None):
         self.metadata = {}
-        if name:
-            self.name = name
-        else:
-            self.name = self.__class__.__name__
+        self.name = name if name else self.__class__.__name__
 
-    def __call__(self, input_nodes):
+    def _call_on_nodes(self, nodes):
+        out_node = Node(self, nodes)
+        for node in nodes:
+            node.output_nodes.append(out_node)
+        if out_node.graph.eager:
+            out_node.run()
+        return out_node
+
+    def _call_on_feature_set(self, feature_set):
+        new_nodes = [self._call_on_nodes([node]) for node in feature_set.nodes]
+        return FeatureSet(new_nodes, feature_set.names)
+
+    def __call__(self, nodes):
         """Creates a Node associated with this Transformation and the given input Nodes.
 
         Parameters
         ----------
-        *input_nodes : megatron.Node(s) / megatron.Input(s)
+        input_nodes : megatron.Node(s) or megatron.FeatureSet
             the input nodes, whose data are to be passed to transform_fn when run.
         """
-        input_nodes = utils.listify(input_nodes)
-        node = Node(self, input_nodes, self.name)
-        for in_node in input_nodes:
-            in_node.output_nodes.append(node)
-        if node.graph.eager:
-            node.run()
-        return node
+        nodes = utils.listify(nodes)
+        if isinstance(nodes[0], (Node, Input)):
+            return self._call_on_nodes(nodes)
+        else:
+            return self._call_on_feature_set(nodes[0])
 
     def __str__(self):
         """Used in caching subgraphs."""
@@ -321,49 +346,16 @@ class Graph:
             os.mkdir(self.cache_dir)
         self.eager = False
         self.nodes = []
-        self.nodes_by_name = defaultdict(list)
 
-    def _add_node(self, node, name):
+    def _add_node(self, node):
         """Add a node to the graph.
 
         Parameters
         ----------
         node : Node / Input
             the node to be added, whether an Input or Node.
-        name : str
-            the name of the node to be added.
         """
         self.nodes.append(node)
-        self.nodes_by_name[name].append(node)
-
-    def _lookup_node(self, node):
-        """Get node by name as string, or just give back the node itself.
-
-        Parameters
-        ----------
-        node : Node or str
-            if Node, return node; if str, lookup node associated with str.
-            str format should be '[transformation/input name]:[index].
-            if the same transformation/input name is used more than once, subsequent instances
-            are made unique by their index.
-
-        Returns
-        -------
-        Node
-            either the node given as an argument, or the node associated with the string argument.
-        """
-        if isinstance(node, str):
-            if node.find(':') >= 0:
-                name, index = node.split(':')
-            else:
-                name = node
-                index = '0'
-            if name in self.nodes_by_name:
-                return self.nodes_by_name[name][int(index)]
-            else:
-                raise ValueError("node not found in graph")
-        else:
-            return node
 
     def _postorder_traversal(self, output_node):
         """Returns the path to the desired Node through the Graph.
@@ -378,13 +370,16 @@ class Graph:
         list of Node
             the path from input to output that arrives at the output_node.
         """
-        output_node = self._lookup_node(output_node)
-        path = []
-        if output_node:
-            for child in output_node.input_nodes:
-                path += self._postorder_traversal(child)
-            path.append(output_node)
-        return path
+        visited = set()
+        order = []
+        def dfs(node):
+            visited.add(node)
+            for in_node in node.input_nodes:
+                if not in_node in visited:
+                    dfs(in_node)
+            order.append(node)
+        dfs(output_node)
+        return order
 
     def _run_path(self, path, feed_dict, cache_result):
         """Execute all non-cached nodes along the path given input data.
@@ -472,8 +467,8 @@ class Graph:
 
         Parameters
         ----------
-        output_nodes : list of Node or str
-            the terminal nodes, or node names, for which to return data.
+        output_nodes : list of Node
+            the terminal nodes for which to return data.
         feed_dict : dict of Numpy array
             the input data to be passed to Input Nodes to begin execution.
         cache_result : bool
@@ -486,6 +481,7 @@ class Graph:
 
         if self.eager:
             raise utils.EagerRunException()
+
         out = []
         output_nodes = utils.listify(output_nodes)
         for output_node in output_nodes:
@@ -509,5 +505,5 @@ def load(filepath):
         graph_info = pickle.load(f)
     G = Graph(cache_dir=graph_info['cache_dir'])
     for node in graph_info['nodes']:
-        G._add_node(node, node.name)
+        G._add_node(node)
     return G
