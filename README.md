@@ -14,12 +14,7 @@ And the dependencies are as follows:
 - NLTK (optional: only if using `megatron.transforms.text` module)
 - Scikit-Image (optional: only if using `megatron.transforms.image` module)
 
-## 
-Megatron supports arbitrary functions as transformations, so long as they return valid Numpy arrays. Megatron provides a growing suite of built-in transformation functions for standard things like scaling, whitening, imputing, and math.
-
-
-
-### Configuration Parameters
+## Using Transformations
 Transformations take keyword arguments in their initialization. These are like "hyperparameters" for the function, those that stay the same for each execution and which can be customized by the user. These functions are then called on other Nodes if in lazy execution, or on data if in eager execution. Multiple arguments are passed as a list.
 
 As an example, here's the usage for the `TimeSeries` function from `megatron.transforms.common`, which takes in a `window_size` parameter and operates on one node:
@@ -29,6 +24,35 @@ As an example, here's the usage for the `TimeSeries` function from `megatron.tra
 And a `Divide` function from `megatron.transforms.numeric`, which takes in no parameters, and operates on two nodes:
 
 `out = megatron.transforms.Divide()([X, Y])`
+
+## Defining Custom Transformations
+A Transformation is one of two things: stateless, or stateful.
+
+- Stateless transformations, when provided the same input at any given time, will always provide the same output. They are dependent on nothing, in terms of context.
+- Stateful transformations will provide different output for the same input depending on their parameters; these transformations are "fitted" to data, much like models. An example is a whitening transformation that subtracts the mean and divides by the standard deviation. This Transformation is "fitted" to the data by calculating a mean and standard deviation, and it then uses these statistics for subsequent transformations of future data.
+
+To define a stateless transformation, simply write the function that accepts Numpy data and returns Numpy data, doing whatever arbitrary transformation you wish. Then pass this function to a `megatron.Lambda` wrapper:
+
+```
+def add_5(x):
+    return x + 5
+
+out = Lambda(add_5)(X)
+```
+
+To define a stateful transformation, you must inherit the `megatron.Transformation` class. You are responsible for writing the following methods for your new child class:
+
+- `fit(self, *nodes)`: This should calculate any necessary parameters when passed in Numpy data as `*nodes`. A `self.metadata` dictionary is provided for the storage of these parameters, and should be used.
+- `transform(self, *nodes)`: This should transform your Numpy data, given as `*nodes`. You make use of the learned parameters by accessing them in `self.metadata`.
+
+`*nodes` is of course not necessary as a parameter name; it is intended to show that you can have an arbitrary number of parameters, each corresponding to a node's data.
+
+## Using Sklearn Transformations
+A wrapper is provided for Sklearn transformations that makes it simple to insert them into the pipeline:
+
+`out = megatron.wrappers.SklearnTransformer(sklearn.StandardScaler())(X)`
+
+That's it.
 
 ## Eager Execution
 Megatron supports eager execution with a very simple adjustment to the code. When you define an Input node, you can call it as a function and pass it a Numpy array as data. Doing this will result in the graph being executed eagerly; the results for each Node can be found in its `output` attribute. An example to state the comparison:
