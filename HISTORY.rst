@@ -1,6 +1,6 @@
 # Release History
 
-## 0.1.2
+## 0.2.0
 
 ### Changes
 - Added visualization module for the computation graph. Contributed by @jeremyjordan.
@@ -12,6 +12,7 @@
 - Remove ability to run nodes by string name; must be actual Node variable.
 - Add FeatureSet, a grouping of Nodes for mapping transformations onto.
 - Structural change of the package, breaking up core into its components.
+- Rename Transformation to Layer.
 
 ### Bug Fixes
 - Previously was not applying kwargs passed to Lambda init on to transform method.
