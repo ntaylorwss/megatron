@@ -1,0 +1,414 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>megatron.nodes package &mdash; Megatron 0.1.0 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" /> 
+
+  
+  <script src="_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="index.html" class="icon icon-home"> Megatron
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <!-- Local TOC -->
+              <div class="local-toc"><ul>
+<li><a class="reference internal" href="#">megatron.nodes package</a><ul>
+<li><a class="reference internal" href="#submodules">Submodules</a></li>
+<li><a class="reference internal" href="#module-megatron.nodes.core">megatron.nodes.core module</a></li>
+<li><a class="reference internal" href="#module-megatron.nodes.wrappers">megatron.nodes.wrappers module</a></li>
+<li><a class="reference internal" href="#module-megatron.nodes">Module contents</a></li>
+</ul>
+</li>
+</ul>
+</div>
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">Megatron</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html">Docs</a> &raquo;</li>
+        
+      <li>megatron.nodes package</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="_sources/megatron.nodes.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="megatron-nodes-package">
+<h1>megatron.nodes package<a class="headerlink" href="#megatron-nodes-package" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Permalink to this headline">¶</a></h2>
+</div>
+<div class="section" id="module-megatron.nodes.core">
+<span id="megatron-nodes-core-module"></span><h2>megatron.nodes.core module<a class="headerlink" href="#module-megatron.nodes.core" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="megatron.nodes.core.InputNode">
+<em class="property">class </em><code class="descclassname">megatron.nodes.core.</code><code class="descname">InputNode</code><span class="sig-paren">(</span><em>pipeline</em>, <em>name</em>, <em>input_shape=()</em><span class="sig-paren">)</span><a class="headerlink" href="#megatron.nodes.core.InputNode" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#megatron.nodes.core.Node" title="megatron.nodes.core.Node"><code class="xref py py-class docutils literal notranslate"><span class="pre">megatron.nodes.core.Node</span></code></a></p>
+<p>A pipeline node holding input data as a Numpy array.</p>
+<p>It is always an initial node in a Pipeline (has no input nodes) and, when run,
+stores its given data (either from a feed dict or a function call) in its output.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>pipeline</strong> (<em>megatron.Pipeline</em>) – the Pipeline with which the node is associated.</li>
+<li><strong>name</strong> (<em>str</em>) – a name to associate with the data; the keys of the Pipeline feed dict will be these names.</li>
+<li><strong>input_shape</strong> (<em>tuple of int</em>) – the shape, not including the observation dimension (1st), of the Numpy arrays to be input.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<dl class="attribute">
+<dt id="megatron.nodes.core.InputNode.pipeline">
+<code class="descname">pipeline</code><a class="headerlink" href="#megatron.nodes.core.InputNode.pipeline" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>megatron.Pipeline</em> – the Pipeline with which the node is associated.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="megatron.nodes.core.InputNode.name">
+<code class="descname">name</code><a class="headerlink" href="#megatron.nodes.core.InputNode.name" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>str</em> – a name to associate with the data; the keys of the Pipeline feed dict will be these names.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="megatron.nodes.core.InputNode.input_shape">
+<code class="descname">input_shape</code><a class="headerlink" href="#megatron.nodes.core.InputNode.input_shape" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>tuple of int</em> – the shape, not including the observation dimension (1st), of the Numpy arrays to be input.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="megatron.nodes.core.InputNode.str">
+<code class="descname">str</code><a class="headerlink" href="#megatron.nodes.core.InputNode.str" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>str</em> – stores the result of magic method str, so that it doesn’t have to be recalculated.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="megatron.nodes.core.InputNode.output">
+<code class="descname">output</code><a class="headerlink" href="#megatron.nodes.core.InputNode.output" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>np.ndarray</em> – is None until node is run; when run, the Numpy array passed in is stored here.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="megatron.nodes.core.InputNode.run">
+<code class="descname">run</code><span class="sig-paren">(</span><em>observations</em><span class="sig-paren">)</span><a class="headerlink" href="#megatron.nodes.core.InputNode.run" title="Permalink to this definition">¶</a></dt>
+<dd><p>Validate and store the data passed in.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>observations</strong> (<em>np.ndarray</em>) – data from either the feed dict or the function call, to be validated.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Raises:</th><td class="field-body"><a class="reference internal" href="megatron.html#megatron.utils.ShapeError" title="megatron.utils.ShapeError"><code class="xref py py-exc docutils literal notranslate"><span class="pre">megatron.utils.ShapeError</span></code></a> – error indicating that the shape of the data does not match the shape of the node.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="megatron.nodes.core.InputNode.validate_input">
+<code class="descname">validate_input</code><span class="sig-paren">(</span><em>observations</em><span class="sig-paren">)</span><a class="headerlink" href="#megatron.nodes.core.InputNode.validate_input" title="Permalink to this definition">¶</a></dt>
+<dd><p>Ensure shape of data passed in aligns with shape of the node.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>observations</strong> (<em>np.ndarray</em>) – data from either the feed dict or the function call, to be validated.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Raises:</th><td class="field-body"><a class="reference internal" href="megatron.html#megatron.utils.ShapeError" title="megatron.utils.ShapeError"><code class="xref py py-exc docutils literal notranslate"><span class="pre">megatron.utils.ShapeError</span></code></a> – error indicating that the shape of the data does not match the shape of the node.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="megatron.nodes.core.Node">
+<em class="property">class </em><code class="descclassname">megatron.nodes.core.</code><code class="descname">Node</code><span class="sig-paren">(</span><em>pipeline</em>, <em>name</em>, <em>inbound_nodes</em><span class="sig-paren">)</span><a class="headerlink" href="#megatron.nodes.core.Node" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<dl class="method">
+<dt id="megatron.nodes.core.Node.run">
+<code class="descname">run</code><span class="sig-paren">(</span><em>inputs</em><span class="sig-paren">)</span><a class="headerlink" href="#megatron.nodes.core.Node.run" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="megatron.nodes.core.TransformationNode">
+<em class="property">class </em><code class="descclassname">megatron.nodes.core.</code><code class="descname">TransformationNode</code><span class="sig-paren">(</span><em>transformation</em>, <em>inbound_nodes</em><span class="sig-paren">)</span><a class="headerlink" href="#megatron.nodes.core.TransformationNode" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#megatron.nodes.core.Node" title="megatron.nodes.core.Node"><code class="xref py py-class docutils literal notranslate"><span class="pre">megatron.nodes.core.Node</span></code></a></p>
+<p>A pipeline node holding a Transformation.</p>
+<p>It connects to a set of input Nodes (of class Node or Input) and, when run,
+applies its given Transformation, storing the result in its output variable.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>transformation</strong> (<em>megatron.Transformation</em>) – the transformation to be applied to the data from its input Nodes.</li>
+<li><strong>inbound_nodes</strong> (<em>list of megatron.Node / megatron.Input</em>) – the Nodes to be connected to this node as input.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<dl class="attribute">
+<dt id="megatron.nodes.core.TransformationNode.transformation">
+<code class="descname">transformation</code><a class="headerlink" href="#megatron.nodes.core.TransformationNode.transformation" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>megatron.Transformation</em> – the transformation to be applied to the data from its input Nodes.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="megatron.nodes.core.TransformationNode.pipeline">
+<code class="descname">pipeline</code><a class="headerlink" href="#megatron.nodes.core.TransformationNode.pipeline" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>megatron.Pipeline</em> – the Pipeline with which this Node is associated; deduced from input nodes.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="megatron.nodes.core.TransformationNode.output">
+<code class="descname">output</code><a class="headerlink" href="#megatron.nodes.core.TransformationNode.output" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>None or np.ndarray</em> – is None until Node is run; when run, the Numpy array produced is stored here.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="megatron.nodes.core.TransformationNode.is_fitted">
+<code class="descname">is_fitted</code><a class="headerlink" href="#megatron.nodes.core.TransformationNode.is_fitted" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>bool</em> – indicates whether the Transformation inside the Node
+has, if necessary, been fit to data.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="megatron.nodes.core.TransformationNode.run">
+<code class="descname">run</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#megatron.nodes.core.TransformationNode.run" title="Permalink to this definition">¶</a></dt>
+<dd><p>Stores result of given Transformation on input Nodes in output variable.</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-megatron.nodes.wrappers">
+<span id="megatron-nodes-wrappers-module"></span><h2>megatron.nodes.wrappers module<a class="headerlink" href="#module-megatron.nodes.wrappers" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="megatron.nodes.wrappers.FeatureSet">
+<em class="property">class </em><code class="descclassname">megatron.nodes.wrappers.</code><code class="descname">FeatureSet</code><span class="sig-paren">(</span><em>nodes</em>, <em>names</em><span class="sig-paren">)</span><a class="headerlink" href="#megatron.nodes.wrappers.FeatureSet" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Wrapper for set of Nodes that when fed to Transformations map to all given Nodes.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>nodes</strong> (<em>list of megatron.Node</em>) – nodes to group together.</td>
+</tr>
+</tbody>
+</table>
+<dl class="attribute">
+<dt id="megatron.nodes.wrappers.FeatureSet.nodes">
+<code class="descname">nodes</code><a class="headerlink" href="#megatron.nodes.wrappers.FeatureSet.nodes" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>list of megatron.Node</em> – nodes to group together.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="megatron.nodes.wrappers.FeatureSet.names">
+<code class="descname">names</code><a class="headerlink" href="#megatron.nodes.wrappers.FeatureSet.names" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>list of str</em> – names of each given Node.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="megatron.nodes.wrappers.FeatureSet.name_to_index">
+<code class="descname">name_to_index</code><a class="headerlink" href="#megatron.nodes.wrappers.FeatureSet.name_to_index" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>dict of str to int</em> – utility data structure for quick indexing of names.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="megatron.nodes.wrappers.FeatureSet.apply_layer">
+<code class="descname">apply_layer</code><span class="sig-paren">(</span><em>layer</em><span class="sig-paren">)</span><a class="headerlink" href="#megatron.nodes.wrappers.FeatureSet.apply_layer" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="megatron.nodes.wrappers.FeatureSet.get">
+<code class="descname">get</code><span class="sig-paren">(</span><em>key</em><span class="sig-paren">)</span><a class="headerlink" href="#megatron.nodes.wrappers.FeatureSet.get" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-megatron.nodes">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-megatron.nodes" title="Permalink to this headline">¶</a></h2>
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2018, Nash Taylor.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'./',
+            VERSION:'0.1.0',
+            LANGUAGE:'None',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true,
+            SOURCELINK_SUFFIX: '.txt'
+        };
+    </script>
+      <script type="text/javascript" src="_static/jquery.js"></script>
+      <script type="text/javascript" src="_static/underscore.js"></script>
+      <script type="text/javascript" src="_static/doctools.js"></script>
+
+  
+
+  <script type="text/javascript" src="_static/js/theme.js"></script>
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
