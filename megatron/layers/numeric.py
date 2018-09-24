@@ -1,9 +1,9 @@
 import numpy as np
-from ..core import Transformation
+from .core import StatelessLayer, StatefulLayer
 from ..utils import initializer
 
 
-class Whiten(Transformation):
+class Whiten(StatefulLayer):
     """Bring mean to 0 and standard deviation to 1."""
     def fit(self, X):
         self.metadata['mean'] = X.mean(axis=0)
@@ -13,13 +13,13 @@ class Whiten(Transformation):
         return (X - self.metadata['mean']) / self.metadata['sd']
 
 
-class Add(Transformation):
+class Add(StatelessLayer):
     """Add up arrays element-wise."""
     def transform(self, *arrays):
         return np.sum(arrays, axis=0)
 
 
-class Multiply(Transformation):
+class Multiply(StatelessLayer):
     """Multiply array by a given scalar.
 
     Parameters
@@ -27,15 +27,14 @@ class Multiply(Transformation):
     factor : float
         multiplier.
     """
-    @initializer
     def __init__(self, factor, name=None):
-        super().__init__(name=name)
+        super().__init__(name, factor=factor)
 
     def transform(self, X):
-        return self.factor * X
+        return self.kwargs['factor'] * X
 
 
-class Divide(Transformation):
+class Divide(StatelessLayer):
     """Divide given array by another given array element-wise.
 
     Parameters
@@ -43,15 +42,15 @@ class Divide(Transformation):
     impute : int/float or None
         the value to impute when encountering a divide by zero.
     """
-    @initializer
-    def __init__(self, impute=None, name=None):
-        super().__init__(name=name)
+    def __init__(self, impute=0, name=None):
+        super().__init__(name, impute=impute)
 
     def transform(self, X1, X2):
-        return np.divide(X1.astype(np.float16), X2, out=np.zeros_like(X1).astype(np.float16), where=X2!=0)
+        impute_array = np.ones_like(X1) * self.kwargs['impute']
+        return np.divide(X1.astype(np.float16), X2, out=impute_array.astype(np.float16), where=X2!=0)
 
 
-class Dot(Transformation):
+class Dot(StatelessLayer):
     """Multiply array by a given matrix, as matrix mulitplication.
 
     Parameters
@@ -59,15 +58,14 @@ class Dot(Transformation):
     W : np.array
         matrix by which to multiply.
     """
-    @initializer
     def __init__(self, W, name=None):
-        super().__init__(name=name)
+        super().__init__(name, W=W)
 
     def transform(self, X):
-        return np.dot(self.W, X)
+        return np.dot(self.kwargs['W'], X)
 
 
-class AddDim(Transformation):
+class AddDim(StatelessLayer):
     """Add a dimension to an array.
 
     Parameters
@@ -75,15 +73,14 @@ class AddDim(Transformation):
     axis : int
         the axis along which to place the new dimension.
     """
-    @initializer
     def __init__(self, axis, name=None):
-        super().__init__()
+        super().__init__(name, axis=axis)
 
     def transform(self, X):
-        return np.expand_dims(X, self.axis)
+        return np.expand_dims(X, self.kwargs['axis'])
 
 
-class OneHot(Transformation):
+class OneHot(StatelessLayer):
     """One-hot encode an array for given range of values.
 
     Parameters
@@ -93,17 +90,16 @@ class OneHot(Transformation):
     min_val : int (default: 0)
         minimum possible value.
     """
-    @initializer
     def __init__(self, max_val, min_val=0, name=None):
-        super().__init__(name=name)
+        super().__init__(name, max_val=max_val, min_val=min_val)
 
     def transform(self, X):
-        if not self.max_val:
-            self.max_val = X.max() + 1
-        return (np.arange(self.min_val, self.max_val) == X[..., None]) * 1
+        if not self.kwargs['max_val']:
+            self.kwargs['max_val'] = X.max() + 1
+        return (np.arange(self.kwargs['min_val'], self.kwargs['max_val']) == X[..., None]) * 1
 
 
-class Reshape(Transformation):
+class Reshape(StatelessLayer):
     """Reshape an array to a given new shape.
 
     Parameters
@@ -111,9 +107,8 @@ class Reshape(Transformation):
     new_shape : tuple of int
         desired new shape for array.
     """
-    @initializer
     def __init__(self, new_shape, name=None):
-        super().__init__(name=name)
+        super().__init__(name, new_shape=new_shape)
 
     def transform(self, X):
-        return np.reshape(X, self.new_shape)
+        return np.reshape(X, self.kwargs['new_shape'])

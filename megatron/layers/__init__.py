@@ -1,3 +1,4 @@
+from .core import StatefulLayer
 from . import common
 from . import image
 from . import missing

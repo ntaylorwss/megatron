@@ -24,7 +24,7 @@ def initializer(func):
 
 class EagerRunException(Exception):
     def __init__(self):
-        message = "Graph.run() should not be called when running in Eager Execution mode."
+        message = "Pipeline.run() should not be called when running in Eager Execution mode."
         super().__init__(message)
 
 
@@ -34,7 +34,7 @@ class ShapeError(Exception):
         super().__init__(msg)
 
 
-class GraphError(Exception):
+class PipelineError(Exception):
     pass
 
 

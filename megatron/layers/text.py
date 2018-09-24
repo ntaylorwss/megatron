@@ -1,5 +1,5 @@
 import numpy as np
-from ..core import Transformation
+from .core import StatelessLayer
 from ..utils import initializer
 
 try:
@@ -8,7 +8,7 @@ except ImportError:
     pass
 
 
-class RemoveStopwords(Transformation):
+class RemoveStopwords(StatelessLayer):
     """Remove common, low-information words from all elements of text array.
 
     Parameters
@@ -16,12 +16,11 @@ class RemoveStopwords(Transformation):
     language : str (default: english)
         the language in which the text is written.
     """
-    @initializer
     def __init__(self, language='english', name=None):
-        super().__init__(name=name)
+        super().__init__(name, language=language)
 
     def transform(self, X):
-        stops = set(stopwords.words(self.language))
+        stops = set(stopwords.words(self.kwargs['language']))
         return ' '.join(word for word in X.split(' ') if word not in stops)
 
 # function will not apply natively to an array of strings; must vectorize

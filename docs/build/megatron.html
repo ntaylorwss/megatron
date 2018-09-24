@@ -82,7 +82,7 @@
 <li><a class="reference internal" href="#subpackages">Subpackages</a></li>
 <li><a class="reference internal" href="#submodules">Submodules</a></li>
 <li><a class="reference internal" href="#module-megatron.adapters">megatron.adapters module</a></li>
-<li><a class="reference internal" href="#module-megatron.core">megatron.core module</a></li>
+<li><a class="reference internal" href="#module-megatron.pipeline">megatron.pipeline module</a></li>
 <li><a class="reference internal" href="#module-megatron.utils">megatron.utils module</a></li>
 <li><a class="reference internal" href="#module-megatron.visuals">megatron.visuals module</a></li>
 <li><a class="reference internal" href="#module-megatron">Module contents</a></li>
@@ -158,14 +158,23 @@
 <h2>Subpackages<a class="headerlink" href="#subpackages" title="Permalink to this headline">¶</a></h2>
 <div class="toctree-wrapper compound">
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="megatron.transforms.html">megatron.transforms package</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="megatron.transforms.html#submodules">Submodules</a></li>
-<li class="toctree-l2"><a class="reference internal" href="megatron.transforms.html#module-megatron.transforms.common">megatron.transforms.common module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="megatron.transforms.html#module-megatron.transforms.image">megatron.transforms.image module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="megatron.transforms.html#module-megatron.transforms.numeric">megatron.transforms.numeric module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="megatron.transforms.html#module-megatron.transforms.text">megatron.transforms.text module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="megatron.transforms.html#module-megatron.transforms.wrappers">megatron.transforms.wrappers module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="megatron.transforms.html#module-megatron.transforms">Module contents</a></li>
+<li class="toctree-l1"><a class="reference internal" href="megatron.layers.html">megatron.layers package</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="megatron.layers.html#submodules">Submodules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="megatron.layers.html#module-megatron.layers.common">megatron.layers.common module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="megatron.layers.html#module-megatron.layers.core">megatron.layers.core module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="megatron.layers.html#module-megatron.layers.image">megatron.layers.image module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="megatron.layers.html#module-megatron.layers.missing">megatron.layers.missing module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="megatron.layers.html#module-megatron.layers.numeric">megatron.layers.numeric module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="megatron.layers.html#module-megatron.layers.text">megatron.layers.text module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="megatron.layers.html#module-megatron.layers.wrappers">megatron.layers.wrappers module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="megatron.layers.html#module-megatron.layers">Module contents</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="megatron.nodes.html">megatron.nodes package</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="megatron.nodes.html#submodules">Submodules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="megatron.nodes.html#module-megatron.nodes.core">megatron.nodes.core module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="megatron.nodes.html#module-megatron.nodes.wrappers">megatron.nodes.wrappers module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="megatron.nodes.html#module-megatron.nodes">Module contents</a></li>
 </ul>
 </li>
 </ul>
@@ -178,19 +187,19 @@
 <span id="megatron-adapters-module"></span><h2>megatron.adapters module<a class="headerlink" href="#module-megatron.adapters" title="Permalink to this headline">¶</a></h2>
 <dl class="function">
 <dt id="megatron.adapters.from_dataframe">
-<code class="descclassname">megatron.adapters.</code><code class="descname">from_dataframe</code><span class="sig-paren">(</span><em>df</em>, <em>graph</em>, <em>eager=False</em><span class="sig-paren">)</span><a class="headerlink" href="#megatron.adapters.from_dataframe" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">megatron.adapters.</code><code class="descname">from_dataframe</code><span class="sig-paren">(</span><em>df</em>, <em>pipeline</em>, <em>eager=False</em>, <em>exclude_cols=[]</em><span class="sig-paren">)</span><a class="headerlink" href="#megatron.adapters.from_dataframe" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 </div>
-<div class="section" id="module-megatron.core">
-<span id="megatron-core-module"></span><h2>megatron.core module<a class="headerlink" href="#module-megatron.core" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="module-megatron.pipeline">
+<span id="megatron-pipeline-module"></span><h2>megatron.pipeline module<a class="headerlink" href="#module-megatron.pipeline" title="Permalink to this headline">¶</a></h2>
 <dl class="class">
-<dt id="megatron.core.Graph">
-<em class="property">class </em><code class="descclassname">megatron.core.</code><code class="descname">Graph</code><span class="sig-paren">(</span><em>cache_dir='../feature_cache'</em><span class="sig-paren">)</span><a class="headerlink" href="#megatron.core.Graph" title="Permalink to this definition">¶</a></dt>
+<dt id="megatron.pipeline.Pipeline">
+<em class="property">class </em><code class="descclassname">megatron.pipeline.</code><code class="descname">Pipeline</code><span class="sig-paren">(</span><em>cache_dir='../feature_cache'</em><span class="sig-paren">)</span><a class="headerlink" href="#megatron.pipeline.Pipeline" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
-<p>A graph with nodes as Transformations and Inputs, edges as I/O relationships.</p>
-<p>Graphs internally implement intelligent caching for maximal data re-use.
-Graphs can also be saved with metadata intact for future use.</p>
+<p>A pipeline with nodes as Transformations and InputNodes, edges as I/O relationships.</p>
+<p>Pipelines internally implement intelligent caching for maximal data re-use.
+Pipelines can also be saved with metadata intact for future use.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
@@ -201,38 +210,39 @@ for particular executions of nodes.</td>
 </tbody>
 </table>
 <dl class="attribute">
-<dt id="megatron.core.Graph.cache_dir">
-<code class="descname">cache_dir</code><a class="headerlink" href="#megatron.core.Graph.cache_dir" title="Permalink to this definition">¶</a></dt>
+<dt id="megatron.pipeline.Pipeline.cache_dir">
+<code class="descname">cache_dir</code><a class="headerlink" href="#megatron.pipeline.Pipeline.cache_dir" title="Permalink to this definition">¶</a></dt>
 <dd><p><em>str</em> – the relative path from the current working directory to store numpy data results
 for particular executions of nodes.</p>
 </dd></dl>
 
 <dl class="attribute">
-<dt id="megatron.core.Graph.eager">
-<code class="descname">eager</code><a class="headerlink" href="#megatron.core.Graph.eager" title="Permalink to this definition">¶</a></dt>
-<dd><p><em>bool</em> – when True, Node outputs are to be calculated on creation. This is indicated by
-data being passed to an Input node as a function call.</p>
+<dt id="megatron.pipeline.Pipeline.eager">
+<code class="descname">eager</code><a class="headerlink" href="#megatron.pipeline.Pipeline.eager" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>bool</em> – when True, TransformationNode outputs are to be calculated on creation. This is indicated by
+data being passed to an InputNode node as a function call.</p>
 </dd></dl>
 
 <dl class="attribute">
-<dt id="megatron.core.Graph.nodes">
-<code class="descname">nodes</code><a class="headerlink" href="#megatron.core.Graph.nodes" title="Permalink to this definition">¶</a></dt>
-<dd><p><em>list of Node / Input</em> – all Input and Node nodes belonging to the Graph.</p>
+<dt id="megatron.pipeline.Pipeline.nodes">
+<code class="descname">nodes</code><a class="headerlink" href="#megatron.pipeline.Pipeline.nodes" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>list of TransformationNode / InputNode</em> – all InputNode and TransformationNode nodes belonging to the Pipeline.</p>
 </dd></dl>
 
 <dl class="method">
-<dt id="megatron.core.Graph.run">
-<code class="descname">run</code><span class="sig-paren">(</span><em>output_nodes</em>, <em>feed_dict</em>, <em>cache_result=True</em>, <em>refit=False</em><span class="sig-paren">)</span><a class="headerlink" href="#megatron.core.Graph.run" title="Permalink to this definition">¶</a></dt>
-<dd><p>Execute a path terminating at (a) given Node(s) with some input data.</p>
+<dt id="megatron.pipeline.Pipeline.run">
+<code class="descname">run</code><span class="sig-paren">(</span><em>output_nodes</em>, <em>feed_dict</em>, <em>cache_result=True</em>, <em>refit=False</em>, <em>dtype='array'</em><span class="sig-paren">)</span><a class="headerlink" href="#megatron.pipeline.Pipeline.run" title="Permalink to this definition">¶</a></dt>
+<dd><p>Execute a path terminating at (a) given TransformationNode(s) with some input data.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>output_nodes</strong> (<em>list of Node</em><em> or </em><em>str</em>) – the terminal nodes, or node names, for which to return data.</li>
-<li><strong>feed_dict</strong> (<em>dict of Numpy array</em>) – the input data to be passed to Input Nodes to begin execution.</li>
+<li><strong>output_nodes</strong> (<em>list of TransformationNode</em>) – the terminal nodes for which to return data.</li>
+<li><strong>feed_dict</strong> (<em>dict of Numpy array</em>) – the input data to be passed to InputNode TransformationNodes to begin execution.</li>
 <li><strong>cache_result</strong> (<em>bool</em>) – whether to store the resulting Numpy array in the cache.</li>
 <li><strong>refit</strong> (<em>bool</em>) – applies to Transformation nodes; if True, recalculate metadata based on this data.</li>
+<li><strong>dtype</strong> (<em>{'array'</em><em>, </em><em>'dataframe'}</em>) – data type to return as. If dataframe, colnames are node names.</li>
 </ul>
 </td>
 </tr>
@@ -241,8 +251,8 @@ data being passed to an Input node as a function call.</p>
 </dd></dl>
 
 <dl class="method">
-<dt id="megatron.core.Graph.save">
-<code class="descname">save</code><span class="sig-paren">(</span><em>filepath</em><span class="sig-paren">)</span><a class="headerlink" href="#megatron.core.Graph.save" title="Permalink to this definition">¶</a></dt>
+<dt id="megatron.pipeline.Pipeline.save">
+<code class="descname">save</code><span class="sig-paren">(</span><em>filepath</em><span class="sig-paren">)</span><a class="headerlink" href="#megatron.pipeline.Pipeline.save" title="Permalink to this definition">¶</a></dt>
 <dd><p>Store just the nodes without their data (i.e. pre-execution) in a given file.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -256,270 +266,15 @@ data being passed to an Input node as a function call.</p>
 
 </dd></dl>
 
-<dl class="class">
-<dt id="megatron.core.Input">
-<em class="property">class </em><code class="descclassname">megatron.core.</code><code class="descname">Input</code><span class="sig-paren">(</span><em>graph</em>, <em>name</em>, <em>input_shape=()</em><span class="sig-paren">)</span><a class="headerlink" href="#megatron.core.Input" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
-<p>A graph node that is fed input data as Numpy arrays.</p>
-<p>It is always an initial node in a Graph (no input nodes) and, when run,
-stores its given data (either from a feed dict or a function call) in its output.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>graph</strong> (<em>megatron.Graph</em>) – the Graph with which the node is associated.</li>
-<li><strong>name</strong> (<em>str</em>) – a name to associate with the data; the keys of the Graph feed dict will be these names.</li>
-<li><strong>input_shape</strong> (<em>tuple of int</em>) – the shape, not including the observation dimension (1st), of the Numpy arrays to be input.</li>
-</ul>
-</td>
-</tr>
-</tbody>
-</table>
-<dl class="attribute">
-<dt id="megatron.core.Input.graph">
-<code class="descname">graph</code><a class="headerlink" href="#megatron.core.Input.graph" title="Permalink to this definition">¶</a></dt>
-<dd><p><em>megatron.Graph</em> – the Graph with which the node is associated.</p>
-</dd></dl>
-
-<dl class="attribute">
-<dt id="megatron.core.Input.name">
-<code class="descname">name</code><a class="headerlink" href="#megatron.core.Input.name" title="Permalink to this definition">¶</a></dt>
-<dd><p><em>str</em> – a name to associate with the data; the keys of the Graph feed dict will be these names.</p>
-</dd></dl>
-
-<dl class="attribute">
-<dt id="megatron.core.Input.input_shape">
-<code class="descname">input_shape</code><a class="headerlink" href="#megatron.core.Input.input_shape" title="Permalink to this definition">¶</a></dt>
-<dd><p><em>tuple of int</em> – the shape, not including the observation dimension (1st), of the Numpy arrays to be input.</p>
-</dd></dl>
-
-<dl class="attribute">
-<dt id="megatron.core.Input.str">
-<code class="descname">str</code><a class="headerlink" href="#megatron.core.Input.str" title="Permalink to this definition">¶</a></dt>
-<dd><p><em>str</em> – stores the result of magic method str, so that it doesn’t have to be recalculated.</p>
-</dd></dl>
-
-<dl class="attribute">
-<dt id="megatron.core.Input.output">
-<code class="descname">output</code><a class="headerlink" href="#megatron.core.Input.output" title="Permalink to this definition">¶</a></dt>
-<dd><p><em>np.ndarray</em> – is None until node is run; when run, the Numpy array passed in is stored here.</p>
-</dd></dl>
-
-<dl class="method">
-<dt id="megatron.core.Input.run">
-<code class="descname">run</code><span class="sig-paren">(</span><em>observations</em><span class="sig-paren">)</span><a class="headerlink" href="#megatron.core.Input.run" title="Permalink to this definition">¶</a></dt>
-<dd><p>Validate and store the data passed in.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>observations</strong> (<em>np.ndarray</em>) – data from either the feed dict or the function call, to be validated.</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Raises:</th><td class="field-body"><a class="reference internal" href="#megatron.utils.ShapeError" title="megatron.utils.ShapeError"><code class="xref py py-exc docutils literal notranslate"><span class="pre">megatron.utils.ShapeError</span></code></a> – error indicating that the shape of the data does not match the shape of the node.</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-<dl class="method">
-<dt id="megatron.core.Input.validate_input">
-<code class="descname">validate_input</code><span class="sig-paren">(</span><em>observations</em><span class="sig-paren">)</span><a class="headerlink" href="#megatron.core.Input.validate_input" title="Permalink to this definition">¶</a></dt>
-<dd><p>Ensure shape of data passed in aligns with shape of the node.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>observations</strong> (<em>np.ndarray</em>) – data from either the feed dict or the function call, to be validated.</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Raises:</th><td class="field-body"><a class="reference internal" href="#megatron.utils.ShapeError" title="megatron.utils.ShapeError"><code class="xref py py-exc docutils literal notranslate"><span class="pre">megatron.utils.ShapeError</span></code></a> – error indicating that the shape of the data does not match the shape of the node.</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-</dd></dl>
-
-<dl class="class">
-<dt id="megatron.core.Lambda">
-<em class="property">class </em><code class="descclassname">megatron.core.</code><code class="descname">Lambda</code><span class="sig-paren">(</span><em>transform_fn</em>, <em>name=None</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#megatron.core.Lambda" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
-<p>A wrapper for a stateless custom function.</p>
-<p>For custom functions that are stateless, and thus do not require to be fit,
-a Lambda wrapper is preferred to creating a Transformation subclass.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>transform_fn</strong> (<em>function</em>) – the function to be applied, which accepts one or more
-Numpy arrays as positional arguments.</li>
-<li><strong>name</strong> (<em>str</em><em> or </em><em>None</em>) – optional custom name for the node. If none given, default name is
-[name of transform_fn]:[index], where index is a unique identifier for
-multiple nodes with the same transform_fn.</li>
-<li><strong>**kwargs</strong> – keyword arguments to whatever custom function is passed in as transform_fn.</li>
-</ul>
-</td>
-</tr>
-</tbody>
-</table>
-<dl class="attribute">
-<dt id="megatron.core.Lambda.transform_fn">
-<code class="descname">transform_fn</code><a class="headerlink" href="#megatron.core.Lambda.transform_fn" title="Permalink to this definition">¶</a></dt>
-<dd><p><em>function</em> – the function to be applied, which accepts one or more
-Numpy arrays as positional arguments.</p>
-</dd></dl>
-
-<dl class="attribute">
-<dt id="megatron.core.Lambda.name">
-<code class="descname">name</code><a class="headerlink" href="#megatron.core.Lambda.name" title="Permalink to this definition">¶</a></dt>
-<dd><p><em>str or None</em> – optional custom name for the node. If none given, default name is
-[name of transform_fn]:[index], where index is a unique identifier for
-multiple nodes with the same transform_fn.</p>
-</dd></dl>
-
-<dl class="attribute">
-<dt>
-<code class="descname">**kwargs</code></dt>
-<dd><p>keyword arguments to whatever custom function is passed in as transform_fn.</p>
-</dd></dl>
-
-<dl class="method">
-<dt id="megatron.core.Lambda.fit">
-<code class="descname">fit</code><span class="sig-paren">(</span><em>*inputs</em><span class="sig-paren">)</span><a class="headerlink" href="#megatron.core.Lambda.fit" title="Permalink to this definition">¶</a></dt>
-<dd><p>Does nothing; only defined for compliance with the Transformation interface.</p>
-</dd></dl>
-
-<dl class="method">
-<dt id="megatron.core.Lambda.transform">
-<code class="descname">transform</code><span class="sig-paren">(</span><em>*inputs</em><span class="sig-paren">)</span><a class="headerlink" href="#megatron.core.Lambda.transform" title="Permalink to this definition">¶</a></dt>
-<dd><p>Apply transform_fn to given input data.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>inputs</strong> (<em>np.ndarray</em><em>(</em><em>s</em><em>)</em>) – input data to be passed to transform_fn; could be one array or a list of arrays.</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-</dd></dl>
-
-<dl class="class">
-<dt id="megatron.core.Node">
-<em class="property">class </em><code class="descclassname">megatron.core.</code><code class="descname">Node</code><span class="sig-paren">(</span><em>transformation</em>, <em>input_nodes</em>, <em>name=None</em><span class="sig-paren">)</span><a class="headerlink" href="#megatron.core.Node" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
-<p>A graph node holding a Transformation.</p>
-<p>It connects to a set of input Nodes (of class Node or Input) and, when run,
-applies its given Transformation, storing the result in its output variable.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>transformation</strong> (<em>megatron.Transformation</em>) – the transformation to be applied to the data from its input Nodes.</li>
-<li><strong>input_nodes</strong> (<em>list of megatron.Node / megatron.Input</em>) – the Nodes to be connected to this node as input.</li>
-</ul>
-</td>
-</tr>
-</tbody>
-</table>
-<dl class="attribute">
-<dt id="megatron.core.Node.transformation">
-<code class="descname">transformation</code><a class="headerlink" href="#megatron.core.Node.transformation" title="Permalink to this definition">¶</a></dt>
-<dd><p><em>megatron.Transformation</em> – the transformation to be applied to the data from its input Nodes.</p>
-</dd></dl>
-
-<dl class="attribute">
-<dt id="megatron.core.Node.graph">
-<code class="descname">graph</code><a class="headerlink" href="#megatron.core.Node.graph" title="Permalink to this definition">¶</a></dt>
-<dd><p><em>megatron.Graph</em> – the Graph with which this Node is associated; deduced from input nodes.</p>
-</dd></dl>
-
-<dl class="attribute">
-<dt id="megatron.core.Node.output">
-<code class="descname">output</code><a class="headerlink" href="#megatron.core.Node.output" title="Permalink to this definition">¶</a></dt>
-<dd><p><em>None or np.ndarray</em> – is None until Node is run; when run, the Numpy array produced is stored here.</p>
-</dd></dl>
-
-<dl class="attribute">
-<dt id="megatron.core.Node.is_fitted">
-<code class="descname">is_fitted</code><a class="headerlink" href="#megatron.core.Node.is_fitted" title="Permalink to this definition">¶</a></dt>
-<dd><p><em>bool</em> – indicates whether the Transformation inside the Node
-has, if necessary, been fit to data.</p>
-</dd></dl>
-
-<dl class="method">
-<dt id="megatron.core.Node.run">
-<code class="descname">run</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#megatron.core.Node.run" title="Permalink to this definition">¶</a></dt>
-<dd><p>Stores result of given Transformation on input Nodes in output variable.</p>
-</dd></dl>
-
-</dd></dl>
-
-<dl class="class">
-<dt id="megatron.core.Transformation">
-<em class="property">class </em><code class="descclassname">megatron.core.</code><code class="descname">Transformation</code><span class="sig-paren">(</span><em>name=None</em><span class="sig-paren">)</span><a class="headerlink" href="#megatron.core.Transformation" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
-<p>Base class of a potentially stateful function to be used to transform data.</p>
-<p>For custom functions that are stateful, and thus require to be fit,
-writing a Transformation subclass is required rather than using a Lambda wrapper.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>name</strong> (<em>str</em><em> or </em><em>None</em>) – optional custom name for the node. If none given, default name is
-[name of class]:[index], where index is a unique identifier for
-multiple nodes of the same object.</td>
-</tr>
-</tbody>
-</table>
-<dl class="attribute">
-<dt id="megatron.core.Transformation.metadata">
-<code class="descname">metadata</code><a class="headerlink" href="#megatron.core.Transformation.metadata" title="Permalink to this definition">¶</a></dt>
-<dd><p><em>dict</em> – stores any necessary metadata, which is defined by child class.</p>
-</dd></dl>
-
-<dl class="method">
-<dt id="megatron.core.Transformation.fit">
-<code class="descname">fit</code><span class="sig-paren">(</span><em>*inputs</em><span class="sig-paren">)</span><a class="headerlink" href="#megatron.core.Transformation.fit" title="Permalink to this definition">¶</a></dt>
-<dd><p>Calculates and overwrites metadata based on current inputs.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>inputs</strong> (<em>numpy.ndarray</em><em>(</em><em>s</em><em>)</em>) – the input data to be fit to; could be one array or a list of arrays.</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-<dl class="method">
-<dt id="megatron.core.Transformation.transform">
-<code class="descname">transform</code><span class="sig-paren">(</span><em>*inputs</em><span class="sig-paren">)</span><a class="headerlink" href="#megatron.core.Transformation.transform" title="Permalink to this definition">¶</a></dt>
-<dd><p>Apply transformation to given input data.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>inputs</strong> (<em>np.ndarray</em><em>(</em><em>s</em><em>)</em>) – input data to be transformed; could be one array or a list of arrays.</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-</dd></dl>
-
 <dl class="function">
-<dt id="megatron.core.load">
-<code class="descclassname">megatron.core.</code><code class="descname">load</code><span class="sig-paren">(</span><em>filepath</em><span class="sig-paren">)</span><a class="headerlink" href="#megatron.core.load" title="Permalink to this definition">¶</a></dt>
-<dd><p>Load a set of nodes from a given file, stored previously with Graph.save().</p>
+<dt id="megatron.pipeline.load_pipeline">
+<code class="descclassname">megatron.pipeline.</code><code class="descname">load_pipeline</code><span class="sig-paren">(</span><em>filepath</em><span class="sig-paren">)</span><a class="headerlink" href="#megatron.pipeline.load_pipeline" title="Permalink to this definition">¶</a></dt>
+<dd><p>Load a set of nodes from a given file, stored previously with Pipeline.save().</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>filepath</strong> (<em>str</em>) – the file from which to load a Graph.</td>
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>filepath</strong> (<em>str</em>) – the file from which to load a Pipeline.</td>
 </tr>
 </tbody>
 </table>
@@ -535,8 +290,8 @@ multiple nodes of the same object.</td>
 </dd></dl>
 
 <dl class="exception">
-<dt id="megatron.utils.GraphError">
-<em class="property">exception </em><code class="descclassname">megatron.utils.</code><code class="descname">GraphError</code><a class="headerlink" href="#megatron.utils.GraphError" title="Permalink to this definition">¶</a></dt>
+<dt id="megatron.utils.PipelineError">
+<em class="property">exception </em><code class="descclassname">megatron.utils.</code><code class="descname">PipelineError</code><a class="headerlink" href="#megatron.utils.PipelineError" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">Exception</span></code></p>
 </dd></dl>
 
@@ -570,32 +325,48 @@ multiple nodes of the same object.</td>
 <div class="section" id="module-megatron.visuals">
 <span id="megatron-visuals-module"></span><h2>megatron.visuals module<a class="headerlink" href="#module-megatron.visuals" title="Permalink to this headline">¶</a></h2>
 <dl class="function">
-<dt id="megatron.visuals.pipeline_to_dot">
-<code class="descclassname">megatron.visuals.</code><code class="descname">pipeline_to_dot</code><span class="sig-paren">(</span><em>graph</em>, <em>output_nodes</em>, <em>rankdir='TB'</em><span class="sig-paren">)</span><a class="headerlink" href="#megatron.visuals.pipeline_to_dot" title="Permalink to this definition">¶</a></dt>
-<dd><p>Convert a megatron Graph to dot format for visualization.</p>
-<p class="rubric">Example</p>
-<p>To inspect within a notebook, use:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">IPython.display</span> <span class="k">import</span> <span class="n">SVG</span>
-<span class="kn">from</span> <span class="nn">megatron.visuals</span> <span class="k">import</span> <span class="n">pipeline_to_dot</span>
-
-<span class="n">SVG</span><span class="p">(</span><span class="n">pipeline_to_dot</span><span class="p">(</span><span class="n">graph</span><span class="p">)</span><span class="o">.</span><span class="n">create</span><span class="p">(</span><span class="n">prog</span><span class="o">=</span><span class="s1">&#39;dot&#39;</span><span class="p">,</span> <span class="nb">format</span><span class="o">=</span><span class="s1">&#39;svg&#39;</span><span class="p">))</span>
-</pre></div>
-</div>
-<p>Otherwise, use the megatron.visuals.plot_pipeline(graph, output_nodes) method to
-save graph as a PNG file.</p>
+<dt id="megatron.visuals.pipeline_imshow">
+<code class="descclassname">megatron.visuals.</code><code class="descname">pipeline_imshow</code><span class="sig-paren">(</span><em>pipeline</em>, <em>output_nodes</em>, <em>rankdir='TB'</em><span class="sig-paren">)</span><a class="headerlink" href="#megatron.visuals.pipeline_imshow" title="Permalink to this definition">¶</a></dt>
+<dd><p>Create visualization of pipeline within Jupyter Notebook.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>graph</strong> (<em>megatron.Graph</em>) – Feature pipeline defined as a graph.</li>
+<li><strong>pipeline</strong> (<em>megatron.Pipeline</em>) – Feature pipeline defined as a pipeline.</li>
 <li><strong>output_nodes</strong> (<em>megatron.Node</em><em> or </em><em>list of megatron.Node</em>) – The output nodes of the pipeline determine your feature-space. Include a list
 of all nodes which you would like to be included as features in the output.</li>
-<li><strong>rankdir</strong> (<em>str</em><em> [</em><em>'TB'</em><em> or </em><em>'LR'</em><em>]</em>) – Direction of graph to plot (top to bottom or left to right).</li>
+<li><strong>rankdir</strong> (<em>str</em><em> [</em><em>'TB'</em><em> or </em><em>'LR'</em><em>]</em>) – Direction of pipeline to plot (top to bottom or left to right).</li>
 </ul>
 </td>
 </tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">Dot representation of the Graph.</p>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">Display of pipeline.</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">IPython.display.SVG</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="megatron.visuals.pipeline_to_dot">
+<code class="descclassname">megatron.visuals.</code><code class="descname">pipeline_to_dot</code><span class="sig-paren">(</span><em>pipeline</em>, <em>output_nodes</em>, <em>rankdir='TB'</em><span class="sig-paren">)</span><a class="headerlink" href="#megatron.visuals.pipeline_to_dot" title="Permalink to this definition">¶</a></dt>
+<dd><p>Convert a megatron Pipeline to dot format for visualization.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>pipeline</strong> (<em>megatron.Pipeline</em>) – Feature pipeline defined as a pipeline.</li>
+<li><strong>output_nodes</strong> (<em>megatron.Node</em><em> or </em><em>list of megatron.Node</em>) – The output nodes of the pipeline determine your feature-space. Include a list
+of all nodes which you would like to be included as features in the output.</li>
+<li><strong>rankdir</strong> (<em>str</em><em> [</em><em>'TB'</em><em> or </em><em>'LR'</em><em>]</em>) – Direction of pipeline to plot (top to bottom or left to right).</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">Dot representation of the Pipeline.</p>
 </td>
 </tr>
 <tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">pydot.Dot</p>
@@ -606,19 +377,19 @@ of all nodes which you would like to be included as features in the output.</li>
 </dd></dl>
 
 <dl class="function">
-<dt id="megatron.visuals.plot_pipeline">
-<code class="descclassname">megatron.visuals.</code><code class="descname">plot_pipeline</code><span class="sig-paren">(</span><em>graph</em>, <em>output_nodes</em>, <em>save_path='pipeline.png'</em>, <em>rankdir='TB'</em><span class="sig-paren">)</span><a class="headerlink" href="#megatron.visuals.plot_pipeline" title="Permalink to this definition">¶</a></dt>
-<dd><p>Save visualization of graph to an image file.</p>
+<dt id="megatron.visuals.save_image">
+<code class="descclassname">megatron.visuals.</code><code class="descname">save_image</code><span class="sig-paren">(</span><em>pipeline</em>, <em>output_nodes</em>, <em>save_path='pipeline.png'</em>, <em>rankdir='TB'</em><span class="sig-paren">)</span><a class="headerlink" href="#megatron.visuals.save_image" title="Permalink to this definition">¶</a></dt>
+<dd><p>Save visualization of pipeline to an image file.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>graph</strong> (<em>megatron.Graph</em>) – Feature pipeline defined as a graph.</li>
+<li><strong>pipeline</strong> (<em>megatron.Pipeline</em>) – Feature pipeline defined as a pipeline.</li>
 <li><strong>output_nodes</strong> (<em>megatron.Node</em><em> or </em><em>list of megatron.Node</em>) – The output nodes of the pipeline determine your feature-space. Include a list
 of all nodes which you would like to be included as features in the output.</li>
-<li><strong>save_path</strong> (<em>str</em>) – Specify where to save the graph visualization.</li>
-<li><strong>rankdir</strong> (<em>str</em><em> [</em><em>'TB'</em><em> or </em><em>'LR'</em><em>]</em>) – Direction of graph to plot (top to bottom or left to right).</li>
+<li><strong>save_path</strong> (<em>str</em>) – Specify where to save the pipeline visualization.</li>
+<li><strong>rankdir</strong> (<em>str</em><em> [</em><em>'TB'</em><em> or </em><em>'LR'</em><em>]</em>) – Direction of pipeline to plot (top to bottom or left to right).</li>
 </ul>
 </td>
 </tr>
