@@ -3,7 +3,8 @@ import numpy as np
 import pandas as pd
 import dill as pickle
 from collections import defaultdict
-from . import utils
+from .utils.generic import md5_hash, listify
+from .utils.errors import EagerRunException
 from .nodes import InputNode, TransformationNode
 from .adapters import output
 
@@ -108,7 +109,7 @@ class Pipeline:
         cache_filepaths = {}
         for node in self.nodes:
             subpath = self._topsort([node])
-            path_hash = utils.md5_hash(''.join(str(node) for node in subpath))
+            path_hash = md5_hash(''.join(str(node) for node in subpath))
             filepath = '{}/{}.npz'.format(self.cache_dir, path_hash)
             if os.path.exists(filepath):
                 cache_filepaths[node] = filepath
@@ -149,7 +150,7 @@ class Pipeline:
         if cache_result:
             for node in output_nodes:
                 hashes = [str(node) for node in self._topsort([node])]
-                path_hash = utils.md5_hash(''.join(hashes))
+                path_hash = md5_hash(''.join(hashes))
                 filepath = '{}/{}.npz'.format(self.cache_dir, path_hash)
                 if not os.path.exists(filepath):
                     np.savez_compressed(filepath, arr=node.output)
@@ -215,10 +216,10 @@ class Pipeline:
             feed_dict = dict(zip(feed_dict.columns, feed_dict.T.values))
 
         if self.eager:
-            raise utils.EagerRunException()
+            raise EagerRunException()
 
         out = []
-        output_nodes = utils.listify(output_nodes)
+        output_nodes = listify(output_nodes)
         path = self._topsort(output_nodes)
         if refit:
             for node in path:

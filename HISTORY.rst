@@ -1,5 +1,16 @@
 # Release History
 
+## 0.2.1
+
+### Changes
+- Topological sort now operates on all output nodes at once, producing a single path.
+- Caching was re-implemented to align with the new path structure.
+- Adapters broken out into input and output modules.
+- Rename Graph to Pipeline.
+
+### Bug Fixes
+- Lots of syntax errors because I didn't test the last release.
+
 ## 0.2.0
 
 ### Changes

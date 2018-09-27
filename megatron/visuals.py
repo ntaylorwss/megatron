@@ -2,7 +2,7 @@
 # https://github.com/keras-team/keras/blob/master/keras/utils/vis_utils.py
 
 import os
-from . import utils
+from .utils.generic import listify
 from IPython.display import SVG
 
 # check for pydot
@@ -50,7 +50,7 @@ def pipeline_to_dot(pipeline, output_nodes, rankdir='TB'):
     dot.set_node_defaults(shape='record')
 
     # build pipeline
-    path = pipeline._topsort(utils.listify(output_nodes))
+    path = pipeline._topsort(listify(output_nodes))
 
     # add nodes
     for node in path:

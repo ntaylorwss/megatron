@@ -1,5 +1,5 @@
 from .core import StatelessLayer
-from ..utils import initializer
+from ..utils.generic import initializer, md5_hash
 import numpy as np
 import pandas as pd
 

@@ -1,6 +1,6 @@
 import inspect
 from .core import StatelessLayer, StatefulLayer
-from ..utils import md5_hash, initializer
+from ..utils.generic import initializer, md5_hash
 
 
 class Lambda(StatelessLayer):

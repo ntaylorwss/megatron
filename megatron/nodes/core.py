@@ -1,4 +1,5 @@
-from .. import utils
+from ..utils.generic import md5_hash
+from ..utils.errors import ShapeError
 
 
 class Node:
@@ -71,7 +72,7 @@ class InputNode(Node):
     def __str__(self):
         """Used in caching subpipelines."""
         if self.str is None:
-            self.str = utils.md5_hash(self.output)
+            self.str = md5_hash(self.output)
         return self.str
 
     def validate_input(self, observations):
@@ -88,7 +89,7 @@ class InputNode(Node):
             error indicating that the shape of the data does not match the shape of the node.
         """
         if hasattr(observations, 'shape') and (list(observations.shape[1:]) != list(self.input_shape)):
-            raise utils.ShapeError(self.name, self.input_shape, observations.shape[1:])
+            raise ShapeError(self.name, self.input_shape, observations.shape[1:])
 
     def __call__(self, observations):
         """Run the node, and indicate to the associated Pipeline that it is running eagerly.

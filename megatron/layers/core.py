@@ -1,7 +1,7 @@
 import inspect
 from ..nodes import InputNode, TransformationNode
 from ..nodes.wrappers import FeatureSet
-from .. import utils
+from ..utils.generic import listify, md5_hash
 
 
 class Layer:
@@ -40,7 +40,7 @@ class Layer:
         inbound_nodes : list of megatron.InputNode / megatron.TransformationNode or megatron.FeatureSet
             the input nodes, whose data are to be passed to transform_fn when run.
         """
-        inbound_nodes = utils.listify(inbound_nodes)
+        inbound_nodes = listify(inbound_nodes)
         if isinstance(inbound_nodes[0], FeatureSet):
             return self._call_on_feature_set(inbound_nodes[0])
         else:
@@ -124,7 +124,7 @@ class StatefulLayer(Layer):
 
     def __str__(self):
         """Used in caching pipelines."""
-        metadata = ''.join([utils.md5_hash(metadata) for metadata in self.metadata.values()])
+        metadata = ''.join([md5_hash(metadata) for metadata in self.metadata.values()])
         kwargs = [str(hp) for hp in self.kwargs.values()]
         return '{}{}'.format(inspect.getsource(self.transform), metadata, kwargs)
 

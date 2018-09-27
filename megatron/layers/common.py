@@ -1,6 +1,6 @@
 import numpy as np
 from .core import StatelessLayer
-from ..utils import initializer
+from ..utils.generic import initializer, md5_hash
 
 
 class TimeSeries(StatelessLayer):
