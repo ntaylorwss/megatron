@@ -19,6 +19,12 @@ class Add(StatelessLayer):
         return np.sum(arrays, axis=0)
 
 
+class Subtract(StatelessLayer):
+    """Subtract one array from another."""
+    def transform(self, X1, X2):
+        return X1 - X2
+
+
 class Multiply(StatelessLayer):
     """Multiply array by a given scalar.
 
@@ -62,7 +68,7 @@ class Dot(StatelessLayer):
         super().__init__(name, W=W)
 
     def transform(self, X):
-        return np.dot(self.kwargs['W'], X)
+        return np.dot(X, self.kwargs['W'])
 
 
 class AddDim(StatelessLayer):

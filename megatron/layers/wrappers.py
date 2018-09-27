@@ -1,3 +1,4 @@
+import inspect
 from .core import StatelessLayer, StatefulLayer
 from ..utils import md5_hash, initializer
 
@@ -25,8 +26,8 @@ class Lambda(StatelessLayer):
         keyword arguments to whatever custom function is passed in as transform_fn.
     """
     def __init__(self, transform_fn, name=None, **kwargs):
-        self.name = name if name else self.transform_fn.__name__
         self.transform_fn = transform_fn
+        self.name = name if name else self.transform_fn.__name__
         self.kwargs = kwargs
 
     def __str__(self):

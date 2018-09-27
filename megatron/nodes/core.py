@@ -6,9 +6,10 @@ class Node:
         self.pipeline = pipeline
         self.pipeline._add_node(self)
         self.name = name
-        self.inbound_nodes = []
+        self.inbound_nodes = inbound_nodes
         self.outbound_nodes = []
         self.output = None
+        self.str = None
 
     def run(self, inputs):
         raise NotImplementedError
@@ -48,7 +49,6 @@ class InputNode(Node):
     def __init__(self, pipeline, name, input_shape=()):
         super().__init__(pipeline, name, [])
         self.input_shape = input_shape
-        self.str = None
         self.outbound_nodes = []
         self.output = None
 
@@ -141,6 +141,8 @@ class TransformationNode(Node):
 
     def run(self):
         """Stores result of given Transformation on input Nodes in output variable."""
+        if self.output:
+            return
         inputs = [node.output for node in self.inbound_nodes]
         if not self.is_fitted:
             self.transformation.fit(*inputs)

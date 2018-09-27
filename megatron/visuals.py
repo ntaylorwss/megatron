@@ -50,22 +50,17 @@ def pipeline_to_dot(pipeline, output_nodes, rankdir='TB'):
     dot.set_node_defaults(shape='record')
 
     # build pipeline
-    paths = []
-    output_nodes = utils.listify(output_nodes)
-    for output_node in output_nodes:
-        paths.append(pipeline._postorder_traversal(output_node))
+    path = pipeline._topsort(utils.listify(output_nodes))
 
     # add nodes
-    nodes = {node for path in paths for node in path}
-    for node in nodes:
-
+    for node in path:
         node_id = str(id(node))
         label = node.name
         pydot_node = pydot.Node(node_id, label=label)
         dot.add_node(pydot_node)
 
         # create edges
-        for input_node in reversed(node.input_nodes):
+        for input_node in reversed(node.inbound_nodes):
             input_node_id = str(id(input_node))
             dot.add_edge(pydot.Edge(input_node_id, node_id))
 
@@ -94,7 +89,7 @@ def pipeline_imshow(pipeline, output_nodes, rankdir='TB'):
     return SVG(dot.create(prog='dot', format='svg'))
 
 
-def save_image(pipeline, output_nodes, save_path='pipeline.png', rankdir='TB'):
+def pipeline_imsave(pipeline, output_nodes, save_path='pipeline.png', rankdir='TB'):
     """Save visualization of pipeline to an image file.
 
     Parameters

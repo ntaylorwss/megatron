@@ -41,3 +41,9 @@ class Retype(StatelessLayer):
 
     def transform(self, X):
         return X.astype(self.kwargs['new_type'])
+
+
+class Concatenate(StatelessLayer):
+    """Combine Nodes, creating n-length array for each observation."""
+    def transform(self, *arrays):
+        return np.stack(arrays).T

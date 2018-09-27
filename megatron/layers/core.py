@@ -1,5 +1,6 @@
 import inspect
 from ..nodes import InputNode, TransformationNode
+from ..nodes.wrappers import FeatureSet
 from .. import utils
 
 
@@ -13,10 +14,9 @@ class Layer:
         nodes : megatron.Node(s)
             nodes given as input to the layer's transformation.
         """
-        nodes = utils.listify(nodes)
         out_node = TransformationNode(self, nodes)
         for node in nodes:
-            node.output_nodes.append(out_node)
+            node.outbound_nodes.append(out_node)
         if out_node.pipeline.eager:
             out_node.run()
         return out_node
@@ -29,7 +29,7 @@ class Layer:
         feature_set : megatron.FeatureSet
             feature set to map the transformation onto.
         """
-        new_nodes = [self._call_on_nodes(node) for node in feature_set.nodes]
+        new_nodes = [self._call_on_nodes([node]) for node in feature_set.nodes]
         return FeatureSet(new_nodes, feature_set.names)
 
     def __call__(self, inbound_nodes):
@@ -40,6 +40,7 @@ class Layer:
         inbound_nodes : list of megatron.InputNode / megatron.TransformationNode or megatron.FeatureSet
             the input nodes, whose data are to be passed to transform_fn when run.
         """
+        inbound_nodes = utils.listify(inbound_nodes)
         if isinstance(inbound_nodes[0], FeatureSet):
             return self._call_on_feature_set(inbound_nodes[0])
         else:
