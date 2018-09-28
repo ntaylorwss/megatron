@@ -26,7 +26,7 @@ class TimeSeries(StatelessLayer):
         return np.flip(out, axis=-1) if self.kwargs['reverse'] else out
 
 
-class Retype(StatelessLayer):
+class Cast(StatelessLayer):
     """Re-defines the data type for a Numpy array's contents.
 
     Parameters

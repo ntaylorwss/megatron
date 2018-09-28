@@ -46,8 +46,11 @@ class FeatureSet:
         else:
             return self.get(key)
 
-    def __setitem__(self, key, node):
+    def set(self, key, node):
         if isinstance(key, str):
             self.nodes[self.name_to_index[key]] = node
         else:
             raise KeyError("Invalid key type; must be str")
+
+    def __setitem__(self, key, node):
+        self.set(key, node)
