@@ -216,7 +216,7 @@ stores its given data (either from a feed dict or a function call) in its output
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>observations</strong> (<em>np.ndarray</em>) – data from either the feed dict or the function call, to be validated.</td>
 </tr>
-<tr class="field-even field"><th class="field-name">Raises:</th><td class="field-body"><a class="reference internal" href="megatron.html#megatron.utils.ShapeError" title="megatron.utils.ShapeError"><code class="xref py py-exc docutils literal notranslate"><span class="pre">megatron.utils.ShapeError</span></code></a> – error indicating that the shape of the data does not match the shape of the node.</td>
+<tr class="field-even field"><th class="field-name">Raises:</th><td class="field-body"><code class="xref py py-exc docutils literal notranslate"><span class="pre">megatron.utils.ShapeError</span></code> – error indicating that the shape of the data does not match the shape of the node.</td>
 </tr>
 </tbody>
 </table>
@@ -232,7 +232,7 @@ stores its given data (either from a feed dict or a function call) in its output
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>observations</strong> (<em>np.ndarray</em>) – data from either the feed dict or the function call, to be validated.</td>
 </tr>
-<tr class="field-even field"><th class="field-name">Raises:</th><td class="field-body"><a class="reference internal" href="megatron.html#megatron.utils.ShapeError" title="megatron.utils.ShapeError"><code class="xref py py-exc docutils literal notranslate"><span class="pre">megatron.utils.ShapeError</span></code></a> – error indicating that the shape of the data does not match the shape of the node.</td>
+<tr class="field-even field"><th class="field-name">Raises:</th><td class="field-body"><code class="xref py py-exc docutils literal notranslate"><span class="pre">megatron.utils.ShapeError</span></code> – error indicating that the shape of the data does not match the shape of the node.</td>
 </tr>
 </tbody>
 </table>
@@ -308,7 +308,7 @@ has, if necessary, been fit to data.</p>
 <span id="megatron-nodes-wrappers-module"></span><h2>megatron.nodes.wrappers module<a class="headerlink" href="#module-megatron.nodes.wrappers" title="Permalink to this headline">¶</a></h2>
 <dl class="class">
 <dt id="megatron.nodes.wrappers.FeatureSet">
-<em class="property">class </em><code class="descclassname">megatron.nodes.wrappers.</code><code class="descname">FeatureSet</code><span class="sig-paren">(</span><em>nodes</em>, <em>names</em><span class="sig-paren">)</span><a class="headerlink" href="#megatron.nodes.wrappers.FeatureSet" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="descclassname">megatron.nodes.wrappers.</code><code class="descname">FeatureSet</code><span class="sig-paren">(</span><em>nodes</em>, <em>names=None</em><span class="sig-paren">)</span><a class="headerlink" href="#megatron.nodes.wrappers.FeatureSet" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
 <p>Wrapper for set of Nodes that when fed to Transformations map to all given Nodes.</p>
 <table class="docutils field-list" frame="void" rules="none">
@@ -347,6 +347,12 @@ has, if necessary, been fit to data.</p>
 <code class="descname">get</code><span class="sig-paren">(</span><em>key</em><span class="sig-paren">)</span><a class="headerlink" href="#megatron.nodes.wrappers.FeatureSet.get" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
+</dd></dl>
+
+<dl class="class">
+<dt id="megatron.nodes.wrappers.Input">
+<em class="property">class </em><code class="descclassname">megatron.nodes.wrappers.</code><code class="descname">Input</code><span class="sig-paren">(</span><em>pipeline</em>, <em>name</em>, <em>input_shape=()</em><span class="sig-paren">)</span><a class="headerlink" href="#megatron.nodes.wrappers.Input" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#megatron.nodes.core.InputNode" title="megatron.nodes.core.InputNode"><code class="xref py py-class docutils literal notranslate"><span class="pre">megatron.nodes.core.InputNode</span></code></a></p>
 </dd></dl>
 
 </div>

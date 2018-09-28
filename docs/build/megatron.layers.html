@@ -162,6 +162,27 @@
 <div class="section" id="module-megatron.layers.common">
 <span id="megatron-layers-common-module"></span><h2>megatron.layers.common module<a class="headerlink" href="#module-megatron.layers.common" title="Permalink to this headline">¶</a></h2>
 <dl class="class">
+<dt id="megatron.layers.common.Concatenate">
+<em class="property">class </em><code class="descclassname">megatron.layers.common.</code><code class="descname">Concatenate</code><span class="sig-paren">(</span><em>name=None</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#megatron.layers.common.Concatenate" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#megatron.layers.core.StatelessLayer" title="megatron.layers.core.StatelessLayer"><code class="xref py py-class docutils literal notranslate"><span class="pre">megatron.layers.core.StatelessLayer</span></code></a></p>
+<p>Combine Nodes, creating n-length array for each observation.</p>
+<dl class="method">
+<dt id="megatron.layers.common.Concatenate.transform">
+<code class="descname">transform</code><span class="sig-paren">(</span><em>*arrays</em><span class="sig-paren">)</span><a class="headerlink" href="#megatron.layers.common.Concatenate.transform" title="Permalink to this definition">¶</a></dt>
+<dd><p>Apply transformation to given input data.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>inputs</strong> (<em>np.ndarray</em><em>(</em><em>s</em><em>)</em>) – input data to be transformed; could be one array or a list of arrays.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
 <dt id="megatron.layers.common.Retype">
 <em class="property">class </em><code class="descclassname">megatron.layers.common.</code><code class="descname">Retype</code><span class="sig-paren">(</span><em>new_type</em>, <em>name=None</em><span class="sig-paren">)</span><a class="headerlink" href="#megatron.layers.common.Retype" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#megatron.layers.core.StatelessLayer" title="megatron.layers.core.StatelessLayer"><code class="xref py py-class docutils literal notranslate"><span class="pre">megatron.layers.core.StatelessLayer</span></code></a></p>
@@ -661,6 +682,27 @@ writing a Transformation subclass is required rather than using a Lambda wrapper
 <dl class="method">
 <dt id="megatron.layers.numeric.Reshape.transform">
 <code class="descname">transform</code><span class="sig-paren">(</span><em>X</em><span class="sig-paren">)</span><a class="headerlink" href="#megatron.layers.numeric.Reshape.transform" title="Permalink to this definition">¶</a></dt>
+<dd><p>Apply transformation to given input data.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>inputs</strong> (<em>np.ndarray</em><em>(</em><em>s</em><em>)</em>) – input data to be transformed; could be one array or a list of arrays.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="megatron.layers.numeric.Subtract">
+<em class="property">class </em><code class="descclassname">megatron.layers.numeric.</code><code class="descname">Subtract</code><span class="sig-paren">(</span><em>name=None</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#megatron.layers.numeric.Subtract" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#megatron.layers.core.StatelessLayer" title="megatron.layers.core.StatelessLayer"><code class="xref py py-class docutils literal notranslate"><span class="pre">megatron.layers.core.StatelessLayer</span></code></a></p>
+<p>Subtract one array from another.</p>
+<dl class="method">
+<dt id="megatron.layers.numeric.Subtract.transform">
+<code class="descname">transform</code><span class="sig-paren">(</span><em>X1</em>, <em>X2</em><span class="sig-paren">)</span><a class="headerlink" href="#megatron.layers.numeric.Subtract.transform" title="Permalink to this definition">¶</a></dt>
 <dd><p>Apply transformation to given input data.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
