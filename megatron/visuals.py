@@ -60,9 +60,9 @@ def pipeline_to_dot(pipeline, output_nodes, rankdir='TB'):
         label = node.name
         # make input nodes green, output nodes blue
         if isinstance(node, InputNode):
-            color = '#aeffad'
-        elif node in output_nodes:
             color = '#b7e3ff'
+        elif node in output_nodes:
+            color = '#aeffad'
         else:
             color = '#e8e8e8'
         pydot_node = pydot.Node(node_id, label=label, style='filled', fillcolor=color)
