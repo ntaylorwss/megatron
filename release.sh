@@ -29,6 +29,8 @@ echo "Docker images built."
 
 # push images to hub
 echo "Pushing docker images..."
+echo "Password hint:"
+cat creds/docker_hint
 docker login -u ntaylor22
 docker push ntaylor22/megatron:$new_version &
 wait
@@ -52,8 +54,11 @@ git push origin master --tags
 echo "Version change committed."
 
 # re-run setup and push to pypi
-echo "Pushing to pypi..."
 python3 setup.py sdist
+echo "Pushing to pypi..."
+echo "Username is ntaylorwss"
+echo "Password hint:"
+cat creds/pypi_hint
 twine upload dist/*
 echo "Pushed to pypi."
 echo "Successful release!"

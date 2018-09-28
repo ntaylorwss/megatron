@@ -7,6 +7,7 @@
 - Caching was re-implemented to align with the new path structure.
 - Adapters broken out into input and output modules.
 - Rename Graph to Pipeline.
+- Add color to graph visualization.
 
 ### Bug Fixes
 - Lots of syntax errors because I didn't test the last release.
