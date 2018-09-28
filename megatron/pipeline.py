@@ -76,7 +76,7 @@ class Pipeline:
             dfs(output_node)
         return order
 
-    def _run_path(self, path, output_nodes, feed_dict, cache_result):
+    def _run_path(self, path, output_nodes, input_data, cache_result):
         """Execute all non-cached nodes along the path given input data.
 
         Can cache the result for a path if requested.
@@ -85,7 +85,7 @@ class Pipeline:
         ----------
         path : list of TransformationNode
             the path of TransformationNodes to be executed.
-        feed_dict : dict of Numpy array
+        input_data : dict of Numpy array
             the input data to be passed to InputNode TransformationNodes to begin execution.
         cache_result : bool
             whether to store the resulting Numpy arrays in the cache.
@@ -100,7 +100,7 @@ class Pipeline:
         num_inputs = sum(1 for node in self.nodes if isinstance(node, InputNode))
         for node in path:
             if isinstance(node, InputNode):
-                node.run(feed_dict[node.name])
+                node.run(input_data[node.name])
                 inputs_loaded += 1
             if inputs_loaded == num_inputs:
                 break
@@ -194,14 +194,14 @@ class Pipeline:
         for node in self.nodes:
             node.output = data[node]
 
-    def run(self, output_nodes, feed_dict, cache_result=True, refit=False, form='array'):
+    def transform(self, output_nodes, input_data, cache_result=True, refit=False, form='array'):
         """Execute a path terminating at (a) given TransformationNode(s) with some input data.
 
         Parameters
         ----------
         output_nodes : list of TransformationNode
             the terminal nodes for which to return data.
-        feed_dict : dict of Numpy array
+        input_data : dict of Numpy array
             the input data to be passed to InputNode TransformationNodes to begin execution.
         cache_result : bool
             whether to store the resulting Numpy array in the cache.
@@ -210,8 +210,8 @@ class Pipeline:
         form : {'array', 'dataframe'}
             data type to return as. If dataframe, colnames are node names.
         """
-        if isinstance(feed_dict, pd.DataFrame):
-            feed_dict = dict(zip(feed_dict.columns, feed_dict.T.values))
+        if isinstance(input_data, pd.DataFrame):
+            input_data = dict(zip(input_data.columns, input_data.T.values))
 
         if self.eager:
             raise EagerRunException()
@@ -222,7 +222,7 @@ class Pipeline:
         if refit:
             for node in path:
                 node.is_fitted = False
-        self._run_path(path, output_nodes, feed_dict, cache_result)
+        self._run_path(path, output_nodes, input_data, cache_result)
         for node in output_nodes:
             out.append(node.output)
         names = [node.name for node in output_nodes]

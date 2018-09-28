@@ -4,6 +4,7 @@
 import os
 from .utils.generic import listify
 from IPython.display import SVG
+from .nodes import InputNode
 
 # check for pydot
 try:
@@ -50,13 +51,21 @@ def pipeline_to_dot(pipeline, output_nodes, rankdir='TB'):
     dot.set_node_defaults(shape='record')
 
     # build pipeline
-    path = pipeline._topsort(listify(output_nodes))
+    output_nodes = set(listify(output_nodes))
+    path = pipeline._topsort(output_nodes)
 
     # add nodes
     for node in path:
         node_id = str(id(node))
         label = node.name
-        pydot_node = pydot.Node(node_id, label=label)
+        # make input nodes green, output nodes blue
+        if isinstance(node, InputNode):
+            color = '#aeffad'
+        elif node in output_nodes:
+            color = '#b7e3ff'
+        else:
+            color = '#e8e8e8'
+        pydot_node = pydot.Node(node_id, label=label, style='filled', fillcolor=color)
         dot.add_node(pydot_node)
 
         # create edges
