@@ -7,3 +7,4 @@ notebooks/.ipynb_checkpoints/
 dist/
 Megatron.egg-info/
 data/
+img/

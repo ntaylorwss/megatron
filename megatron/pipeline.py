@@ -138,8 +138,6 @@ class Pipeline:
                                 for out_node in predecessor.outbound_nodes)
                         and predecessor not in output_nodes):
                     predecessor.output = None
-                    output_names = [outbound.name for outbound in predecessor.outbound_nodes]
-                    output_vals = [type(outbound.output) for outbound in predecessor.outbound_nodes]
 
         # reset inbound node tracking
         for node, inbound_nodes in self._tmp_inbound_storage.items():
