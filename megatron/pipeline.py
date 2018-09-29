@@ -228,6 +228,16 @@ class Pipeline:
         names = [node.name for node in output_nodes]
         return self._format_output(out, form, names)
 
+    def transform_generator(self, output_nodes, input_generators, cache_result=True, refit=False, form='array'):
+        def dict_to_generator(d):
+            keys = d.keys()
+            for values in zip(*d.values()):
+                yield dict(zip(keys, values))
+
+        input_generator = dict_to_generator(input_generators)
+        for input_data in input_generator:
+            yield self.transform(output_nodes, input_data, cache_result, refit, form)
+
 
 def load_pipeline(filepath):
     """Load a set of nodes from a given file, stored previously with Pipeline.save().
