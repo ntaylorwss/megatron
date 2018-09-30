@@ -17,7 +17,7 @@ class Layer:
         out_node = TransformationNode(self, nodes)
         for node in nodes:
             node.outbound_nodes.append(out_node)
-        if out_node.pipeline.eager:
+        if all(node.output is not None for node in nodes):
             out_node.run()
         return out_node
 

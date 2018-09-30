@@ -4,8 +4,9 @@ import pandas as pd
 import dill as pickle
 from collections import defaultdict
 from .utils.generic import md5_hash, listify
-from .utils.errors import EagerRunException
+from .utils.errors import EagerRunError, DisconnectedError
 from .nodes import InputNode, TransformationNode
+from .nodes.wrappers import FeatureSet
 from .adapters import output
 
 
@@ -32,23 +33,24 @@ class Pipeline:
     nodes : list of TransformationNode / InputNode
         all InputNode and TransformationNode nodes belonging to the Pipeline.
     """
-    def __init__(self, cache_dir='feature_cache'):
+    def __init__(self, inputs, outputs, cache_dir='feature_cache'):
+        self.inputs = []
+        inputs = listify(inputs)
+        for node in inputs:
+            if isinstance(node, FeatureSet):
+                self.inputs += node.nodes
+            else:
+                self.inputs.append(node)
+        self.outputs = listify(outputs)
+        self.path = self._topsort(self.outputs)
+        not_provided = set(self.path).intersection(self.inputs) - set(self.inputs)
+        if len(not_provided) > 0:
+            raise DisconnectedError(not_provided)
         self.cache_dir = cache_dir
         if not os.path.exists(self.cache_dir):
             os.mkdir(self.cache_dir)
         self.eager = False
-        self.nodes = []
         self._tmp_inbound_storage = {}
-
-    def _add_node(self, node):
-        """Add a node to the pipeline.
-
-        Parameters
-        ----------
-        node : TransformationNode / InputNode
-            the node to be added, whether an InputNode or TransformationNode.
-        """
-        self.nodes.append(node)
 
     def _topsort(self, output_nodes):
         """Returns the path to the desired TransformationNode through the Pipeline.
@@ -76,7 +78,7 @@ class Pipeline:
             dfs(output_node)
         return order
 
-    def _run_path(self, path, output_nodes, input_data, cache_result):
+    def _run_path(self, input_data, cache_result):
         """Execute all non-cached nodes along the path given input data.
 
         Can cache the result for a path if requested.
@@ -95,9 +97,12 @@ class Pipeline:
         np.ndarray
             the data for the target node of the path given the input data.
         """
+        # path starts as entire path of graph
+        path = self.path
+
         # run just the InputNode nodes to get the data hashes
         inputs_loaded = 0
-        num_inputs = sum(1 for node in self.nodes if isinstance(node, InputNode))
+        num_inputs = sum(1 for node in path if isinstance(node, InputNode))
         for node in path:
             if isinstance(node, InputNode):
                 node.run(input_data[node.name])
@@ -105,9 +110,9 @@ class Pipeline:
             if inputs_loaded == num_inputs:
                 break
 
-        # find cached nodes and erase their inputs, so as to make them inputs
+        # find cached nodes and erase their inbounds, to create a shorter path
         cache_filepaths = {}
-        for node in self.nodes:
+        for node in path:
             subpath = self._topsort([node])
             path_hash = md5_hash(''.join(str(node) for node in subpath))
             filepath = '{}/{}.npz'.format(self.cache_dir, path_hash)
@@ -119,8 +124,8 @@ class Pipeline:
             node.inbound_nodes = []
             node.output = np.load(filepath)['arr']
 
-        # recalculate path based on now removed edges
-        path = self._topsort(output_nodes)
+        # recalculate path to outputs based on now removed edges
+        path = self._topsort(self.outputs)
 
         # run transformation nodes to end of path
         for index, node in enumerate(path):
@@ -128,15 +133,15 @@ class Pipeline:
                 try:
                     if node.output is None:  # could be cache-loaded TransformationNode
                         node.run()
-                except Exception as e:
-                    print("Exception thrown at node named {}".format(node.name))
+                except Error as e:
+                    print("Error thrown at node named {}".format(node.name))
                     raise
             # erase data from nodes once unneeded
             for predecessor in path[:index]:
                 if (predecessor.output is not None
                         and all(out_node.output is not None
                                 for out_node in predecessor.outbound_nodes)
-                        and predecessor not in output_nodes):
+                        and predecessor not in self.outputs):
                     predecessor.output = None
 
         # reset inbound node tracking
@@ -146,7 +151,7 @@ class Pipeline:
 
         # cache results if asked
         if cache_result:
-            for node in output_nodes:
+            for node in self.outputs:
                 hashes = [str(node) for node in self._topsort([node])]
                 path_hash = md5_hash(''.join(hashes))
                 filepath = '{}/{}.npz'.format(self.cache_dir, path_hash)
@@ -180,27 +185,29 @@ class Pipeline:
         filepath : str
             the desired location of the stored nodes, filename included.
         """
+        # TODO: make this more like Keras by outputting a JSON description of the model structure
         # store ref to data outside of Pipeline and remove ref to data in TransformationNodes
         data = {}
-        for node in self.nodes:
+        for node in self.path:
             data[node] = node.output
             node.output = None
-            node.pipeline = None
         with open(filepath, 'wb') as f:
             # keep same cache_dir too for new pipeline when loaded
-            pipeline_info = {'nodes': self.nodes, 'cache_dir': self.cache_dir}
+            pipeline_info = {'nodes': self.path, 'cache_dir': self.cache_dir}
             pickle.dump(pipeline_info, f)
         # reinsert data into Pipeline
-        for node in self.nodes:
+        for node in self.path:
             node.output = data[node]
 
-    def transform(self, output_nodes, input_data, cache_result=True, refit=False, form='array'):
+    def set_outputs(self, new_outputs):
+        self.outputs = listify(new_outputs)
+        self.path = self._topsort(self.outputs)
+
+    def transform(self, input_data, cache_result=True, refit=False, form='array'):
         """Execute a path terminating at (a) given TransformationNode(s) with some input data.
 
         Parameters
         ----------
-        output_nodes : list of TransformationNode
-            the terminal nodes for which to return data.
         input_data : dict of Numpy array
             the input data to be passed to InputNode TransformationNodes to begin execution.
         cache_result : bool
@@ -210,25 +217,23 @@ class Pipeline:
         form : {'array', 'dataframe'}
             data type to return as. If dataframe, colnames are node names.
         """
+        if self.eager:
+            raise EagerRunError()
+
         if isinstance(input_data, pd.DataFrame):
             input_data = dict(zip(input_data.columns, input_data.T.values))
 
-        if self.eager:
-            raise EagerRunException()
-
         out = []
-        output_nodes = listify(output_nodes)
-        path = self._topsort(output_nodes)
         if refit:
-            for node in path:
+            for node in self.path:
                 node.is_fitted = False
-        self._run_path(path, output_nodes, input_data, cache_result)
-        for node in output_nodes:
+        self._run_path(input_data, cache_result)
+        for node in self.outputs:
             out.append(node.output)
-        names = [node.name for node in output_nodes]
+        names = [node.name for node in self.outputs]
         return self._format_output(out, form, names)
 
-    def transform_generator(self, output_nodes, input_generators, cache_result=True, refit=False, form='array'):
+    def transform_generator(self, input_generators, cache_result=True, refit=False, form='array'):
         def dict_to_generator(d):
             keys = d.keys()
             for values in zip(*d.values()):
@@ -236,7 +241,7 @@ class Pipeline:
 
         input_generator = dict_to_generator(input_generators)
         for input_data in input_generator:
-            yield self.transform(output_nodes, input_data, cache_result, refit, form)
+            yield self.transform(input_data, cache_result, refit, form)
 
 
 def load_pipeline(filepath):

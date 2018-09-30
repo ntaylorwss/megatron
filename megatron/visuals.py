@@ -24,16 +24,13 @@ def _check_pydot():
         raise OSError('PipelineViz must be installed with its executables included in the $PATH.')
 
 
-def pipeline_to_dot(pipeline, output_nodes, rankdir='TB'):
+def pipeline_to_dot(pipeline, rankdir='TB'):
     """Convert a megatron Pipeline to dot format for visualization.
 
     Parameters
     ----------
     pipeline : megatron.Pipeline
         Feature pipeline defined as a pipeline.
-    output_nodes : megatron.Node or list of megatron.Node
-        The output nodes of the pipeline determine your feature-space. Include a list
-        of all nodes which you would like to be included as features in the output.
     rankdir : str ['TB' or 'LR']
         Direction of pipeline to plot (top to bottom or left to right).
 
@@ -50,18 +47,14 @@ def pipeline_to_dot(pipeline, output_nodes, rankdir='TB'):
     dot.set('concentrate', True)
     dot.set_node_defaults(shape='record')
 
-    # build pipeline
-    output_nodes = set(listify(output_nodes))
-    path = pipeline._topsort(output_nodes)
-
     # add nodes
-    for node in path:
+    for node in pipeline.path:
         node_id = str(id(node))
         label = node.name
         # make input nodes green, output nodes blue
         if isinstance(node, InputNode):
             color = '#b7e3ff'
-        elif node in output_nodes:
+        elif node in pipeline.outputs:
             color = '#aeffad'
         else:
             color = '#e8e8e8'
@@ -76,16 +69,13 @@ def pipeline_to_dot(pipeline, output_nodes, rankdir='TB'):
     return dot
 
 
-def pipeline_imshow(pipeline, output_nodes, rankdir='TB'):
+def pipeline_imshow(pipeline, rankdir='TB'):
     """Create visualization of pipeline within Jupyter Notebook.
 
     Parameters
     ----------
     pipeline : megatron.Pipeline
         Feature pipeline defined as a pipeline.
-    output_nodes : megatron.Node or list of megatron.Node
-        The output nodes of the pipeline determine your feature-space. Include a list
-        of all nodes which you would like to be included as features in the output.
     rankdir : str ['TB' or 'LR']
         Direction of pipeline to plot (top to bottom or left to right).
 
@@ -94,26 +84,23 @@ def pipeline_imshow(pipeline, output_nodes, rankdir='TB'):
     IPython.display.SVG
         Display of pipeline.
     """
-    dot = pipeline_to_dot(pipeline, output_nodes, rankdir)
+    dot = pipeline_to_dot(pipeline, rankdir)
     return SVG(dot.create(prog='dot', format='svg'))
 
 
-def pipeline_imsave(pipeline, output_nodes, save_path='pipeline.png', rankdir='TB'):
+def pipeline_imsave(pipeline, save_path='pipeline.png', rankdir='TB'):
     """Save visualization of pipeline to an image file.
 
     Parameters
     ----------
     pipeline : megatron.Pipeline
         Feature pipeline defined as a pipeline.
-    output_nodes : megatron.Node or list of megatron.Node
-        The output nodes of the pipeline determine your feature-space. Include a list
-        of all nodes which you would like to be included as features in the output.
     save_path : str
         Specify where to save the pipeline visualization.
     rankdir : str ['TB' or 'LR']
         Direction of pipeline to plot (top to bottom or left to right).
     """
-    dot = pipeline_to_dot(pipeline, output_nodes, rankdir)
+    dot = pipeline_to_dot(pipeline, rankdir)
     _, extension = os.path.splitext(save_path)
     if not extension:
         extension = 'png'

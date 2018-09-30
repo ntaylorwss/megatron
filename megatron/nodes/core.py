@@ -3,9 +3,7 @@ from ..utils.errors import ShapeError
 
 
 class Node:
-    def __init__(self, pipeline, name, inbound_nodes):
-        self.pipeline = pipeline
-        self.pipeline._add_node(self)
+    def __init__(self, name, inbound_nodes):
         self.name = name
         self.inbound_nodes = inbound_nodes
         self.outbound_nodes = []
@@ -27,8 +25,6 @@ class InputNode(Node):
 
     Parameters
     ----------
-    pipeline : megatron.Pipeline
-        the Pipeline with which the node is associated.
     name : str
         a name to associate with the data; the keys of the Pipeline feed dict will be these names.
     input_shape : tuple of int
@@ -36,8 +32,6 @@ class InputNode(Node):
 
     Attributes
     ----------
-    pipeline : megatron.Pipeline
-        the Pipeline with which the node is associated.
     name : str
         a name to associate with the data; the keys of the Pipeline feed dict will be these names.
     input_shape : tuple of int
@@ -47,8 +41,8 @@ class InputNode(Node):
     output : np.ndarray
         is None until node is run; when run, the Numpy array passed in is stored here.
     """
-    def __init__(self, pipeline, name, input_shape=()):
-        super().__init__(pipeline, name, [])
+    def __init__(self, name, input_shape=()):
+        super().__init__(name, [])
         self.input_shape = input_shape
         self.outbound_nodes = []
         self.output = None
@@ -105,7 +99,6 @@ class InputNode(Node):
             error indicating that the shape of the data does not match the shape of the node.
         """
         self.run(observations)
-        self.pipeline.eager = True
         return self
 
 
@@ -126,8 +119,6 @@ class TransformationNode(Node):
     ----------
     transformation : megatron.Transformation
         the transformation to be applied to the data from its input Nodes.
-    pipeline : megatron.Pipeline
-        the Pipeline with which this Node is associated; deduced from input nodes.
     output : None or np.ndarray
         is None until Node is run; when run, the Numpy array produced is stored here.
     is_fitted : bool
@@ -135,8 +126,7 @@ class TransformationNode(Node):
         has, if necessary, been fit to data.
     """
     def __init__(self, transformation, inbound_nodes):
-        pipeline = inbound_nodes[0].pipeline
-        super().__init__(pipeline, transformation.name, inbound_nodes)
+        super().__init__(transformation.name, inbound_nodes)
         self.transformation = transformation
         self.is_fitted = False
 
