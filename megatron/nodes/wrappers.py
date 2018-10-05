@@ -1,4 +1,5 @@
 from .core import InputNode
+from ..utils.generic import isinstance_str
 
 
 class Input(InputNode):
@@ -10,8 +11,9 @@ class FeatureSet:
 
     Parameters
     ----------
-    nodes : list of megatron.Node
-        nodes to group together.
+    nodes : list of megatron.Node or str
+        nodes to group together, or names of nodes to create, then group together.
+        if strs provided, shape of each is assumed to be a single column.
 
     Attributes
     ----------
@@ -24,10 +26,17 @@ class FeatureSet:
     """
     def __init__(self, nodes, names=None):
         self.nodes = nodes
-        if names:
-            self.names = names
+        if all(isinstance(node, str) for node in self.nodes):
+            self.nodes = [InputNode(node) for node in self.nodes]
+            self.names = nodes
+        elif all(isinstance_str(node, 'Node') for node in self.nodes):
+            self.nodes = nodes
+            if names:
+                self.names = names
+            else:
+                self.names = [node.name for node in self.nodes]
         else:
-            self.names = [node.name for node in self.nodes]
+            raise TypeError("Cannot mix Nodes and names as input to FeatureSet")
         self.name_to_index = {name: i for i, name in enumerate(self.names)}
 
     def apply_layer(self, layer):

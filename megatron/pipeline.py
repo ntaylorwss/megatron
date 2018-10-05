@@ -42,7 +42,7 @@ class Pipeline:
         not_provided = set(self.path).intersection(self.inputs) - set(self.inputs)
         if len(not_provided) > 0:
             raise utils.errors.DisconnectedError(not_provided)
-        self.cache_dir = cache_dir
+        self.cache_dir = 'feature_cache'
         if not os.path.exists(self.cache_dir):
             os.mkdir(self.cache_dir)
         self.eager = False
