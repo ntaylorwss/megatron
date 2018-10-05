@@ -1,5 +1,17 @@
 # Release History
 
+## 0.3.0
+
+### Changes
+- Now handling data generators as input.
+- Pulled out fit into its own public method, as well as partial_fit.
+- Create pipeline by defining inputs and outputs, rather than passing to inputs.
+- Re-organize utils module.
+- Remove adapters module, work them into the framework.
+
+### Bug Fixes
+- Fix caching, again.
+
 ## 0.2.1
 
 ### Changes
