@@ -1,4 +1,3 @@
-import hashlib
 import inspect
 import functools
 
@@ -30,7 +29,5 @@ def delistify(x):
     return x[0] if isinstance(x, list) else x
 
 
-def md5_hash(x):
-    if x.__class__.__name__ == 'ndarray':
-        x = bytes(x)
-    return str(int(hashlib.md5(str(x).encode()).hexdigest(), 16))
+def isinstance_str(obj, classname):
+    return classname in [t.__name__ for t in obj.__class__.__mro__[:-1]]

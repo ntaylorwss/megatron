@@ -1,6 +1,5 @@
 import numpy as np
 from .core import StatelessLayer
-from ..utils.generic import initializer, md5_hash
 
 try:
     from nltk.corpus import stopwords
@@ -22,6 +21,7 @@ class RemoveStopwords(StatelessLayer):
     def transform(self, X):
         stops = set(stopwords.words(self.kwargs['language']))
         return ' '.join(word for word in X.split(' ') if word not in stops)
+
 
 # function will not apply natively to an array of strings; must vectorize
 RemoveStopwords.transform = np.vectorize(RemoveStopwords.transform)

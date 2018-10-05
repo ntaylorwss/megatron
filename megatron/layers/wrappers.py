@@ -1,6 +1,5 @@
 import inspect
 from .core import StatelessLayer, StatefulLayer
-from ..utils.generic import initializer, md5_hash
 
 
 class Lambda(StatelessLayer):
@@ -64,15 +63,12 @@ class SklearnTransformation(StatefulLayer):
     name : str
         name to give the transformation, used in visualization.
     """
-    @initializer
-    def __init__(self, transformation, name=None):
+    def __init__(self, layer, name=None):
+        self.layer = layer
         self.name = name if name else transformation.__class__.__name__
 
-    def __str__(self):
-        # when there's no metadata, string will be empty, which is like a unique null hash
-        metadata = {k: v for k, v in self.transformation.__dict__.items() if k[-1] == '_'}
-        metadata = ''.join([md5_hash(metadata) for metadata in metadata.values()])
-        return '{}{}'.format(self.transformation.__class__.__name__, metadata)
+    def partial_fit(self, inputs):
+        self.transformation.partial_fit(inputs)
 
     def fit(self, inputs):
         self.transformation.fit(inputs)

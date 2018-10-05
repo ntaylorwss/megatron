@@ -1,6 +1,5 @@
 import numpy as np
 from .core import StatelessLayer
-from ..utils.generic import initializer, md5_hash
 try:
     import skimage
 except ImportError:

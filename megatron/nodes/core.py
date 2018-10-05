@@ -1,5 +1,4 @@
-from ..utils.generic import md5_hash
-from ..utils.errors import ShapeError
+from .. import utils
 
 
 class Node:
@@ -8,13 +7,7 @@ class Node:
         self.inbound_nodes = inbound_nodes
         self.outbound_nodes = []
         self.output = None
-        self.str = None
-
-    def run(self, inputs):
-        raise NotImplementedError
-
-    def __str__(self):
-        raise NotImplementedError
+        self.has_run = False
 
 
 class InputNode(Node):
@@ -36,8 +29,6 @@ class InputNode(Node):
         a name to associate with the data; the keys of the Pipeline feed dict will be these names.
     input_shape : tuple of int
         the shape, not including the observation dimension (1st), of the Numpy arrays to be input.
-    str : str
-        stores the result of magic method str, so that it doesn't have to be recalculated.
     output : np.ndarray
         is None until node is run; when run, the Numpy array passed in is stored here.
     """
@@ -47,7 +38,7 @@ class InputNode(Node):
         self.outbound_nodes = []
         self.output = None
 
-    def run(self, observations):
+    def load(self, observations):
         """Validate and store the data passed in.
 
         Parameters
@@ -62,12 +53,7 @@ class InputNode(Node):
         """
         self.validate_input(observations)
         self.output = observations
-
-    def __str__(self):
-        """Used in caching subpipelines."""
-        if self.str is None:
-            self.str = md5_hash(self.output)
-        return self.str
+        self.has_run = True
 
     def validate_input(self, observations):
         """Ensure shape of data passed in aligns with shape of the node.
@@ -83,7 +69,7 @@ class InputNode(Node):
             error indicating that the shape of the data does not match the shape of the node.
         """
         if hasattr(observations, 'shape') and (list(observations.shape[1:]) != list(self.input_shape)):
-            raise ShapeError(self.name, self.input_shape, observations.shape[1:])
+            raise utils.errors.ShapeError(self.name, self.input_shape, observations.shape[1:])
 
     def __call__(self, observations):
         """Run the node, and indicate to the associated Pipeline that it is running eagerly.
@@ -125,23 +111,24 @@ class TransformationNode(Node):
         indicates whether the Transformation inside the Node
         has, if necessary, been fit to data.
     """
-    def __init__(self, transformation, inbound_nodes):
-        super().__init__(transformation.name, inbound_nodes)
-        self.transformation = transformation
-        self.is_fitted = False
+    def __init__(self, layer, inbound_nodes):
+        super().__init__(layer.name, inbound_nodes)
+        self.layer = layer
 
-    def run(self):
-        """Stores result of given Transformation on input Nodes in output variable."""
-        if self.output:
-            return
+    def partial_fit(self):
         inputs = [node.output for node in self.inbound_nodes]
-        if not self.is_fitted:
-            self.transformation.fit(*inputs)
-            self.is_fitted = True
-        self.output = self.transformation.transform(*inputs)
+        self.layer.partial_fit(*inputs)
+        self.output = self.layer.transform(*inputs)
 
-    def __str__(self):
-        """Used in caching subpipelines."""
-        if self.str is None:
-            self.str = str(self.transformation)
-        return self.str
+    def fit(self):
+        """Calculates metadata based on provided data."""
+        inputs = [node.output for node in self.inbound_nodes]
+        self.layer.fit(*inputs)
+        self.output = self.layer.transform(*inputs)
+        self.has_run = True
+
+    def transform(self):
+        """Stores result of given Transformation on input Nodes in output variable."""
+        inputs = [node.output for node in self.inbound_nodes]
+        self.output = self.layer.transform(*inputs)
+        self.has_run = True

@@ -1,16 +1,5 @@
 import numpy as np
 from .core import StatelessLayer, StatefulLayer
-from ..utils.generic import initializer, md5_hash
-
-
-class Whiten(StatefulLayer):
-    """Bring mean to 0 and standard deviation to 1."""
-    def fit(self, X):
-        self.metadata['mean'] = X.mean(axis=0)
-        self.metadata['sd'] = X.std(axis=0)
-
-    def transform(self, X):
-        return (X - self.metadata['mean']) / self.metadata['sd']
 
 
 class Add(StatelessLayer):

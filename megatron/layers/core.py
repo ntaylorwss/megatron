@@ -1,7 +1,7 @@
 import inspect
 from ..nodes import InputNode, TransformationNode
 from ..nodes.wrappers import FeatureSet
-from ..utils.generic import listify, md5_hash
+from .. import utils
 
 
 class Layer:
@@ -40,14 +40,25 @@ class Layer:
         inbound_nodes : list of megatron.InputNode / megatron.TransformationNode or megatron.FeatureSet
             the input nodes, whose data are to be passed to transform_fn when run.
         """
-        inbound_nodes = listify(inbound_nodes)
+        inbound_nodes = utils.generic.listify(inbound_nodes)
         if isinstance(inbound_nodes[0], FeatureSet):
             return self._call_on_feature_set(inbound_nodes[0])
         else:
             return self._call_on_nodes(inbound_nodes)
 
+    def partial_fit(self, *inputs):
+        """Updates metadata based on given batch of data or full dataset.
+
+        Contains the main logic of fitting.
+        Parameters
+        ----------
+        inputs : numpy.ndarray(s)
+            the input data to be fit to; could be one array or a list of arrays.
+        """
+        pass
+
     def fit(self, *inputs):
-        """Calculates and overwrites metadata (if necessary).cored on current inputs.
+        """Overwrites metadata based on given batch of data or full dataset.
 
         Parameters
         ----------
@@ -88,12 +99,6 @@ class StatelessLayer(Layer):
         self.name = name if name else self.__class__.__name__
         self.kwargs = kwargs
 
-    def __str__(self):
-        """Used in caching pipelines."""
-        out = [str(hp) for hp in self.kwargs.values()]
-        out.append(inspect.getsource(self.transform))
-        return ''.join(out)
-
 
 class StatefulLayer(Layer):
     """A layer holding a stateful transformation.
@@ -122,12 +127,10 @@ class StatefulLayer(Layer):
         self.kwargs = kwargs
         self.metadata = {}
 
-    def __str__(self):
-        """Used in caching pipelines."""
-        metadata = ''.join([md5_hash(metadata) for metadata in self.metadata.values()])
-        kwargs = [str(hp) for hp in self.kwargs.values()]
-        return '{}{}'.format(inspect.getsource(self.transform), metadata, kwargs)
-
-    def fit(self, *inputs):
+    def partial_fit(self, *inputs):
         """Must be implemented for a layer to be considered stateful."""
         raise NotImplementedError
+
+    def fit(self, *inputs):
+        self.metadata = {}
+        self.partial_fit(*inputs)
