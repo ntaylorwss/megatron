@@ -26,17 +26,10 @@ class FeatureSet:
     """
     def __init__(self, nodes, names=None):
         self.nodes = nodes
-        if all(isinstance(node, str) for node in self.nodes):
-            self.nodes = [InputNode(node) for node in self.nodes]
-            self.names = nodes
-        elif all(isinstance_str(node, 'Node') for node in self.nodes):
-            self.nodes = nodes
-            if names:
-                self.names = names
-            else:
-                self.names = [node.name for node in self.nodes]
+        if names:
+            self.names = names
         else:
-            raise TypeError("Cannot mix Nodes and names as input to FeatureSet")
+            self.names = [node.name for node in self.nodes]
         self.name_to_index = {name: i for i, name in enumerate(self.names)}
 
     def apply_layer(self, layer):

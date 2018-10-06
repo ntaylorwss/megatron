@@ -30,17 +30,17 @@ def topsort(output_nodes):
     return order
 
 
-def format_output(arrays, form, names):
-    """Return data for single or multiple TransformationNode(s) in requested format.
+def format_output(arrays, format, names):
+    """Return arrays for single or multiple TransformationNode(s) in requested format.
 
     Parameters
     ----------
     arrays : list of np.ndarray
-        data resulting from Pipeline.transform(). Will always be a list, potentially of one.
-    form : {'array', 'dataframe'}
-        data type to return as. If dataframe, colnames are node names.
+        arrays resulting from Pipeline.transform(). Will always be a list, potentially of one.
+    format : {'array', 'arraysframe'}
+        arrays type to return as. If arraysframe, colnames are node names.
     names : list of str
-        names of output nodes; used when form is 'dataframe'.
+        names of output nodes; used when format is 'arraysframe'.
     """
     name_counts = {}
     new_names = []
@@ -51,18 +51,18 @@ def format_output(arrays, form, names):
         else:
             new_names.append(name)
             name_counts[name] = 1
-    if form== 'array':
+    if format== 'array':
         return {name: array for name, array in zip(new_names, arrays)}
-    elif form== 'dataframe':
-        if len(data) == 1:
-            array, name = data[0], names[0]
+    elif format== 'dataframe':
+        if len(arrays) == 1:
+            array, name = arrays[0], names[0]
             if len(array.shape) == 2:
                 names = ['{}.{}'.format(name, i) for i in range(array.shape[1])]
-            data = pd.DataFrame(array, columns=names)
+            arrays = pd.DataFrame(array, columns=names)
         else:
             out = []
             new_names = []
-            for array, name in zip(data, names):
+            for array, name in zip(arrays, names):
                 if len(array.shape) == 1:
                     out.append(array)
                     new_names.append(name)
@@ -71,7 +71,7 @@ def format_output(arrays, form, names):
                     new_names += ['{}{}'.format(name, i) for i in range(len(out))]
                 else:
                     raise ValueError("An array has more than 2 dimensions")
-            data = pd.DataFrame(np.stack(out).T, columns=new_names)
-        return data
+            arrays = pd.DataFrame(np.stack(out).T, columns=new_names)
+        return arrays
     else:
         raise ValueError("Invalid format; should be either 'array' or 'dataframe'")

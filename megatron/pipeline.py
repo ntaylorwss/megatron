@@ -37,7 +37,15 @@ class Pipeline:
                 self.inputs += node.nodes
             else:
                 self.inputs.append(node)
-        self.outputs = utils.generic.listify(outputs)
+
+        self.outputs = []
+        outputs = utils.generic.listify(outputs)
+        for node in outputs:
+            if utils.generic.isinstance_str(node, 'FeatureSet'):
+                self.outputs += node.nodes
+            else:
+                self.outputs.append(node)
+
         self.path = utils.pipeline.topsort(self.outputs)
         not_provided = set(self.path).intersection(self.inputs) - set(self.inputs)
         if len(not_provided) > 0:
@@ -163,7 +171,7 @@ class Pipeline:
         for batch in input_generator:
             self.partial_fit(batch)
 
-    def transform(self, input_data, cache_result=True, form='array'):
+    def transform(self, input_data, cache_result=True, format='array'):
         """Execute a path terminating at (a) given TransformationNode(s) with some input data.
 
         Parameters
@@ -184,12 +192,12 @@ class Pipeline:
             arrays.append(node.output)
             node.output = None
         names = [node.name for node in self.outputs]
-        return utils.pipeline.format_output(arrays, form, names)
+        return utils.pipeline.format_output(arrays, format, names)
 
-    def transform_generator(self, input_generator, cache_result=True, form='array'):
+    def transform_generator(self, input_generator, cache_result=True, format='array'):
         for batch in input_generator:
             #yield batch
-            yield self.transform(batch, cache_result, form)
+            yield self.transform(batch, cache_result, format)
 
     def save(self, filepath):
         """Store just the nodes without their data (i.e. pre-execution) in a given file.

@@ -18,7 +18,8 @@ class Layer:
         for node in nodes:
             node.outbound_nodes.append(out_node)
         if all(node.output is not None for node in nodes):
-            out_node.run()
+            out_node.fit()
+            out_node.transform()
         return out_node
 
     def _call_on_feature_set(self, feature_set):
@@ -34,6 +35,8 @@ class Layer:
 
     def __call__(self, inbound_nodes):
         """Creates a TransformationNode associated with this Transformation and the given InputNodes.
+
+        When running eagerly, perform a fit and transform, and store the result of the transform in output member.
 
         Parameters
         ----------

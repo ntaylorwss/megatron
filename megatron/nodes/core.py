@@ -35,8 +35,6 @@ class InputNode(Node):
     def __init__(self, name, input_shape=()):
         super().__init__(name, [])
         self.input_shape = input_shape
-        self.outbound_nodes = []
-        self.output = None
 
     def load(self, observations):
         """Validate and store the data passed in.
@@ -72,7 +70,7 @@ class InputNode(Node):
             raise utils.errors.ShapeError(self.name, self.input_shape, observations.shape[1:])
 
     def __call__(self, observations):
-        """Run the node, and indicate to the associated Pipeline that it is running eagerly.
+        """Run the node, storing the given data. Intended for eager execution.
 
         Parameters
         ----------
@@ -84,7 +82,7 @@ class InputNode(Node):
         megatron.utils.ShapeError
             error indicating that the shape of the data does not match the shape of the node.
         """
-        self.run(observations)
+        self.load(observations)
         return self
 
 
