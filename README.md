@@ -16,6 +16,7 @@ And the dependencies are as follows:
 - Sklearn (optional: only if using transformation functions from sklearn with the `SklearnTransformer` wrapper)
 - NLTK (optional: only if using `megatron.transforms.text` module)
 - Scikit-Image (optional: only if using `megatron.transforms.image` module)
+- PyArrow (optional: only if loading Parquet-formatted raw data)
 
 ## Using Transformations
 Transformations take keyword arguments in their initialization. These are like "hyperparameters" for the function, those that stay the same for each execution and which can be customized by the user. These functions are then called on other Nodes if in lazy execution, or on data if in eager execution (see below for a discussion on Eager Execution). Multiple arguments are passed as a list.
