@@ -80,9 +80,11 @@
               <div class="local-toc"><ul>
 <li><a class="reference internal" href="#">megatron.utils package</a><ul>
 <li><a class="reference internal" href="#submodules">Submodules</a></li>
-<li><a class="reference internal" href="#module-megatron.utils.errors">megatron.utils.errors module</a></li>
+<li><a class="reference internal" href="#megatron-utils-errors-module">megatron.utils.errors module</a></li>
 <li><a class="reference internal" href="#module-megatron.utils.generic">megatron.utils.generic module</a></li>
-<li><a class="reference internal" href="#module-megatron.utils.public">megatron.utils.public module</a></li>
+<li><a class="reference internal" href="#module-megatron.utils.hash">megatron.utils.hash module</a></li>
+<li><a class="reference internal" href="#module-megatron.utils.helpers">megatron.utils.helpers module</a></li>
+<li><a class="reference internal" href="#module-megatron.utils.pipeline">megatron.utils.pipeline module</a></li>
 <li><a class="reference internal" href="#module-megatron.utils">Module contents</a></li>
 </ul>
 </li>
@@ -155,20 +157,8 @@
 <div class="section" id="submodules">
 <h2>Submodules<a class="headerlink" href="#submodules" title="Permalink to this headline">¶</a></h2>
 </div>
-<div class="section" id="module-megatron.utils.errors">
-<span id="megatron-utils-errors-module"></span><h2>megatron.utils.errors module<a class="headerlink" href="#module-megatron.utils.errors" title="Permalink to this headline">¶</a></h2>
-<dl class="exception">
-<dt id="megatron.utils.errors.EagerRunException">
-<em class="property">exception </em><code class="descclassname">megatron.utils.errors.</code><code class="descname">EagerRunException</code><a class="headerlink" href="#megatron.utils.errors.EagerRunException" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">Exception</span></code></p>
-</dd></dl>
-
-<dl class="exception">
-<dt id="megatron.utils.errors.ShapeError">
-<em class="property">exception </em><code class="descclassname">megatron.utils.errors.</code><code class="descname">ShapeError</code><span class="sig-paren">(</span><em>name</em>, <em>input_dims</em><span class="sig-paren">)</span><a class="headerlink" href="#megatron.utils.errors.ShapeError" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">Exception</span></code></p>
-</dd></dl>
-
+<div class="section" id="megatron-utils-errors-module">
+<h2>megatron.utils.errors module<a class="headerlink" href="#megatron-utils-errors-module" title="Permalink to this headline">¶</a></h2>
 </div>
 <div class="section" id="module-megatron.utils.generic">
 <span id="megatron-utils-generic-module"></span><h2>megatron.utils.generic module<a class="headerlink" href="#module-megatron.utils.generic" title="Permalink to this headline">¶</a></h2>
@@ -178,8 +168,18 @@
 <dd></dd></dl>
 
 <dl class="function">
+<dt id="megatron.utils.generic.flattenjson">
+<code class="descclassname">megatron.utils.generic.</code><code class="descname">flattenjson</code><span class="sig-paren">(</span><em>json</em>, <em>delim='_'</em><span class="sig-paren">)</span><a class="headerlink" href="#megatron.utils.generic.flattenjson" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
 <dt id="megatron.utils.generic.initializer">
 <code class="descclassname">megatron.utils.generic.</code><code class="descname">initializer</code><span class="sig-paren">(</span><em>func</em><span class="sig-paren">)</span><a class="headerlink" href="#megatron.utils.generic.initializer" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="megatron.utils.generic.isinstance_str">
+<code class="descclassname">megatron.utils.generic.</code><code class="descname">isinstance_str</code><span class="sig-paren">(</span><em>obj</em>, <em>classname</em><span class="sig-paren">)</span><a class="headerlink" href="#megatron.utils.generic.isinstance_str" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="function">
@@ -187,24 +187,66 @@
 <code class="descclassname">megatron.utils.generic.</code><code class="descname">listify</code><span class="sig-paren">(</span><em>x</em><span class="sig-paren">)</span><a class="headerlink" href="#megatron.utils.generic.listify" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
+</div>
+<div class="section" id="module-megatron.utils.hash">
+<span id="megatron-utils-hash-module"></span><h2>megatron.utils.hash module<a class="headerlink" href="#module-megatron.utils.hash" title="Permalink to this headline">¶</a></h2>
 <dl class="function">
-<dt id="megatron.utils.generic.md5_hash">
-<code class="descclassname">megatron.utils.generic.</code><code class="descname">md5_hash</code><span class="sig-paren">(</span><em>x</em><span class="sig-paren">)</span><a class="headerlink" href="#megatron.utils.generic.md5_hash" title="Permalink to this definition">¶</a></dt>
+<dt id="megatron.utils.hash.hash_path">
+<code class="descclassname">megatron.utils.hash.</code><code class="descname">hash_path</code><span class="sig-paren">(</span><em>nodes</em><span class="sig-paren">)</span><a class="headerlink" href="#megatron.utils.hash.hash_path" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 </div>
-<div class="section" id="module-megatron.utils.public">
-<span id="megatron-utils-public-module"></span><h2>megatron.utils.public module<a class="headerlink" href="#module-megatron.utils.public" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="module-megatron.utils.helpers">
+<span id="megatron-utils-helpers-module"></span><h2>megatron.utils.helpers module<a class="headerlink" href="#module-megatron.utils.helpers" title="Permalink to this headline">¶</a></h2>
 <dl class="function">
-<dt id="megatron.utils.public.column_stack">
-<code class="descclassname">megatron.utils.public.</code><code class="descname">column_stack</code><span class="sig-paren">(</span><em>arrays</em><span class="sig-paren">)</span><a class="headerlink" href="#megatron.utils.public.column_stack" title="Permalink to this definition">¶</a></dt>
+<dt id="megatron.utils.helpers.column_stack">
+<code class="descclassname">megatron.utils.helpers.</code><code class="descname">column_stack</code><span class="sig-paren">(</span><em>arrays</em><span class="sig-paren">)</span><a class="headerlink" href="#megatron.utils.helpers.column_stack" title="Permalink to this definition">¶</a></dt>
 <dd><p>Given a list of arrays, some of which are 2D, turn the 2D ones into 1D arrays.</p>
 </dd></dl>
 
 <dl class="function">
-<dt id="megatron.utils.public.safe_divide">
-<code class="descclassname">megatron.utils.public.</code><code class="descname">safe_divide</code><span class="sig-paren">(</span><em>X1</em>, <em>X2</em>, <em>impute=0</em><span class="sig-paren">)</span><a class="headerlink" href="#megatron.utils.public.safe_divide" title="Permalink to this definition">¶</a></dt>
+<dt id="megatron.utils.helpers.safe_divide">
+<code class="descclassname">megatron.utils.helpers.</code><code class="descname">safe_divide</code><span class="sig-paren">(</span><em>X1</em>, <em>X2</em>, <em>impute=0</em><span class="sig-paren">)</span><a class="headerlink" href="#megatron.utils.helpers.safe_divide" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
+
+</div>
+<div class="section" id="module-megatron.utils.pipeline">
+<span id="megatron-utils-pipeline-module"></span><h2>megatron.utils.pipeline module<a class="headerlink" href="#module-megatron.utils.pipeline" title="Permalink to this headline">¶</a></h2>
+<dl class="function">
+<dt id="megatron.utils.pipeline.format_output">
+<code class="descclassname">megatron.utils.pipeline.</code><code class="descname">format_output</code><span class="sig-paren">(</span><em>output_data</em>, <em>out_type</em><span class="sig-paren">)</span><a class="headerlink" href="#megatron.utils.pipeline.format_output" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return arrays for single or multiple Transout_typeionNode(s) in requested out_type.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>arrays</strong> (<em>list of np.ndarray</em>) – arrays resulting from Pipeline.transform(). Will always be a list, potentially of one.</li>
+<li><strong>out_type</strong> (<em>{'array'</em><em>, </em><em>'arraysframe'}</em>) – arrays type to return as. If dataframe, colnames are node names.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="megatron.utils.pipeline.topsort">
+<code class="descclassname">megatron.utils.pipeline.</code><code class="descname">topsort</code><span class="sig-paren">(</span><em>output_nodes</em><span class="sig-paren">)</span><a class="headerlink" href="#megatron.utils.pipeline.topsort" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the path to the desired Transout_typeionNode through the Pipeline.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>output_node</strong> (<em>Transout_typeionNode</em>) – the target terminal node of the path.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">the path from input to output that arrives at the output_node.</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">list of Transout_typeionNode</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
 
 </div>
 <div class="section" id="module-megatron.utils">

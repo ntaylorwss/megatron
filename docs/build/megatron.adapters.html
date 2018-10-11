@@ -80,9 +80,9 @@
               <div class="local-toc"><ul>
 <li><a class="reference internal" href="#">megatron.adapters package</a><ul>
 <li><a class="reference internal" href="#submodules">Submodules</a></li>
-<li><a class="reference internal" href="#module-megatron.adapters.input">megatron.adapters.input module</a></li>
-<li><a class="reference internal" href="#module-megatron.adapters.output">megatron.adapters.output module</a></li>
-<li><a class="reference internal" href="#module-megatron.adapters">Module contents</a></li>
+<li><a class="reference internal" href="#megatron-adapters-input-module">megatron.adapters.input module</a></li>
+<li><a class="reference internal" href="#megatron-adapters-output-module">megatron.adapters.output module</a></li>
+<li><a class="reference internal" href="#module-contents">Module contents</a></li>
 </ul>
 </li>
 </ul>
@@ -154,46 +154,14 @@
 <div class="section" id="submodules">
 <h2>Submodules<a class="headerlink" href="#submodules" title="Permalink to this headline">¶</a></h2>
 </div>
-<div class="section" id="module-megatron.adapters.input">
-<span id="megatron-adapters-input-module"></span><h2>megatron.adapters.input module<a class="headerlink" href="#module-megatron.adapters.input" title="Permalink to this headline">¶</a></h2>
-<dl class="function">
-<dt id="megatron.adapters.input.from_dataframe">
-<code class="descclassname">megatron.adapters.input.</code><code class="descname">from_dataframe</code><span class="sig-paren">(</span><em>df</em>, <em>pipeline</em>, <em>eager=False</em>, <em>exclude_cols=[]</em><span class="sig-paren">)</span><a class="headerlink" href="#megatron.adapters.input.from_dataframe" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
+<div class="section" id="megatron-adapters-input-module">
+<h2>megatron.adapters.input module<a class="headerlink" href="#megatron-adapters-input-module" title="Permalink to this headline">¶</a></h2>
 </div>
-<div class="section" id="module-megatron.adapters.output">
-<span id="megatron-adapters-output-module"></span><h2>megatron.adapters.output module<a class="headerlink" href="#module-megatron.adapters.output" title="Permalink to this headline">¶</a></h2>
-<dl class="function">
-<dt id="megatron.adapters.output.array">
-<code class="descclassname">megatron.adapters.output.</code><code class="descname">array</code><span class="sig-paren">(</span><em>data</em><span class="sig-paren">)</span><a class="headerlink" href="#megatron.adapters.output.array" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="function">
-<dt id="megatron.adapters.output.dataframe">
-<code class="descclassname">megatron.adapters.output.</code><code class="descname">dataframe</code><span class="sig-paren">(</span><em>arrays</em>, <em>names</em><span class="sig-paren">)</span><a class="headerlink" href="#megatron.adapters.output.dataframe" title="Permalink to this definition">¶</a></dt>
-<dd><p>Return data from pipeline as Pandas dataframe.</p>
-<p>Each column corresponds to a node. If a node has 2D data,
-it creates multiple columns, named [node.name].i, for each i.</p>
-<p>If a node holds data that has more than 2 dimensions, this
-function will fail.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>arrays</strong> (<em>list of Numpy array</em><em>(</em><em>s</em><em>)</em>) – arrays corresponding to each output node.</li>
-<li><strong>names</strong> (<em>list of str</em><em>(</em><em>s</em><em>)</em>) – names corresponding to each output node.</li>
-</ul>
-</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
+<div class="section" id="megatron-adapters-output-module">
+<h2>megatron.adapters.output module<a class="headerlink" href="#megatron-adapters-output-module" title="Permalink to this headline">¶</a></h2>
 </div>
-<div class="section" id="module-megatron.adapters">
-<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-megatron.adapters" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="module-contents">
+<h2>Module contents<a class="headerlink" href="#module-contents" title="Permalink to this headline">¶</a></h2>
 </div>
 </div>
 

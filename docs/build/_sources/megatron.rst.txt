@@ -6,7 +6,7 @@ Subpackages
 
 .. toctree::
 
-    megatron.adapters
+    megatron.io
     megatron.layers
     megatron.nodes
     megatron.utils

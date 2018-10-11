@@ -20,10 +20,26 @@ megatron.utils.generic module
     :undoc-members:
     :show-inheritance:
 
-megatron.utils.public module
-----------------------------
+megatron.utils.hash module
+--------------------------
 
-.. automodule:: megatron.utils.public
+.. automodule:: megatron.utils.hash
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+megatron.utils.helpers module
+-----------------------------
+
+.. automodule:: megatron.utils.helpers
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+megatron.utils.pipeline module
+------------------------------
+
+.. automodule:: megatron.utils.pipeline
     :members:
     :undoc-members:
     :show-inheritance:

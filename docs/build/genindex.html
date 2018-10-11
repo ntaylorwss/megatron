@@ -149,6 +149,7 @@
  | <a href="#E"><strong>E</strong></a>
  | <a href="#F"><strong>F</strong></a>
  | <a href="#G"><strong>G</strong></a>
+ | <a href="#H"><strong>H</strong></a>
  | <a href="#I"><strong>I</strong></a>
  | <a href="#K"><strong>K</strong></a>
  | <a href="#L"><strong>L</strong></a>
@@ -169,13 +170,11 @@
   <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="megatron.layers.html#megatron.layers.numeric.Add">Add (class in megatron.layers.numeric)</a>
 </li>
-      <li><a href="megatron.layers.html#megatron.layers.numeric.AddDim">AddDim (class in megatron.layers.numeric)</a>
-</li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="megatron.nodes.html#megatron.nodes.wrappers.FeatureSet.apply_layer">apply_layer() (megatron.nodes.wrappers.FeatureSet method)</a>
+      <li><a href="megatron.layers.html#megatron.layers.numeric.AddDim">AddDim (class in megatron.layers.numeric)</a>
 </li>
-      <li><a href="megatron.adapters.html#megatron.adapters.output.array">array() (in module megatron.adapters.output)</a>
+      <li><a href="megatron.nodes.html#megatron.nodes.wrappers.FeatureSet.apply_layer">apply_layer() (megatron.nodes.wrappers.FeatureSet method)</a>
 </li>
   </ul></td>
 </tr></table>
@@ -185,11 +184,17 @@
   <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="megatron.html#megatron.pipeline.Pipeline.cache_dir">cache_dir (megatron.pipeline.Pipeline attribute)</a>
 </li>
+      <li><a href="megatron.layers.html#megatron.layers.common.Cast">Cast (class in megatron.layers.common)</a>
+</li>
+      <li><a href="megatron.utils.html#megatron.utils.helpers.column_stack">column_stack() (in module megatron.utils.helpers)</a>
+</li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="megatron.utils.html#megatron.utils.public.column_stack">column_stack() (in module megatron.utils.public)</a>
-</li>
       <li><a href="megatron.layers.html#megatron.layers.common.Concatenate">Concatenate (class in megatron.layers.common)</a>
+</li>
+      <li><a href="megatron.io.html#megatron.io.dataset.CSVData">CSVData() (in module megatron.io.dataset)</a>
+</li>
+      <li><a href="megatron.io.html#megatron.io.generator.CSVGenerator">CSVGenerator (class in megatron.io.generator)</a>
 </li>
   </ul></td>
 </tr></table>
@@ -197,7 +202,9 @@
 <h2 id="D">D</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="megatron.adapters.html#megatron.adapters.output.dataframe">dataframe() (in module megatron.adapters.output)</a>
+      <li><a href="megatron.io.html#megatron.io.generator.DataGenerator">DataGenerator (class in megatron.io.generator)</a>
+</li>
+      <li><a href="megatron.io.html#megatron.io.storage.LocalStorage.delete_table">delete_table() (megatron.io.storage.LocalStorage method)</a>
 </li>
       <li><a href="megatron.utils.html#megatron.utils.generic.delistify">delistify() (in module megatron.utils.generic)</a>
 </li>
@@ -218,10 +225,6 @@
       <li><a href="megatron.html#megatron.pipeline.Pipeline.eager">eager (megatron.pipeline.Pipeline attribute)</a>
 </li>
   </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="megatron.utils.html#megatron.utils.errors.EagerRunException">EagerRunException</a>
-</li>
-  </ul></td>
 </tr></table>
 
 <h2 id="F">F</h2>
@@ -234,14 +237,24 @@
       <ul>
         <li><a href="megatron.layers.html#megatron.layers.core.StatefulLayer.fit">(megatron.layers.core.StatefulLayer method)</a>
 </li>
-        <li><a href="megatron.layers.html#megatron.layers.numeric.Whiten.fit">(megatron.layers.numeric.Whiten method)</a>
+        <li><a href="megatron.nodes.html#megatron.nodes.core.TransformationNode.fit">(megatron.nodes.core.TransformationNode method)</a>
 </li>
-        <li><a href="megatron.layers.html#megatron.layers.wrappers.SklearnTransformation.fit">(megatron.layers.wrappers.SklearnTransformation method)</a>
+        <li><a href="megatron.html#megatron.pipeline.Pipeline.fit">(megatron.pipeline.Pipeline method)</a>
 </li>
       </ul></li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="megatron.adapters.html#megatron.adapters.input.from_dataframe">from_dataframe() (in module megatron.adapters.input)</a>
+      <li><a href="megatron.html#megatron.pipeline.Pipeline.fit_generator">fit_generator() (megatron.pipeline.Pipeline method)</a>
+</li>
+      <li><a href="megatron.utils.html#megatron.utils.generic.flattenjson">flattenjson() (in module megatron.utils.generic)</a>
+</li>
+      <li><a href="megatron.utils.html#megatron.utils.pipeline.format_output">format_output() (in module megatron.utils.pipeline)</a>
+</li>
+      <li><a href="megatron.nodes.html#megatron.nodes.fromfile.from_csv">from_csv() (in module megatron.nodes.fromfile)</a>
+</li>
+      <li><a href="megatron.nodes.html#megatron.nodes.fromfile.from_dataframe">from_dataframe() (in module megatron.nodes.fromfile)</a>
+</li>
+      <li><a href="megatron.nodes.html#megatron.nodes.fromfile.from_sql">from_sql() (in module megatron.nodes.fromfile)</a>
 </li>
   </ul></td>
 </tr></table>
@@ -250,6 +263,14 @@
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="megatron.nodes.html#megatron.nodes.wrappers.FeatureSet.get">get() (megatron.nodes.wrappers.FeatureSet method)</a>
+</li>
+  </ul></td>
+</tr></table>
+
+<h2 id="H">H</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="megatron.utils.html#megatron.utils.hash.hash_path">hash_path() (in module megatron.utils.hash)</a>
 </li>
   </ul></td>
 </tr></table>
@@ -271,6 +292,8 @@
 </li>
       <li><a href="megatron.nodes.html#megatron.nodes.core.TransformationNode.is_fitted">is_fitted (megatron.nodes.core.TransformationNode attribute)</a>
 </li>
+      <li><a href="megatron.utils.html#megatron.utils.generic.isinstance_str">isinstance_str() (in module megatron.utils.generic)</a>
+</li>
   </ul></td>
 </tr></table>
 
@@ -289,15 +312,21 @@
 <h2 id="L">L</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="megatron.layers.html#megatron.layers.wrappers.Lambda">Lambda (class in megatron.layers.wrappers)</a>
+      <li><a href="megatron.layers.html#megatron.layers.core.Lambda">Lambda (class in megatron.layers.core)</a>
 </li>
       <li><a href="megatron.layers.html#megatron.layers.core.Layer">Layer (class in megatron.layers.core)</a>
 </li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="megatron.utils.html#megatron.utils.generic.listify">listify() (in module megatron.utils.generic)</a>
 </li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="megatron.nodes.html#megatron.nodes.core.InputNode.load">load() (megatron.nodes.core.InputNode method)</a>
+</li>
       <li><a href="megatron.html#megatron.pipeline.load_pipeline">load_pipeline() (in module megatron.pipeline)</a>
+</li>
+      <li><a href="megatron.io.html#megatron.io.storage.LocalStorage">LocalStorage (class in megatron.io.storage)</a>
+</li>
+      <li><a href="megatron.io.html#megatron.io.storage.LocalStorage.lookup">lookup() (megatron.io.storage.LocalStorage method)</a>
 </li>
   </ul></td>
 </tr></table>
@@ -305,15 +334,15 @@
 <h2 id="M">M</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="megatron.utils.html#megatron.utils.generic.md5_hash">md5_hash() (in module megatron.utils.generic)</a>
-</li>
       <li><a href="megatron.html#module-megatron">megatron (module)</a>
 </li>
-      <li><a href="megatron.adapters.html#module-megatron.adapters">megatron.adapters (module)</a>
+      <li><a href="megatron.io.html#module-megatron.io">megatron.io (module)</a>
 </li>
-      <li><a href="megatron.adapters.html#module-megatron.adapters.input">megatron.adapters.input (module)</a>
+      <li><a href="megatron.io.html#module-megatron.io.dataset">megatron.io.dataset (module)</a>
 </li>
-      <li><a href="megatron.adapters.html#module-megatron.adapters.output">megatron.adapters.output (module)</a>
+      <li><a href="megatron.io.html#module-megatron.io.generator">megatron.io.generator (module)</a>
+</li>
+      <li><a href="megatron.io.html#module-megatron.io.storage">megatron.io.storage (module)</a>
 </li>
       <li><a href="megatron.layers.html#module-megatron.layers">megatron.layers (module)</a>
 </li>
@@ -331,11 +360,11 @@
 </li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="megatron.layers.html#module-megatron.layers.wrappers">megatron.layers.wrappers (module)</a>
-</li>
       <li><a href="megatron.nodes.html#module-megatron.nodes">megatron.nodes (module)</a>
 </li>
       <li><a href="megatron.nodes.html#module-megatron.nodes.core">megatron.nodes.core (module)</a>
+</li>
+      <li><a href="megatron.nodes.html#module-megatron.nodes.fromfile">megatron.nodes.fromfile (module)</a>
 </li>
       <li><a href="megatron.nodes.html#module-megatron.nodes.wrappers">megatron.nodes.wrappers (module)</a>
 </li>
@@ -343,11 +372,13 @@
 </li>
       <li><a href="megatron.utils.html#module-megatron.utils">megatron.utils (module)</a>
 </li>
-      <li><a href="megatron.utils.html#module-megatron.utils.errors">megatron.utils.errors (module)</a>
-</li>
       <li><a href="megatron.utils.html#module-megatron.utils.generic">megatron.utils.generic (module)</a>
 </li>
-      <li><a href="megatron.utils.html#module-megatron.utils.public">megatron.utils.public (module)</a>
+      <li><a href="megatron.utils.html#module-megatron.utils.hash">megatron.utils.hash (module)</a>
+</li>
+      <li><a href="megatron.utils.html#module-megatron.utils.helpers">megatron.utils.helpers (module)</a>
+</li>
+      <li><a href="megatron.utils.html#module-megatron.utils.pipeline">megatron.utils.pipeline (module)</a>
 </li>
       <li><a href="megatron.html#module-megatron.visuals">megatron.visuals (module)</a>
 </li>
@@ -366,15 +397,13 @@
       <ul>
         <li><a href="megatron.layers.html#megatron.layers.core.StatelessLayer.name">(megatron.layers.core.StatelessLayer attribute)</a>
 </li>
-        <li><a href="megatron.layers.html#megatron.layers.wrappers.SklearnTransformation.name">(megatron.layers.wrappers.SklearnTransformation attribute)</a>
-</li>
         <li><a href="megatron.nodes.html#megatron.nodes.core.InputNode.name">(megatron.nodes.core.InputNode attribute)</a>
 </li>
       </ul></li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="megatron.nodes.html#megatron.nodes.wrappers.FeatureSet.name_to_index">name_to_index (megatron.nodes.wrappers.FeatureSet attribute)</a>
 </li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="megatron.nodes.html#megatron.nodes.wrappers.FeatureSet.names">names (megatron.nodes.wrappers.FeatureSet attribute)</a>
 </li>
       <li><a href="megatron.nodes.html#megatron.nodes.core.Node">Node (class in megatron.nodes.core)</a>
@@ -407,16 +436,24 @@
 <h2 id="P">P</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="megatron.html#megatron.pipeline.Pipeline">Pipeline (class in megatron.pipeline)</a>
+      <li><a href="megatron.io.html#megatron.io.dataset.PandasData">PandasData() (in module megatron.io.dataset)</a>
 </li>
-      <li><a href="megatron.nodes.html#megatron.nodes.core.InputNode.pipeline">pipeline (megatron.nodes.core.InputNode attribute)</a>
+      <li><a href="megatron.io.html#megatron.io.generator.PandasGenerator">PandasGenerator (class in megatron.io.generator)</a>
+</li>
+      <li><a href="megatron.layers.html#megatron.layers.core.Layer.partial_fit">partial_fit() (megatron.layers.core.Layer method)</a>
 
       <ul>
-        <li><a href="megatron.nodes.html#megatron.nodes.core.TransformationNode.pipeline">(megatron.nodes.core.TransformationNode attribute)</a>
+        <li><a href="megatron.layers.html#megatron.layers.core.StatefulLayer.partial_fit">(megatron.layers.core.StatefulLayer method)</a>
+</li>
+        <li><a href="megatron.nodes.html#megatron.nodes.core.TransformationNode.partial_fit">(megatron.nodes.core.TransformationNode method)</a>
+</li>
+        <li><a href="megatron.html#megatron.pipeline.Pipeline.partial_fit">(megatron.pipeline.Pipeline method)</a>
 </li>
       </ul></li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="megatron.html#megatron.pipeline.Pipeline">Pipeline (class in megatron.pipeline)</a>
+</li>
       <li><a href="megatron.html#megatron.visuals.pipeline_imsave">pipeline_imsave() (in module megatron.visuals)</a>
 </li>
       <li><a href="megatron.html#megatron.visuals.pipeline_imshow">pipeline_imshow() (in module megatron.visuals)</a>
@@ -433,43 +470,33 @@
 </li>
       <li><a href="megatron.layers.html#megatron.layers.numeric.Reshape">Reshape (class in megatron.layers.numeric)</a>
 </li>
-      <li><a href="megatron.layers.html#megatron.layers.common.Retype">Retype (class in megatron.layers.common)</a>
-</li>
-      <li><a href="megatron.layers.html#megatron.layers.image.RGBtoBinary">RGBtoBinary (class in megatron.layers.image)</a>
-</li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="megatron.layers.html#megatron.layers.image.RGBtoBinary">RGBtoBinary (class in megatron.layers.image)</a>
+</li>
       <li><a href="megatron.layers.html#megatron.layers.image.RGBtoGrey">RGBtoGrey (class in megatron.layers.image)</a>
 </li>
-      <li><a href="megatron.nodes.html#megatron.nodes.core.InputNode.run">run() (megatron.nodes.core.InputNode method)</a>
-
-      <ul>
-        <li><a href="megatron.nodes.html#megatron.nodes.core.Node.run">(megatron.nodes.core.Node method)</a>
-</li>
-        <li><a href="megatron.nodes.html#megatron.nodes.core.TransformationNode.run">(megatron.nodes.core.TransformationNode method)</a>
-</li>
-      </ul></li>
   </ul></td>
 </tr></table>
 
 <h2 id="S">S</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="megatron.utils.html#megatron.utils.public.safe_divide">safe_divide() (in module megatron.utils.public)</a>
+      <li><a href="megatron.utils.html#megatron.utils.helpers.safe_divide">safe_divide() (in module megatron.utils.helpers)</a>
 </li>
       <li><a href="megatron.html#megatron.pipeline.Pipeline.save">save() (megatron.pipeline.Pipeline method)</a>
 </li>
-      <li><a href="megatron.utils.html#megatron.utils.errors.ShapeError">ShapeError</a>
+      <li><a href="megatron.nodes.html#megatron.nodes.wrappers.FeatureSet.set">set() (megatron.nodes.wrappers.FeatureSet method)</a>
 </li>
-      <li><a href="megatron.layers.html#megatron.layers.wrappers.SklearnTransformation">SklearnTransformation (class in megatron.layers.wrappers)</a>
+      <li><a href="megatron.io.html#megatron.io.dataset.SQLData">SQLData() (in module megatron.io.dataset)</a>
 </li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="megatron.io.html#megatron.io.generator.SQLGenerator">SQLGenerator (class in megatron.io.generator)</a>
+</li>
       <li><a href="megatron.layers.html#megatron.layers.core.StatefulLayer">StatefulLayer (class in megatron.layers.core)</a>
 </li>
       <li><a href="megatron.layers.html#megatron.layers.core.StatelessLayer">StatelessLayer (class in megatron.layers.core)</a>
-</li>
-      <li><a href="megatron.nodes.html#megatron.nodes.core.InputNode.str">str (megatron.nodes.core.InputNode attribute)</a>
 </li>
       <li><a href="megatron.layers.html#megatron.layers.numeric.Subtract">Subtract (class in megatron.layers.numeric)</a>
 </li>
@@ -481,14 +508,18 @@
   <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="megatron.layers.html#megatron.layers.common.TimeSeries">TimeSeries (class in megatron.layers.common)</a>
 </li>
+      <li><a href="megatron.utils.html#megatron.utils.pipeline.topsort">topsort() (in module megatron.utils.pipeline)</a>
+</li>
       <li><a href="megatron.layers.html#megatron.layers.text.RemoveStopwords.transform">transform (megatron.layers.text.RemoveStopwords attribute)</a>
 </li>
-      <li><a href="megatron.layers.html#megatron.layers.common.Concatenate.transform">transform() (megatron.layers.common.Concatenate method)</a>
+      <li><a href="megatron.layers.html#megatron.layers.common.Cast.transform">transform() (megatron.layers.common.Cast method)</a>
 
       <ul>
-        <li><a href="megatron.layers.html#megatron.layers.common.Retype.transform">(megatron.layers.common.Retype method)</a>
+        <li><a href="megatron.layers.html#megatron.layers.common.Concatenate.transform">(megatron.layers.common.Concatenate method)</a>
 </li>
         <li><a href="megatron.layers.html#megatron.layers.common.TimeSeries.transform">(megatron.layers.common.TimeSeries method)</a>
+</li>
+        <li><a href="megatron.layers.html#megatron.layers.core.Lambda.transform">(megatron.layers.core.Lambda method)</a>
 </li>
         <li><a href="megatron.layers.html#megatron.layers.core.Layer.transform">(megatron.layers.core.Layer method)</a>
 </li>
@@ -518,25 +549,19 @@
 </li>
         <li><a href="megatron.layers.html#megatron.layers.numeric.Subtract.transform">(megatron.layers.numeric.Subtract method)</a>
 </li>
-        <li><a href="megatron.layers.html#megatron.layers.numeric.Whiten.transform">(megatron.layers.numeric.Whiten method)</a>
-</li>
-        <li><a href="megatron.layers.html#megatron.layers.wrappers.Lambda.transform">(megatron.layers.wrappers.Lambda method)</a>
-</li>
-        <li><a href="megatron.layers.html#megatron.layers.wrappers.SklearnTransformation.transform">(megatron.layers.wrappers.SklearnTransformation method)</a>
+        <li><a href="megatron.nodes.html#megatron.nodes.core.TransformationNode.transform">(megatron.nodes.core.TransformationNode method)</a>
 </li>
         <li><a href="megatron.html#megatron.pipeline.Pipeline.transform">(megatron.pipeline.Pipeline method)</a>
 </li>
       </ul></li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="megatron.layers.html#megatron.layers.wrappers.Lambda.transform_fn">transform_fn (megatron.layers.wrappers.Lambda attribute)</a>
+      <li><a href="megatron.layers.html#megatron.layers.core.Lambda.transform_fn">transform_fn (megatron.layers.core.Lambda attribute)</a>
 </li>
-      <li><a href="megatron.layers.html#megatron.layers.wrappers.SklearnTransformation.transformation">transformation (megatron.layers.wrappers.SklearnTransformation attribute)</a>
-
-      <ul>
-        <li><a href="megatron.nodes.html#megatron.nodes.core.TransformationNode.transformation">(megatron.nodes.core.TransformationNode attribute)</a>
+      <li><a href="megatron.html#megatron.pipeline.Pipeline.transform_generator">transform_generator() (megatron.pipeline.Pipeline method)</a>
 </li>
-      </ul></li>
+      <li><a href="megatron.nodes.html#megatron.nodes.core.TransformationNode.transformation">transformation (megatron.nodes.core.TransformationNode attribute)</a>
+</li>
       <li><a href="megatron.nodes.html#megatron.nodes.core.TransformationNode">TransformationNode (class in megatron.nodes.core)</a>
 </li>
   </ul></td>
@@ -561,7 +586,7 @@
 <h2 id="W">W</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="megatron.layers.html#megatron.layers.numeric.Whiten">Whiten (class in megatron.layers.numeric)</a>
+      <li><a href="megatron.io.html#megatron.io.storage.LocalStorage.write">write() (megatron.io.storage.LocalStorage method)</a>
 </li>
   </ul></td>
 </tr></table>

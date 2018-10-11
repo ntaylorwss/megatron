@@ -86,7 +86,6 @@
 <li><a class="reference internal" href="#module-megatron.layers.missing">megatron.layers.missing module</a></li>
 <li><a class="reference internal" href="#module-megatron.layers.numeric">megatron.layers.numeric module</a></li>
 <li><a class="reference internal" href="#module-megatron.layers.text">megatron.layers.text module</a></li>
-<li><a class="reference internal" href="#module-megatron.layers.wrappers">megatron.layers.wrappers module</a></li>
 <li><a class="reference internal" href="#module-megatron.layers">Module contents</a></li>
 </ul>
 </li>
@@ -162,13 +161,21 @@
 <div class="section" id="module-megatron.layers.common">
 <span id="megatron-layers-common-module"></span><h2>megatron.layers.common module<a class="headerlink" href="#module-megatron.layers.common" title="Permalink to this headline">¶</a></h2>
 <dl class="class">
-<dt id="megatron.layers.common.Concatenate">
-<em class="property">class </em><code class="descclassname">megatron.layers.common.</code><code class="descname">Concatenate</code><span class="sig-paren">(</span><em>name=None</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#megatron.layers.common.Concatenate" title="Permalink to this definition">¶</a></dt>
+<dt id="megatron.layers.common.Cast">
+<em class="property">class </em><code class="descclassname">megatron.layers.common.</code><code class="descname">Cast</code><span class="sig-paren">(</span><em>new_type</em><span class="sig-paren">)</span><a class="headerlink" href="#megatron.layers.common.Cast" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#megatron.layers.core.StatelessLayer" title="megatron.layers.core.StatelessLayer"><code class="xref py py-class docutils literal notranslate"><span class="pre">megatron.layers.core.StatelessLayer</span></code></a></p>
-<p>Combine Nodes, creating n-length array for each observation.</p>
+<p>Re-defines the data type for a Numpy array’s contents.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>new_type</strong> (<em>type</em>) – the new type for the array to be cast to.</td>
+</tr>
+</tbody>
+</table>
 <dl class="method">
-<dt id="megatron.layers.common.Concatenate.transform">
-<code class="descname">transform</code><span class="sig-paren">(</span><em>*arrays</em><span class="sig-paren">)</span><a class="headerlink" href="#megatron.layers.common.Concatenate.transform" title="Permalink to this definition">¶</a></dt>
+<dt id="megatron.layers.common.Cast.transform">
+<code class="descname">transform</code><span class="sig-paren">(</span><em>X</em><span class="sig-paren">)</span><a class="headerlink" href="#megatron.layers.common.Cast.transform" title="Permalink to this definition">¶</a></dt>
 <dd><p>Apply transformation to given input data.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -183,21 +190,13 @@
 </dd></dl>
 
 <dl class="class">
-<dt id="megatron.layers.common.Retype">
-<em class="property">class </em><code class="descclassname">megatron.layers.common.</code><code class="descname">Retype</code><span class="sig-paren">(</span><em>new_type</em>, <em>name=None</em><span class="sig-paren">)</span><a class="headerlink" href="#megatron.layers.common.Retype" title="Permalink to this definition">¶</a></dt>
+<dt id="megatron.layers.common.Concatenate">
+<em class="property">class </em><code class="descclassname">megatron.layers.common.</code><code class="descname">Concatenate</code><span class="sig-paren">(</span><em>name=None</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#megatron.layers.common.Concatenate" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#megatron.layers.core.StatelessLayer" title="megatron.layers.core.StatelessLayer"><code class="xref py py-class docutils literal notranslate"><span class="pre">megatron.layers.core.StatelessLayer</span></code></a></p>
-<p>Re-defines the data type for a Numpy array’s contents.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>new_type</strong> (<em>type</em>) – the new type for the array to be cast to.</td>
-</tr>
-</tbody>
-</table>
+<p>Combine Nodes, creating n-length array for each observation.</p>
 <dl class="method">
-<dt id="megatron.layers.common.Retype.transform">
-<code class="descname">transform</code><span class="sig-paren">(</span><em>X</em><span class="sig-paren">)</span><a class="headerlink" href="#megatron.layers.common.Retype.transform" title="Permalink to this definition">¶</a></dt>
+<dt id="megatron.layers.common.Concatenate.transform">
+<code class="descname">transform</code><span class="sig-paren">(</span><em>*arrays</em><span class="sig-paren">)</span><a class="headerlink" href="#megatron.layers.common.Concatenate.transform" title="Permalink to this definition">¶</a></dt>
 <dd><p>Apply transformation to given input data.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -249,14 +248,63 @@
 <div class="section" id="module-megatron.layers.core">
 <span id="megatron-layers-core-module"></span><h2>megatron.layers.core module<a class="headerlink" href="#module-megatron.layers.core" title="Permalink to this headline">¶</a></h2>
 <dl class="class">
+<dt id="megatron.layers.core.Lambda">
+<em class="property">class </em><code class="descclassname">megatron.layers.core.</code><code class="descname">Lambda</code><span class="sig-paren">(</span><em>transform_fn</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#megatron.layers.core.Lambda" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#megatron.layers.core.StatelessLayer" title="megatron.layers.core.StatelessLayer"><code class="xref py py-class docutils literal notranslate"><span class="pre">megatron.layers.core.StatelessLayer</span></code></a></p>
+<p>A layer holding a stateless transformation.</p>
+<p>For custom functions that are stateless, and thus do not require to be fit,
+a Lambda wrapper is preferred to creating a Transformation subclass.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>transform_fn</strong> (<em>function</em>) – the function to be applied, which accepts one or more
+Numpy arrays as positional arguments.</li>
+<li><strong>**kwargs</strong> – keyword arguments to whatever custom function is passed in as transform_fn.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<dl class="attribute">
+<dt id="megatron.layers.core.Lambda.transform_fn">
+<code class="descname">transform_fn</code><a class="headerlink" href="#megatron.layers.core.Lambda.transform_fn" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>function</em> – the function to be applied, which accepts one or more
+Numpy arrays as positional arguments.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt>
+<code class="descname">**kwargs</code></dt>
+<dd><p>keyword arguments to whatever custom function is passed in as transform_fn.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="megatron.layers.core.Lambda.transform">
+<code class="descname">transform</code><span class="sig-paren">(</span><em>*inputs</em><span class="sig-paren">)</span><a class="headerlink" href="#megatron.layers.core.Lambda.transform" title="Permalink to this definition">¶</a></dt>
+<dd><p>Applies transform_fn to given input data.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>inputs</strong> (<em>np.ndarray</em><em>(</em><em>s</em><em>)</em>) – input data to be passed to transform_fn; could be one array or a list of arrays.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
 <dt id="megatron.layers.core.Layer">
-<em class="property">class </em><code class="descclassname">megatron.layers.core.</code><code class="descname">Layer</code><a class="headerlink" href="#megatron.layers.core.Layer" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="descclassname">megatron.layers.core.</code><code class="descname">Layer</code><span class="sig-paren">(</span><em>name=None</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#megatron.layers.core.Layer" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
 <p>Base class of all layers.</p>
 <dl class="method">
 <dt id="megatron.layers.core.Layer.fit">
 <code class="descname">fit</code><span class="sig-paren">(</span><em>*inputs</em><span class="sig-paren">)</span><a class="headerlink" href="#megatron.layers.core.Layer.fit" title="Permalink to this definition">¶</a></dt>
-<dd><p>Calculates and overwrites metadata (if necessary).cored on current inputs.</p>
+<dd><p>Overwrites metadata based on given batch of data or full dataset.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
@@ -265,6 +313,15 @@
 </tr>
 </tbody>
 </table>
+</dd></dl>
+
+<dl class="method">
+<dt id="megatron.layers.core.Layer.partial_fit">
+<code class="descname">partial_fit</code><span class="sig-paren">(</span><em>*inputs</em><span class="sig-paren">)</span><a class="headerlink" href="#megatron.layers.core.Layer.partial_fit" title="Permalink to this definition">¶</a></dt>
+<dd><p>Updates metadata based on given batch of data or full dataset.</p>
+<p>Contains the main logic of fitting.
+:param inputs: the input data to be fit to; could be one array or a list of arrays.
+:type inputs: numpy.ndarray(s)</p>
 </dd></dl>
 
 <dl class="method">
@@ -285,7 +342,7 @@
 
 <dl class="class">
 <dt id="megatron.layers.core.StatefulLayer">
-<em class="property">class </em><code class="descclassname">megatron.layers.core.</code><code class="descname">StatefulLayer</code><span class="sig-paren">(</span><em>name=None</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#megatron.layers.core.StatefulLayer" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="descclassname">megatron.layers.core.</code><code class="descname">StatefulLayer</code><span class="sig-paren">(</span><em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#megatron.layers.core.StatefulLayer" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#megatron.layers.core.Layer" title="megatron.layers.core.Layer"><code class="xref py py-class docutils literal notranslate"><span class="pre">megatron.layers.core.Layer</span></code></a></p>
 <p>A layer holding a stateful transformation.</p>
 <p>For custom functions that are stateful, and thus require to be fit,
@@ -323,6 +380,20 @@ writing a Transformation subclass is required rather than using a Lambda wrapper
 <dl class="method">
 <dt id="megatron.layers.core.StatefulLayer.fit">
 <code class="descname">fit</code><span class="sig-paren">(</span><em>*inputs</em><span class="sig-paren">)</span><a class="headerlink" href="#megatron.layers.core.StatefulLayer.fit" title="Permalink to this definition">¶</a></dt>
+<dd><p>Overwrites metadata based on given batch of data or full dataset.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>inputs</strong> (<em>numpy.ndarray</em><em>(</em><em>s</em><em>)</em>) – the input data to be fit to; could be one array or a list of arrays.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="megatron.layers.core.StatefulLayer.partial_fit">
+<code class="descname">partial_fit</code><span class="sig-paren">(</span><em>*inputs</em><span class="sig-paren">)</span><a class="headerlink" href="#megatron.layers.core.StatefulLayer.partial_fit" title="Permalink to this definition">¶</a></dt>
 <dd><p>Must be implemented for a layer to be considered stateful.</p>
 </dd></dl>
 
@@ -364,7 +435,7 @@ writing a Transformation subclass is required rather than using a Lambda wrapper
 <span id="megatron-layers-image-module"></span><h2>megatron.layers.image module<a class="headerlink" href="#module-megatron.layers.image" title="Permalink to this headline">¶</a></h2>
 <dl class="class">
 <dt id="megatron.layers.image.Downsample">
-<em class="property">class </em><code class="descclassname">megatron.layers.image.</code><code class="descname">Downsample</code><span class="sig-paren">(</span><em>new_shape</em>, <em>name=None</em><span class="sig-paren">)</span><a class="headerlink" href="#megatron.layers.image.Downsample" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="descclassname">megatron.layers.image.</code><code class="descname">Downsample</code><span class="sig-paren">(</span><em>new_shape</em><span class="sig-paren">)</span><a class="headerlink" href="#megatron.layers.image.Downsample" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#megatron.layers.core.StatelessLayer" title="megatron.layers.core.StatelessLayer"><code class="xref py py-class docutils literal notranslate"><span class="pre">megatron.layers.core.StatelessLayer</span></code></a></p>
 <p>Shrink an image to a given size proportionally.</p>
 <table class="docutils field-list" frame="void" rules="none">
@@ -414,7 +485,7 @@ writing a Transformation subclass is required rather than using a Lambda wrapper
 
 <dl class="class">
 <dt id="megatron.layers.image.RGBtoGrey">
-<em class="property">class </em><code class="descclassname">megatron.layers.image.</code><code class="descname">RGBtoGrey</code><span class="sig-paren">(</span><em>method='luminosity'</em>, <em>name=None</em><span class="sig-paren">)</span><a class="headerlink" href="#megatron.layers.image.RGBtoGrey" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="descclassname">megatron.layers.image.</code><code class="descname">RGBtoGrey</code><span class="sig-paren">(</span><em>method='luminosity'</em><span class="sig-paren">)</span><a class="headerlink" href="#megatron.layers.image.RGBtoGrey" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#megatron.layers.core.StatelessLayer" title="megatron.layers.core.StatelessLayer"><code class="xref py py-class docutils literal notranslate"><span class="pre">megatron.layers.core.StatelessLayer</span></code></a></p>
 <p>Convert an RGB array representation of an image to greyscale.</p>
 <table class="docutils field-list" frame="void" rules="none">
@@ -443,7 +514,7 @@ writing a Transformation subclass is required rather than using a Lambda wrapper
 
 <dl class="class">
 <dt id="megatron.layers.image.Upsample">
-<em class="property">class </em><code class="descclassname">megatron.layers.image.</code><code class="descname">Upsample</code><span class="sig-paren">(</span><em>new_shape</em>, <em>name=None</em><span class="sig-paren">)</span><a class="headerlink" href="#megatron.layers.image.Upsample" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="descclassname">megatron.layers.image.</code><code class="descname">Upsample</code><span class="sig-paren">(</span><em>new_shape</em><span class="sig-paren">)</span><a class="headerlink" href="#megatron.layers.image.Upsample" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#megatron.layers.core.StatelessLayer" title="megatron.layers.core.StatelessLayer"><code class="xref py py-class docutils literal notranslate"><span class="pre">megatron.layers.core.StatelessLayer</span></code></a></p>
 <p>Expand an image to a given size proportionally.</p>
 <table class="docutils field-list" frame="void" rules="none">
@@ -475,7 +546,7 @@ writing a Transformation subclass is required rather than using a Lambda wrapper
 <span id="megatron-layers-missing-module"></span><h2>megatron.layers.missing module<a class="headerlink" href="#module-megatron.layers.missing" title="Permalink to this headline">¶</a></h2>
 <dl class="class">
 <dt id="megatron.layers.missing.Impute">
-<em class="property">class </em><code class="descclassname">megatron.layers.missing.</code><code class="descname">Impute</code><span class="sig-paren">(</span><em>imputation_dict</em>, <em>name=None</em><span class="sig-paren">)</span><a class="headerlink" href="#megatron.layers.missing.Impute" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="descclassname">megatron.layers.missing.</code><code class="descname">Impute</code><span class="sig-paren">(</span><em>imputation_dict</em><span class="sig-paren">)</span><a class="headerlink" href="#megatron.layers.missing.Impute" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#megatron.layers.core.StatelessLayer" title="megatron.layers.core.StatelessLayer"><code class="xref py py-class docutils literal notranslate"><span class="pre">megatron.layers.core.StatelessLayer</span></code></a></p>
 <dl class="method">
 <dt id="megatron.layers.missing.Impute.transform">
@@ -519,7 +590,7 @@ writing a Transformation subclass is required rather than using a Lambda wrapper
 
 <dl class="class">
 <dt id="megatron.layers.numeric.AddDim">
-<em class="property">class </em><code class="descclassname">megatron.layers.numeric.</code><code class="descname">AddDim</code><span class="sig-paren">(</span><em>axis</em>, <em>name=None</em><span class="sig-paren">)</span><a class="headerlink" href="#megatron.layers.numeric.AddDim" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="descclassname">megatron.layers.numeric.</code><code class="descname">AddDim</code><span class="sig-paren">(</span><em>axis</em><span class="sig-paren">)</span><a class="headerlink" href="#megatron.layers.numeric.AddDim" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#megatron.layers.core.StatelessLayer" title="megatron.layers.core.StatelessLayer"><code class="xref py py-class docutils literal notranslate"><span class="pre">megatron.layers.core.StatelessLayer</span></code></a></p>
 <p>Add a dimension to an array.</p>
 <table class="docutils field-list" frame="void" rules="none">
@@ -548,7 +619,7 @@ writing a Transformation subclass is required rather than using a Lambda wrapper
 
 <dl class="class">
 <dt id="megatron.layers.numeric.Divide">
-<em class="property">class </em><code class="descclassname">megatron.layers.numeric.</code><code class="descname">Divide</code><span class="sig-paren">(</span><em>impute=0</em>, <em>name=None</em><span class="sig-paren">)</span><a class="headerlink" href="#megatron.layers.numeric.Divide" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="descclassname">megatron.layers.numeric.</code><code class="descname">Divide</code><span class="sig-paren">(</span><em>impute=0</em><span class="sig-paren">)</span><a class="headerlink" href="#megatron.layers.numeric.Divide" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#megatron.layers.core.StatelessLayer" title="megatron.layers.core.StatelessLayer"><code class="xref py py-class docutils literal notranslate"><span class="pre">megatron.layers.core.StatelessLayer</span></code></a></p>
 <p>Divide given array by another given array element-wise.</p>
 <table class="docutils field-list" frame="void" rules="none">
@@ -577,7 +648,7 @@ writing a Transformation subclass is required rather than using a Lambda wrapper
 
 <dl class="class">
 <dt id="megatron.layers.numeric.Dot">
-<em class="property">class </em><code class="descclassname">megatron.layers.numeric.</code><code class="descname">Dot</code><span class="sig-paren">(</span><em>W</em>, <em>name=None</em><span class="sig-paren">)</span><a class="headerlink" href="#megatron.layers.numeric.Dot" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="descclassname">megatron.layers.numeric.</code><code class="descname">Dot</code><span class="sig-paren">(</span><em>W</em><span class="sig-paren">)</span><a class="headerlink" href="#megatron.layers.numeric.Dot" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#megatron.layers.core.StatelessLayer" title="megatron.layers.core.StatelessLayer"><code class="xref py py-class docutils literal notranslate"><span class="pre">megatron.layers.core.StatelessLayer</span></code></a></p>
 <p>Multiply array by a given matrix, as matrix mulitplication.</p>
 <table class="docutils field-list" frame="void" rules="none">
@@ -606,7 +677,7 @@ writing a Transformation subclass is required rather than using a Lambda wrapper
 
 <dl class="class">
 <dt id="megatron.layers.numeric.Multiply">
-<em class="property">class </em><code class="descclassname">megatron.layers.numeric.</code><code class="descname">Multiply</code><span class="sig-paren">(</span><em>factor</em>, <em>name=None</em><span class="sig-paren">)</span><a class="headerlink" href="#megatron.layers.numeric.Multiply" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="descclassname">megatron.layers.numeric.</code><code class="descname">Multiply</code><span class="sig-paren">(</span><em>factor</em><span class="sig-paren">)</span><a class="headerlink" href="#megatron.layers.numeric.Multiply" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#megatron.layers.core.StatelessLayer" title="megatron.layers.core.StatelessLayer"><code class="xref py py-class docutils literal notranslate"><span class="pre">megatron.layers.core.StatelessLayer</span></code></a></p>
 <p>Multiply array by a given scalar.</p>
 <table class="docutils field-list" frame="void" rules="none">
@@ -635,7 +706,7 @@ writing a Transformation subclass is required rather than using a Lambda wrapper
 
 <dl class="class">
 <dt id="megatron.layers.numeric.OneHot">
-<em class="property">class </em><code class="descclassname">megatron.layers.numeric.</code><code class="descname">OneHot</code><span class="sig-paren">(</span><em>max_val</em>, <em>min_val=0</em>, <em>name=None</em><span class="sig-paren">)</span><a class="headerlink" href="#megatron.layers.numeric.OneHot" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="descclassname">megatron.layers.numeric.</code><code class="descname">OneHot</code><span class="sig-paren">(</span><em>max_val</em>, <em>min_val=0</em><span class="sig-paren">)</span><a class="headerlink" href="#megatron.layers.numeric.OneHot" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#megatron.layers.core.StatelessLayer" title="megatron.layers.core.StatelessLayer"><code class="xref py py-class docutils literal notranslate"><span class="pre">megatron.layers.core.StatelessLayer</span></code></a></p>
 <p>One-hot encode an array for given range of values.</p>
 <table class="docutils field-list" frame="void" rules="none">
@@ -668,7 +739,7 @@ writing a Transformation subclass is required rather than using a Lambda wrapper
 
 <dl class="class">
 <dt id="megatron.layers.numeric.Reshape">
-<em class="property">class </em><code class="descclassname">megatron.layers.numeric.</code><code class="descname">Reshape</code><span class="sig-paren">(</span><em>new_shape</em>, <em>name=None</em><span class="sig-paren">)</span><a class="headerlink" href="#megatron.layers.numeric.Reshape" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="descclassname">megatron.layers.numeric.</code><code class="descname">Reshape</code><span class="sig-paren">(</span><em>new_shape</em><span class="sig-paren">)</span><a class="headerlink" href="#megatron.layers.numeric.Reshape" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#megatron.layers.core.StatelessLayer" title="megatron.layers.core.StatelessLayer"><code class="xref py py-class docutils literal notranslate"><span class="pre">megatron.layers.core.StatelessLayer</span></code></a></p>
 <p>Reshape an array to a given new shape.</p>
 <table class="docutils field-list" frame="void" rules="none">
@@ -716,39 +787,12 @@ writing a Transformation subclass is required rather than using a Lambda wrapper
 
 </dd></dl>
 
-<dl class="class">
-<dt id="megatron.layers.numeric.Whiten">
-<em class="property">class </em><code class="descclassname">megatron.layers.numeric.</code><code class="descname">Whiten</code><span class="sig-paren">(</span><em>name=None</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#megatron.layers.numeric.Whiten" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference internal" href="#megatron.layers.core.StatefulLayer" title="megatron.layers.core.StatefulLayer"><code class="xref py py-class docutils literal notranslate"><span class="pre">megatron.layers.core.StatefulLayer</span></code></a></p>
-<p>Bring mean to 0 and standard deviation to 1.</p>
-<dl class="method">
-<dt id="megatron.layers.numeric.Whiten.fit">
-<code class="descname">fit</code><span class="sig-paren">(</span><em>X</em><span class="sig-paren">)</span><a class="headerlink" href="#megatron.layers.numeric.Whiten.fit" title="Permalink to this definition">¶</a></dt>
-<dd><p>Must be implemented for a layer to be considered stateful.</p>
-</dd></dl>
-
-<dl class="method">
-<dt id="megatron.layers.numeric.Whiten.transform">
-<code class="descname">transform</code><span class="sig-paren">(</span><em>X</em><span class="sig-paren">)</span><a class="headerlink" href="#megatron.layers.numeric.Whiten.transform" title="Permalink to this definition">¶</a></dt>
-<dd><p>Apply transformation to given input data.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>inputs</strong> (<em>np.ndarray</em><em>(</em><em>s</em><em>)</em>) – input data to be transformed; could be one array or a list of arrays.</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-</dd></dl>
-
 </div>
 <div class="section" id="module-megatron.layers.text">
 <span id="megatron-layers-text-module"></span><h2>megatron.layers.text module<a class="headerlink" href="#module-megatron.layers.text" title="Permalink to this headline">¶</a></h2>
 <dl class="class">
 <dt id="megatron.layers.text.RemoveStopwords">
-<em class="property">class </em><code class="descclassname">megatron.layers.text.</code><code class="descname">RemoveStopwords</code><span class="sig-paren">(</span><em>language='english'</em>, <em>name=None</em><span class="sig-paren">)</span><a class="headerlink" href="#megatron.layers.text.RemoveStopwords" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="descclassname">megatron.layers.text.</code><code class="descname">RemoveStopwords</code><span class="sig-paren">(</span><em>language='english'</em><span class="sig-paren">)</span><a class="headerlink" href="#megatron.layers.text.RemoveStopwords" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#megatron.layers.core.StatelessLayer" title="megatron.layers.core.StatelessLayer"><code class="xref py py-class docutils literal notranslate"><span class="pre">megatron.layers.core.StatelessLayer</span></code></a></p>
 <p>Remove common, low-information words from all elements of text array.</p>
 <table class="docutils field-list" frame="void" rules="none">
@@ -763,109 +807,6 @@ writing a Transformation subclass is required rather than using a Lambda wrapper
 <dt id="megatron.layers.text.RemoveStopwords.transform">
 <code class="descname">transform</code><em class="property"> = &lt;numpy.lib.function_base.vectorize object&gt;</em><a class="headerlink" href="#megatron.layers.text.RemoveStopwords.transform" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
-
-</dd></dl>
-
-</div>
-<div class="section" id="module-megatron.layers.wrappers">
-<span id="megatron-layers-wrappers-module"></span><h2>megatron.layers.wrappers module<a class="headerlink" href="#module-megatron.layers.wrappers" title="Permalink to this headline">¶</a></h2>
-<dl class="class">
-<dt id="megatron.layers.wrappers.Lambda">
-<em class="property">class </em><code class="descclassname">megatron.layers.wrappers.</code><code class="descname">Lambda</code><span class="sig-paren">(</span><em>transform_fn</em>, <em>name=None</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#megatron.layers.wrappers.Lambda" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference internal" href="#megatron.layers.core.StatelessLayer" title="megatron.layers.core.StatelessLayer"><code class="xref py py-class docutils literal notranslate"><span class="pre">megatron.layers.core.StatelessLayer</span></code></a></p>
-<p>A layer holding a stateless transformation.</p>
-<p>For custom functions that are stateless, and thus do not require to be fit,
-a Lambda wrapper is preferred to creating a Transformation subclass.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>transform_fn</strong> (<em>function</em>) – the function to be applied, which accepts one or more
-Numpy arrays as positional arguments.</li>
-<li><strong>**kwargs</strong> – keyword arguments to whatever custom function is passed in as transform_fn.</li>
-</ul>
-</td>
-</tr>
-</tbody>
-</table>
-<dl class="attribute">
-<dt id="megatron.layers.wrappers.Lambda.transform_fn">
-<code class="descname">transform_fn</code><a class="headerlink" href="#megatron.layers.wrappers.Lambda.transform_fn" title="Permalink to this definition">¶</a></dt>
-<dd><p><em>function</em> – the function to be applied, which accepts one or more
-Numpy arrays as positional arguments.</p>
-</dd></dl>
-
-<dl class="attribute">
-<dt>
-<code class="descname">**kwargs</code></dt>
-<dd><p>keyword arguments to whatever custom function is passed in as transform_fn.</p>
-</dd></dl>
-
-<dl class="method">
-<dt id="megatron.layers.wrappers.Lambda.transform">
-<code class="descname">transform</code><span class="sig-paren">(</span><em>*inputs</em><span class="sig-paren">)</span><a class="headerlink" href="#megatron.layers.wrappers.Lambda.transform" title="Permalink to this definition">¶</a></dt>
-<dd><p>Applies transform_fn to given input data.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>inputs</strong> (<em>np.ndarray</em><em>(</em><em>s</em><em>)</em>) – input data to be passed to transform_fn; could be one array or a list of arrays.</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-</dd></dl>
-
-<dl class="class">
-<dt id="megatron.layers.wrappers.SklearnTransformation">
-<em class="property">class </em><code class="descclassname">megatron.layers.wrappers.</code><code class="descname">SklearnTransformation</code><span class="sig-paren">(</span><em>transformation</em>, <em>name=None</em><span class="sig-paren">)</span><a class="headerlink" href="#megatron.layers.wrappers.SklearnTransformation" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference internal" href="#megatron.layers.core.StatefulLayer" title="megatron.layers.core.StatefulLayer"><code class="xref py py-class docutils literal notranslate"><span class="pre">megatron.layers.core.StatefulLayer</span></code></a></p>
-<p>Wrapper for Sklearn pipeline transformation classes.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>transformation</strong> (<em>sklearn.BaseEstimator</em>) – the sklearn class to use.</li>
-<li><strong>name</strong> (<em>str</em>) – name to give the transformation, used in visualization.</li>
-</ul>
-</td>
-</tr>
-</tbody>
-</table>
-<dl class="attribute">
-<dt id="megatron.layers.wrappers.SklearnTransformation.transformation">
-<code class="descname">transformation</code><a class="headerlink" href="#megatron.layers.wrappers.SklearnTransformation.transformation" title="Permalink to this definition">¶</a></dt>
-<dd><p><em>sklearn.BaseEstimator</em> – the sklearn class to use.</p>
-</dd></dl>
-
-<dl class="attribute">
-<dt id="megatron.layers.wrappers.SklearnTransformation.name">
-<code class="descname">name</code><a class="headerlink" href="#megatron.layers.wrappers.SklearnTransformation.name" title="Permalink to this definition">¶</a></dt>
-<dd><p><em>str</em> – name to give the transformation, used in visualization.</p>
-</dd></dl>
-
-<dl class="method">
-<dt id="megatron.layers.wrappers.SklearnTransformation.fit">
-<code class="descname">fit</code><span class="sig-paren">(</span><em>inputs</em><span class="sig-paren">)</span><a class="headerlink" href="#megatron.layers.wrappers.SklearnTransformation.fit" title="Permalink to this definition">¶</a></dt>
-<dd><p>Must be implemented for a layer to be considered stateful.</p>
-</dd></dl>
-
-<dl class="method">
-<dt id="megatron.layers.wrappers.SklearnTransformation.transform">
-<code class="descname">transform</code><span class="sig-paren">(</span><em>inputs</em><span class="sig-paren">)</span><a class="headerlink" href="#megatron.layers.wrappers.SklearnTransformation.transform" title="Permalink to this definition">¶</a></dt>
-<dd><p>Apply transformation to given input data.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>inputs</strong> (<em>np.ndarray</em><em>(</em><em>s</em><em>)</em>) – input data to be transformed; could be one array or a list of arrays.</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
 
 </dd></dl>
 

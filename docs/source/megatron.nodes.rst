@@ -12,6 +12,14 @@ megatron.nodes.core module
     :undoc-members:
     :show-inheritance:
 
+megatron.nodes.fromfile module
+------------------------------
+
+.. automodule:: megatron.nodes.fromfile
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
 megatron.nodes.wrappers module
 ------------------------------
 

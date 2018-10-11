@@ -156,11 +156,12 @@
 <h2>Subpackages<a class="headerlink" href="#subpackages" title="Permalink to this headline">¶</a></h2>
 <div class="toctree-wrapper compound">
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="megatron.adapters.html">megatron.adapters package</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="megatron.adapters.html#submodules">Submodules</a></li>
-<li class="toctree-l2"><a class="reference internal" href="megatron.adapters.html#module-megatron.adapters.input">megatron.adapters.input module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="megatron.adapters.html#module-megatron.adapters.output">megatron.adapters.output module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="megatron.adapters.html#module-megatron.adapters">Module contents</a></li>
+<li class="toctree-l1"><a class="reference internal" href="megatron.io.html">megatron.io package</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="megatron.io.html#submodules">Submodules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="megatron.io.html#module-megatron.io.dataset">megatron.io.dataset module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="megatron.io.html#module-megatron.io.generator">megatron.io.generator module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="megatron.io.html#module-megatron.io.storage">megatron.io.storage module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="megatron.io.html#module-megatron.io">Module contents</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="megatron.layers.html">megatron.layers package</a><ul>
@@ -171,22 +172,24 @@
 <li class="toctree-l2"><a class="reference internal" href="megatron.layers.html#module-megatron.layers.missing">megatron.layers.missing module</a></li>
 <li class="toctree-l2"><a class="reference internal" href="megatron.layers.html#module-megatron.layers.numeric">megatron.layers.numeric module</a></li>
 <li class="toctree-l2"><a class="reference internal" href="megatron.layers.html#module-megatron.layers.text">megatron.layers.text module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="megatron.layers.html#module-megatron.layers.wrappers">megatron.layers.wrappers module</a></li>
 <li class="toctree-l2"><a class="reference internal" href="megatron.layers.html#module-megatron.layers">Module contents</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="megatron.nodes.html">megatron.nodes package</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="megatron.nodes.html#submodules">Submodules</a></li>
 <li class="toctree-l2"><a class="reference internal" href="megatron.nodes.html#module-megatron.nodes.core">megatron.nodes.core module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="megatron.nodes.html#module-megatron.nodes.fromfile">megatron.nodes.fromfile module</a></li>
 <li class="toctree-l2"><a class="reference internal" href="megatron.nodes.html#module-megatron.nodes.wrappers">megatron.nodes.wrappers module</a></li>
 <li class="toctree-l2"><a class="reference internal" href="megatron.nodes.html#module-megatron.nodes">Module contents</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="megatron.utils.html">megatron.utils package</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="megatron.utils.html#submodules">Submodules</a></li>
-<li class="toctree-l2"><a class="reference internal" href="megatron.utils.html#module-megatron.utils.errors">megatron.utils.errors module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="megatron.utils.html#megatron-utils-errors-module">megatron.utils.errors module</a></li>
 <li class="toctree-l2"><a class="reference internal" href="megatron.utils.html#module-megatron.utils.generic">megatron.utils.generic module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="megatron.utils.html#module-megatron.utils.public">megatron.utils.public module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="megatron.utils.html#module-megatron.utils.hash">megatron.utils.hash module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="megatron.utils.html#module-megatron.utils.helpers">megatron.utils.helpers module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="megatron.utils.html#module-megatron.utils.pipeline">megatron.utils.pipeline module</a></li>
 <li class="toctree-l2"><a class="reference internal" href="megatron.utils.html#module-megatron.utils">Module contents</a></li>
 </ul>
 </li>
@@ -200,7 +203,7 @@
 <span id="megatron-pipeline-module"></span><h2>megatron.pipeline module<a class="headerlink" href="#module-megatron.pipeline" title="Permalink to this headline">¶</a></h2>
 <dl class="class">
 <dt id="megatron.pipeline.Pipeline">
-<em class="property">class </em><code class="descclassname">megatron.pipeline.</code><code class="descname">Pipeline</code><span class="sig-paren">(</span><em>cache_dir='feature_cache'</em><span class="sig-paren">)</span><a class="headerlink" href="#megatron.pipeline.Pipeline" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="descclassname">megatron.pipeline.</code><code class="descname">Pipeline</code><span class="sig-paren">(</span><em>inputs</em>, <em>outputs</em>, <em>name=None</em>, <em>storage='local'</em><span class="sig-paren">)</span><a class="headerlink" href="#megatron.pipeline.Pipeline" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
 <p>A pipeline with nodes as Transformations and InputNodes, edges as I/O relationships.</p>
 <p>Pipelines internally implement intelligent caching for maximal data re-use.
@@ -235,6 +238,21 @@ data being passed to an InputNode node as a function call.</p>
 </dd></dl>
 
 <dl class="method">
+<dt id="megatron.pipeline.Pipeline.fit">
+<code class="descname">fit</code><span class="sig-paren">(</span><em>input_data</em><span class="sig-paren">)</span><a class="headerlink" href="#megatron.pipeline.Pipeline.fit" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="megatron.pipeline.Pipeline.fit_generator">
+<code class="descname">fit_generator</code><span class="sig-paren">(</span><em>input_generator</em><span class="sig-paren">)</span><a class="headerlink" href="#megatron.pipeline.Pipeline.fit_generator" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="megatron.pipeline.Pipeline.partial_fit">
+<code class="descname">partial_fit</code><span class="sig-paren">(</span><em>input_data</em><span class="sig-paren">)</span><a class="headerlink" href="#megatron.pipeline.Pipeline.partial_fit" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
 <dt id="megatron.pipeline.Pipeline.save">
 <code class="descname">save</code><span class="sig-paren">(</span><em>filepath</em><span class="sig-paren">)</span><a class="headerlink" href="#megatron.pipeline.Pipeline.save" title="Permalink to this definition">¶</a></dt>
 <dd><p>Store just the nodes without their data (i.e. pre-execution) in a given file.</p>
@@ -250,17 +268,15 @@ data being passed to an InputNode node as a function call.</p>
 
 <dl class="method">
 <dt id="megatron.pipeline.Pipeline.transform">
-<code class="descname">transform</code><span class="sig-paren">(</span><em>output_nodes</em>, <em>input_data</em>, <em>cache_result=True</em>, <em>refit=False</em>, <em>form='array'</em><span class="sig-paren">)</span><a class="headerlink" href="#megatron.pipeline.Pipeline.transform" title="Permalink to this definition">¶</a></dt>
-<dd><p>Execute a path terminating at (a) given TransformationNode(s) with some input data.</p>
+<code class="descname">transform</code><span class="sig-paren">(</span><em>input_data</em>, <em>cache_result=True</em>, <em>out_type='array'</em><span class="sig-paren">)</span><a class="headerlink" href="#megatron.pipeline.Pipeline.transform" title="Permalink to this definition">¶</a></dt>
+<dd><p>Execute the graph with some input data, get the output nodes’ data.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>output_nodes</strong> (<em>list of TransformationNode</em>) – the terminal nodes for which to return data.</li>
 <li><strong>input_data</strong> (<em>dict of Numpy array</em>) – the input data to be passed to InputNode TransformationNodes to begin execution.</li>
 <li><strong>cache_result</strong> (<em>bool</em>) – whether to store the resulting Numpy array in the cache.</li>
-<li><strong>refit</strong> (<em>bool</em>) – applies to Transformation nodes; if True, recalculate metadata based on this data.</li>
 <li><strong>form</strong> (<em>{'array'</em><em>, </em><em>'dataframe'}</em>) – data type to return as. If dataframe, colnames are node names.</li>
 </ul>
 </td>
@@ -268,6 +284,11 @@ data being passed to an InputNode node as a function call.</p>
 </tbody>
 </table>
 </dd></dl>
+
+<dl class="method">
+<dt id="megatron.pipeline.Pipeline.transform_generator">
+<code class="descname">transform_generator</code><span class="sig-paren">(</span><em>input_generator</em>, <em>cache_result=True</em>, <em>out_type='array'</em><span class="sig-paren">)</span><a class="headerlink" href="#megatron.pipeline.Pipeline.transform_generator" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
 
 </dd></dl>
 
@@ -290,7 +311,7 @@ data being passed to an InputNode node as a function call.</p>
 <span id="megatron-visuals-module"></span><h2>megatron.visuals module<a class="headerlink" href="#module-megatron.visuals" title="Permalink to this headline">¶</a></h2>
 <dl class="function">
 <dt id="megatron.visuals.pipeline_imsave">
-<code class="descclassname">megatron.visuals.</code><code class="descname">pipeline_imsave</code><span class="sig-paren">(</span><em>pipeline</em>, <em>output_nodes</em>, <em>save_path='pipeline.png'</em>, <em>rankdir='TB'</em><span class="sig-paren">)</span><a class="headerlink" href="#megatron.visuals.pipeline_imsave" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">megatron.visuals.</code><code class="descname">pipeline_imsave</code><span class="sig-paren">(</span><em>pipeline</em>, <em>save_path='pipeline.png'</em>, <em>rankdir='TB'</em><span class="sig-paren">)</span><a class="headerlink" href="#megatron.visuals.pipeline_imsave" title="Permalink to this definition">¶</a></dt>
 <dd><p>Save visualization of pipeline to an image file.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -298,8 +319,6 @@ data being passed to an InputNode node as a function call.</p>
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
 <li><strong>pipeline</strong> (<em>megatron.Pipeline</em>) – Feature pipeline defined as a pipeline.</li>
-<li><strong>output_nodes</strong> (<em>megatron.Node</em><em> or </em><em>list of megatron.Node</em>) – The output nodes of the pipeline determine your feature-space. Include a list
-of all nodes which you would like to be included as features in the output.</li>
 <li><strong>save_path</strong> (<em>str</em>) – Specify where to save the pipeline visualization.</li>
 <li><strong>rankdir</strong> (<em>str</em><em> [</em><em>'TB'</em><em> or </em><em>'LR'</em><em>]</em>) – Direction of pipeline to plot (top to bottom or left to right).</li>
 </ul>
@@ -311,7 +330,7 @@ of all nodes which you would like to be included as features in the output.</li>
 
 <dl class="function">
 <dt id="megatron.visuals.pipeline_imshow">
-<code class="descclassname">megatron.visuals.</code><code class="descname">pipeline_imshow</code><span class="sig-paren">(</span><em>pipeline</em>, <em>output_nodes</em>, <em>rankdir='TB'</em><span class="sig-paren">)</span><a class="headerlink" href="#megatron.visuals.pipeline_imshow" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">megatron.visuals.</code><code class="descname">pipeline_imshow</code><span class="sig-paren">(</span><em>pipeline</em>, <em>rankdir='TB'</em><span class="sig-paren">)</span><a class="headerlink" href="#megatron.visuals.pipeline_imshow" title="Permalink to this definition">¶</a></dt>
 <dd><p>Create visualization of pipeline within Jupyter Notebook.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -319,8 +338,6 @@ of all nodes which you would like to be included as features in the output.</li>
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
 <li><strong>pipeline</strong> (<em>megatron.Pipeline</em>) – Feature pipeline defined as a pipeline.</li>
-<li><strong>output_nodes</strong> (<em>megatron.Node</em><em> or </em><em>list of megatron.Node</em>) – The output nodes of the pipeline determine your feature-space. Include a list
-of all nodes which you would like to be included as features in the output.</li>
 <li><strong>rankdir</strong> (<em>str</em><em> [</em><em>'TB'</em><em> or </em><em>'LR'</em><em>]</em>) – Direction of pipeline to plot (top to bottom or left to right).</li>
 </ul>
 </td>
@@ -337,7 +354,7 @@ of all nodes which you would like to be included as features in the output.</li>
 
 <dl class="function">
 <dt id="megatron.visuals.pipeline_to_dot">
-<code class="descclassname">megatron.visuals.</code><code class="descname">pipeline_to_dot</code><span class="sig-paren">(</span><em>pipeline</em>, <em>output_nodes</em>, <em>rankdir='TB'</em><span class="sig-paren">)</span><a class="headerlink" href="#megatron.visuals.pipeline_to_dot" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">megatron.visuals.</code><code class="descname">pipeline_to_dot</code><span class="sig-paren">(</span><em>pipeline</em>, <em>rankdir='TB'</em><span class="sig-paren">)</span><a class="headerlink" href="#megatron.visuals.pipeline_to_dot" title="Permalink to this definition">¶</a></dt>
 <dd><p>Convert a megatron Pipeline to dot format for visualization.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -345,8 +362,6 @@ of all nodes which you would like to be included as features in the output.</li>
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
 <li><strong>pipeline</strong> (<em>megatron.Pipeline</em>) – Feature pipeline defined as a pipeline.</li>
-<li><strong>output_nodes</strong> (<em>megatron.Node</em><em> or </em><em>list of megatron.Node</em>) – The output nodes of the pipeline determine your feature-space. Include a list
-of all nodes which you would like to be included as features in the output.</li>
 <li><strong>rankdir</strong> (<em>str</em><em> [</em><em>'TB'</em><em> or </em><em>'LR'</em><em>]</em>) – Direction of pipeline to plot (top to bottom or left to right).</li>
 </ul>
 </td>
