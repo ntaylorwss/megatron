@@ -7,10 +7,11 @@
 - Pulled out fit into its own public method, as well as partial_fit.
 - Create pipeline by defining inputs and outputs, rather than passing to inputs.
 - Re-organize utils module.
-- Remove adapters module, work them into the framework.
-
-### Bug Fixes
-- Fix caching, again.
+- Add sqlite database for storing processed features in such a way that they can be queried.
+- Create io module, which holds data generators / datasets for input, feature cache database for output.
+- Remove SklearnTransformation wrapper; classes can now be used as long as they adhere to the fit/transform API.
+- Adjust naming so that Layer and Node have their own names.
+- Name argument for node is now received in the call of the Layer, not its init.
 
 ## 0.2.1
 

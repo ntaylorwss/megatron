@@ -9,4 +9,3 @@ sphinx==1.7.5
 sphinxcontrib-napoleon==0.6.1
 sphinx_rtd_theme==0.4.1
 dill==0.2.8
-pyarrow==0.10.0
