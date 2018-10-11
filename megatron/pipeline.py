@@ -4,6 +4,7 @@ import pandas as pd
 import dill as pickle
 from collections import defaultdict
 from . import utils
+from . import io
 
 
 class Pipeline:
@@ -29,7 +30,10 @@ class Pipeline:
     nodes : list of TransformationNode / InputNode
         all InputNode and TransformationNode nodes belonging to the Pipeline.
     """
-    def __init__(self, inputs, outputs):
+    def __init__(self, inputs, outputs, name=None, storage='local'):
+        self.eager = False
+
+        # flatten inputs into list of nodes
         self.inputs = []
         inputs = utils.generic.listify(inputs)
         for node in inputs:
@@ -38,6 +42,7 @@ class Pipeline:
             else:
                 self.inputs.append(node)
 
+        # flatten outputs into list of nodes
         self.outputs = []
         outputs = utils.generic.listify(outputs)
         for node in outputs:
@@ -46,15 +51,28 @@ class Pipeline:
             else:
                 self.outputs.append(node)
 
+        # ensure all outputs are named
+        if any(node.is_default_name for node in self.outputs):
+            msg = "All outputs must be named; passed as second parameter when Layer is called"
+            raise NameError(msg)
+
+        # calculate path from input to output
         self.path = utils.pipeline.topsort(self.outputs)
-        not_provided = set(self.path).intersection(self.inputs) - set(self.inputs)
-        if len(not_provided) > 0:
-            raise utils.errors.DisconnectedError(not_provided)
-        self.cache_dir = 'feature_cache'
-        if not os.path.exists(self.cache_dir):
-            os.mkdir(self.cache_dir)
-        self.eager = False
-        self._tmp_inbound_storage = {}
+
+        # ensure input data matches with input nodes
+        missing_inputs = set(self.path).intersection(self.inputs) - set(self.inputs)
+        if len(missing_inputs) > 0:
+            raise utils.errors.DisconnectedError(missing_inputs)
+        extra_inputs = set(self.path).intersection(self.inputs) - set(self.path)
+        if len(extra_inputs) > 0:
+            utils.errors.ExtraInputsWarning(extra_inputs)
+
+        # setup output data storage
+        self.name = name
+        if storage == 'local':
+            self.storage = io.storage.LocalStorage(self.name)
+        elif storage == 's3':
+            self.storage = io.storage.S3Storage(self.name)
 
     def _reload(self):
         for node in self.path:
@@ -111,30 +129,12 @@ class Pipeline:
             the data for the target node of the path given the input data.
         """
         self._reload()
-        path = self.path
 
         # run just the InputNode nodes to get the data hashes
         self._load_inputs(input_data)
 
-        # find cached nodes and erase their inbounds, to create a shorter path
-        cache_filepaths = {}
-        for node in path:
-            subpath = utils.pipeline.topsort([node])
-            path_hash = utils.hash.hash_path(subpath)
-            filepath = '{}/{}.npz'.format(self.cache_dir, path_hash)
-            if os.path.exists(filepath):
-                cache_filepaths[node] = filepath
-                print("Loading node named '{}' from cache".format(node.name))
-        for node, filepath in cache_filepaths.items():
-            self._tmp_inbound_storage[node] = node.inbound_nodes
-            node.inbound_nodes = []
-            node.output = np.load(filepath)['arr']
-
-        # recalculate path to outputs based on now removed edges
-        path = utils.pipeline.topsort(self.outputs)
-
         # run transformation nodes to end of path
-        for index, node in enumerate(path):
+        for index, node in enumerate(self.path):
             if utils.generic.isinstance_str(node, 'TransformationNode'):
                 try:
                     if node.output is None:  # could be cache-loaded TransformationNode
@@ -143,23 +143,10 @@ class Pipeline:
                     print("Error thrown at node named {}".format(node.name))
                     raise
             # erase data from nodes once unneeded
-            for predecessor in path[:index]:
+            for predecessor in self.path[:index]:
                 outbound_run = all(out_node.has_run for out_node in predecessor.outbound_nodes)
                 if outbound_run and predecessor not in self.outputs:
                     predecessor.output = None
-
-        # reset inbound node tracking
-        for node, inbound_nodes in self._tmp_inbound_storage.items():
-            node.inbound_nodes = inbound_nodes
-        self._tmp_inbound_storage = {}
-
-        # cache results if asked
-        if cache_result:
-            for node in self.outputs:
-                path_hash = utils.hash.hash_path(utils.pipeline.topsort([node]))
-                filepath = '{}/{}.npz'.format(self.cache_dir, path_hash)
-                if not os.path.exists(filepath):
-                    np.savez_compressed(filepath, arr=node.output)
 
     def partial_fit(self, input_data):
         self._fit(input_data, True)
@@ -171,8 +158,8 @@ class Pipeline:
         for batch in input_generator:
             self.partial_fit(batch)
 
-    def transform(self, input_data, cache_result=True, format='array'):
-        """Execute a path terminating at (a) given TransformationNode(s) with some input data.
+    def transform(self, input_data, cache_result=True, out_type='array'):
+        """Execute the graph with some input data, get the output nodes' data.
 
         Parameters
         ----------
@@ -186,18 +173,14 @@ class Pipeline:
         if self.eager:
             raise utils.errors.EagerRunError()
 
-        arrays = []
         self._transform(input_data, cache_result)
-        for node in self.outputs:
-            arrays.append(node.output)
-            node.output = None
-        names = [node.name for node in self.outputs]
-        return utils.pipeline.format_output(arrays, format, names)
+        output_data = {node.name: node.output for node in self.outputs}
+        self.storage.write(input_data, output_data)
+        return utils.pipeline.format_output(output_data, out_type)
 
-    def transform_generator(self, input_generator, cache_result=True, format='array'):
+    def transform_generator(self, input_generator, cache_result=True, out_type='array'):
         for batch in input_generator:
-            #yield batch
-            yield self.transform(batch, cache_result, format)
+            yield self.transform(batch, cache_result, out_type)
 
     def save(self, filepath):
         """Store just the nodes without their data (i.e. pre-execution) in a given file.

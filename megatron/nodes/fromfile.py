@@ -6,9 +6,10 @@ from .wrappers import FeatureSet
 
 def from_dataframe(df, exclude_cols=[], eager=False, nrows=None):
     exclude_cols = set(exclude_cols)
-    nodes = [InputNode(col) for col in df.columns if not col in exclude_cols]
+    cols = [col for col in df.columns if not col in exclude_cols]
+    nodes = [InputNode(col) for col in cols]
     if eager:
-        nodes = [node(df[col].values[:nrows]) for node in nodes]
+        nodes = [node(df[col].values[:nrows]) for node, col in zip(nodes, cols)]
     return FeatureSet(nodes)
 
 

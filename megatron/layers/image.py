@@ -13,8 +13,8 @@ class RGBtoGrey(StatelessLayer):
     ----------
     method : {'luminosity', 'lightness', 'average'}
     """
-    def __init__(self, method='luminosity', name=None):
-        super().__init__(name, method=method)
+    def __init__(self, method='luminosity'):
+        super().__init__(method=method)
 
     def transform(self, X):
         if self.kwargs['method'] == 'lightness':
@@ -41,8 +41,8 @@ class Downsample(StatelessLayer):
     new_shape : tuple of int
         the target shape for the new image.
     """
-    def __init__(self, new_shape, name=None):
-        super().__init__(name, new_shape=new_shape)
+    def __init__(self, new_shape):
+        super().__init__(new_shape=new_shape)
 
     def transform(self, X):
         if any(self.kwargs['new_shape'][i] > X.shape[i]
@@ -59,8 +59,8 @@ class Upsample(StatelessLayer):
     new_shape : tuple of int
         the target shape for the new image.
     """
-    def __init__(self, new_shape, name=None):
-        super().__init__(name, new_shape=new_shape)
+    def __init__(self, new_shape):
+        super().__init__(new_shape=new_shape)
 
     def transform(self, X):
         if any(self.kwargs['new_shape'][i] < X.shape[i]

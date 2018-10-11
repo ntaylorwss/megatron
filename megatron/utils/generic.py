@@ -31,3 +31,21 @@ def delistify(x):
 
 def isinstance_str(obj, classname):
     return classname in [t.__name__ for t in obj.__class__.__mro__[:-1]]
+
+
+def flattenjson(json, delim='_'):
+    def _flatten_dict(d):
+        cols = {}
+        for k in d.keys():
+            if isinstance(d[k], dict ):
+                get = _flatten_dict(d[k])
+                for kk in get.keys():
+                    cols[ k + delim + kk ] = get[kk]
+            else:
+                cols[k] = d[k]
+        return cols
+
+    if isinstance(json, dict):
+        return _flatten_dict(json)
+    else:
+        return list(map(_flatten_dict, json))

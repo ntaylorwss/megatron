@@ -4,8 +4,8 @@ from .core import StatelessLayer
 
 
 class Impute(StatelessLayer):
-    def __init__(self, imputation_dict, name=None):
-        super().__init__(name, imputation_dict=imputation_dict)
+    def __init__(self, imputation_dict):
+        super().__init__(imputation_dict=imputation_dict)
 
     def transform(self, X):
         for old, new in self.kwargs['imputation_dict'].items():

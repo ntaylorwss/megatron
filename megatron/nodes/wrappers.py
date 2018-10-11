@@ -24,12 +24,9 @@ class FeatureSet:
     name_to_index : dict of str to int
         utility data structure for quick indexing of names.
     """
-    def __init__(self, nodes, names=None):
+    def __init__(self, nodes):
         self.nodes = nodes
-        if names:
-            self.names = names
-        else:
-            self.names = [node.name for node in self.nodes]
+        self.names = [node.name for node in self.nodes]
         self.name_to_index = {name: i for i, name in enumerate(self.names)}
 
     def apply_layer(self, layer):

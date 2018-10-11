@@ -15,8 +15,8 @@ class RemoveStopwords(StatelessLayer):
     language : str (default: english)
         the language in which the text is written.
     """
-    def __init__(self, language='english', name=None):
-        super().__init__(name, language=language)
+    def __init__(self, language='english'):
+        super().__init__(language=language)
 
     def transform(self, X):
         stops = set(stopwords.words(self.kwargs['language']))

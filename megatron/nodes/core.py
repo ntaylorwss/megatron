@@ -2,9 +2,9 @@ from .. import utils
 
 
 class Node:
-    def __init__(self, name, inbound_nodes):
-        self.name = name
+    def __init__(self, inbound_nodes, name):
         self.inbound_nodes = inbound_nodes
+        self.name = name
         self.outbound_nodes = []
         self.output = None
         self.has_run = False
@@ -33,8 +33,9 @@ class InputNode(Node):
         is None until node is run; when run, the Numpy array passed in is stored here.
     """
     def __init__(self, name, input_shape=()):
-        super().__init__(name, [])
+        self.layer_name = 'Input'
         self.input_shape = input_shape
+        super().__init__([], name)
 
     def load(self, observations):
         """Validate and store the data passed in.
@@ -109,9 +110,14 @@ class TransformationNode(Node):
         indicates whether the Transformation inside the Node
         has, if necessary, been fit to data.
     """
-    def __init__(self, layer, inbound_nodes):
-        super().__init__(layer.name, inbound_nodes)
+    def __init__(self, layer, inbound_nodes, name=None):
+        self.is_default_name = name is None
+        if name is None:
+            name = '{}({})'.format(self.__class__.__name__,
+                                   ','.join([node.name for node in inbound_nodes]))
         self.layer = layer
+        self.layer_name = layer.name
+        super().__init__(inbound_nodes, name)
 
     def partial_fit(self):
         inputs = [node.output for node in self.inbound_nodes]

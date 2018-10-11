@@ -6,7 +6,11 @@ from .. import utils
 
 class Layer:
     """Base class of all layers."""
-    def _call_on_nodes(self, nodes):
+    def __init__(self, name=None, **kwargs):
+        self.name = name if name else self.__class__.__name__
+        self.kwargs = kwargs
+
+    def _call_on_nodes(self, nodes, out_name):
         """Create new node by applying transformation to given nodes.
 
         Parameters
@@ -14,7 +18,7 @@ class Layer:
         nodes : megatron.Node(s)
             nodes given as input to the layer's transformation.
         """
-        out_node = TransformationNode(self, nodes)
+        out_node = TransformationNode(self, nodes, out_name)
         for node in nodes:
             node.outbound_nodes.append(out_node)
         if all(node.output is not None for node in nodes):
@@ -30,10 +34,10 @@ class Layer:
         feature_set : megatron.FeatureSet
             feature set to map the transformation onto.
         """
-        new_nodes = [self._call_on_nodes([node]) for node in feature_set.nodes]
-        return FeatureSet(new_nodes, feature_set.names)
+        new_nodes = [self._call_on_nodes([node], node.name) for node in feature_set.nodes]
+        return FeatureSet(new_nodes)
 
-    def __call__(self, inbound_nodes):
+    def __call__(self, inbound_nodes, name=None):
         """Creates a TransformationNode associated with this Transformation and the given InputNodes.
 
         When running eagerly, perform a fit and transform, and store the result of the transform in output member.
@@ -45,9 +49,11 @@ class Layer:
         """
         inbound_nodes = utils.generic.listify(inbound_nodes)
         if isinstance(inbound_nodes[0], FeatureSet):
+            if name:
+                raise ValueError("When transforming FeatureSet, name cannot be provided")
             return self._call_on_feature_set(inbound_nodes[0])
         else:
-            return self._call_on_nodes(inbound_nodes)
+            return self._call_on_nodes(inbound_nodes, name)
 
     def partial_fit(self, *inputs):
         """Updates metadata based on given batch of data or full dataset.
@@ -98,9 +104,7 @@ class StatelessLayer(Layer):
     kwargs : dict
         the hyperparameters of the transformation function.
     """
-    def __init__(self, name=None, **kwargs):
-        self.name = name if name else self.__class__.__name__
-        self.kwargs = kwargs
+    pass
 
 
 class StatefulLayer(Layer):
@@ -125,9 +129,8 @@ class StatefulLayer(Layer):
     metadata : dict
         stores any necessary metadata, which is defined by child class.
     """
-    def __init__(self, name=None, **kwargs):
-        self.name = name if name else self.__class__.__name__
-        self.kwargs = kwargs
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
         self.metadata = {}
 
     def partial_fit(self, *inputs):
@@ -137,3 +140,40 @@ class StatefulLayer(Layer):
     def fit(self, *inputs):
         self.metadata = {}
         self.partial_fit(*inputs)
+
+
+class Lambda(StatelessLayer):
+    """A layer holding a stateless transformation.
+
+    For custom functions that are stateless, and thus do not require to be fit,
+    a Lambda wrapper is preferred to creating a Transformation subclass.
+
+    Parameters
+    ----------
+    transform_fn : function
+        the function to be applied, which accepts one or more
+        Numpy arrays as positional arguments.
+    **kwargs
+        keyword arguments to whatever custom function is passed in as transform_fn.
+
+    Attributes
+    ----------
+    transform_fn : function
+        the function to be applied, which accepts one or more
+        Numpy arrays as positional arguments.
+    **kwargs
+        keyword arguments to whatever custom function is passed in as transform_fn.
+    """
+    def __init__(self, transform_fn, **kwargs):
+        self.transform_fn = transform_fn
+        super().__init__(**kwargs)
+
+    def transform(self, *inputs):
+        """Applies transform_fn to given input data.
+
+        Parameters
+        ----------
+        inputs : np.ndarray(s)
+            input data to be passed to transform_fn; could be one array or a list of arrays.
+        """
+        return self.transform_fn(*inputs, **self.kwargs)

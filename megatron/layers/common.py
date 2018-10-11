@@ -15,9 +15,8 @@ class TimeSeries(StatelessLayer):
         if True, oldest data is first; if False, newest data is first.
     """
     def __init__(self, window_size, time_axis=1, reverse=False, name=None):
-        if name is None:
-            name = 'window({})'.format(window_size)
-        super().__init__(name, window_size=window_size, time_axis=time_axis, reverse=reverse)
+        super().__init__(window_size=window_size, time_axis=time_axis, reverse=reverse)
+        self.name = 'window({})'.format(window_size)
 
     def transform(self, X):
         steps = [np.roll(X, i, axis=0) for i in range(self.kwargs['window_size'])]
@@ -33,13 +32,13 @@ class Cast(StatelessLayer):
     new_type : type
         the new type for the array to be cast to.
     """
-    def __init__(self, new_type, name=None):
-        if name is None:
-            name = new_type.__name__
-        super().__init__(name, new_type=new_type)
+    def __init__(self, new_type):
+        super().__init__(new_type=new_type)
+        self.name = new_type.__name__
 
     def transform(self, X):
         return X.astype(self.kwargs['new_type'])
+
 
 
 class Concatenate(StatelessLayer):

@@ -15,3 +15,9 @@ class DisconnectedError(Exception):
         base_msg = "The following inputs are not connected to your provided outputs: {}"
         msg = base_msg.format(', '.join([node.name for node in missing_inputs]))
         super().__init__(msg)
+
+
+def ExtraInputsWarning(extra_inputs):
+    msg = "Some input nodes provided that aren't used in the graph: {}"
+    msg.format(', '.join([node.node_name for node in extra_inputs])
+    warnings.warn(msg)

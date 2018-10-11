@@ -4,16 +4,16 @@ import pandas as pd
 
 
 def topsort(output_nodes):
-    """Returns the path to the desired TransformationNode through the Pipeline.
+    """Returns the path to the desired Transout_typeionNode through the Pipeline.
 
     Parameters
     ----------
-    output_node : TransformationNode
+    output_node : Transout_typeionNode
         the target terminal node of the path.
 
     Returns
     -------
-    list of TransformationNode
+    list of Transout_typeionNode
         the path from input to output that arrives at the output_node.
     """
     visited = defaultdict(int)
@@ -30,39 +30,28 @@ def topsort(output_nodes):
     return order
 
 
-def format_output(arrays, format, names):
-    """Return arrays for single or multiple TransformationNode(s) in requested format.
+def format_output(output_data, out_type):
+    """Return arrays for single or multiple Transout_typeionNode(s) in requested out_type.
 
     Parameters
     ----------
     arrays : list of np.ndarray
         arrays resulting from Pipeline.transform(). Will always be a list, potentially of one.
-    format : {'array', 'arraysframe'}
-        arrays type to return as. If arraysframe, colnames are node names.
-    names : list of str
-        names of output nodes; used when format is 'arraysframe'.
+    out_type : {'array', 'arraysframe'}
+        arrays type to return as. If dataframe, colnames are node names.
     """
-    name_counts = {}
-    new_names = []
-    for name in names:
-        if name in name_counts:
-            new_names.append('{}.{}'.format(name, name_counts[name]))
-            name_counts[name] += 1
-        else:
-            new_names.append(name)
-            name_counts[name] = 1
-    if format== 'array':
-        return {name: array for name, array in zip(new_names, arrays)}
-    elif format== 'dataframe':
-        if len(arrays) == 1:
-            array, name = arrays[0], names[0]
+    if out_type== 'array':
+        return output_data
+    elif out_type== 'dataframe':
+        if len(output_data) == 1:
+            name, array = list(output_data.items()[0])
             if len(array.shape) == 2:
                 names = ['{}.{}'.format(name, i) for i in range(array.shape[1])]
             arrays = pd.DataFrame(array, columns=names)
         else:
             out = []
             new_names = []
-            for array, name in zip(arrays, names):
+            for name, array in output_data.items():
                 if len(array.shape) == 1:
                     out.append(array)
                     new_names.append(name)
@@ -74,4 +63,4 @@ def format_output(arrays, format, names):
             arrays = pd.DataFrame(np.stack(out).T, columns=new_names)
         return arrays
     else:
-        raise ValueError("Invalid format; should be either 'array' or 'dataframe'")
+        raise ValueError("Invalid out_type; should be either 'array' or 'dataframe'")

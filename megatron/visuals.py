@@ -50,7 +50,7 @@ def pipeline_to_dot(pipeline, rankdir='TB'):
     # add nodes
     for node in pipeline.path:
         node_id = str(id(node))
-        label = '{} ({})'.format(node.node_name, node.layer_name)
+        label = '{} ({})'.format(node.name, node.layer_name)
         # make input nodes green, output nodes blue
         if isinstance(node, InputNode):
             color = '#b7e3ff'
