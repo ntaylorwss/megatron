@@ -81,7 +81,7 @@ class Pipeline:
 
         # setup output data storage
         self.name = name
-        self.storage = io.storage.DataStore(self.name, storage)
+        self.storage = io.storage.DataStore(self.name, storage_db)
 
     def _reload(self):
         """Reset all nodes' has_run indicators to False."""
@@ -163,8 +163,7 @@ class Pipeline:
         for index, node in enumerate(self.path):
             if utils.generic.isinstance_str(node, 'TransformationNode'):
                 try:
-                    if node.output is None:  # could be cache-loaded TransformationNode
-                        node.transform()
+                    node.transform()
                 except Exception as e:
                     print("Error thrown at node named {}".format(node.name))
                     raise
@@ -182,6 +181,7 @@ class Pipeline:
         input_data : dict of Numpy array
             the input data to be passed to InputNodes to begin execution.
         """
+        input_data, _ = input_data
         self._fit(input_data, True)
 
     def fit(self, input_data):
@@ -189,9 +189,10 @@ class Pipeline:
 
         Parameters
         ----------
-        input_data : dict of Numpy array
-            the input data to be passed to InputNodes to begin execution.
+        input_data : 2-tuple of dict of Numpy array, Numpy array
+            the input data to be passed to InputNodes to begin execution, and the index.
         """
+        input_data, _ = input_data
         self._fit(input_data, False)
 
     def fit_generator(self, input_generator):
@@ -220,10 +221,11 @@ class Pipeline:
         if self.eager:
             raise utils.errors.EagerRunError()
 
+        input_data, input_index = input_data
         self._transform(input_data, cache_result)
         output_data = {node.name: node.output for node in self.outputs}
-        self.storage.write(input_data, output_data)
-        return utils.pipeline.format_output(output_data, out_type)
+        self.storage.write(input_data, output_data, input_index)
+        return utils.pipeline.format_output(output_data, out_type), input_index
 
     def transform_generator(self, input_generator, cache_result=True, out_type='array'):
         """Execute the graph with some input data from a generator, create generator.

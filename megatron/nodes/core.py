@@ -55,6 +55,7 @@ class InputNode(Node):
         is None until node is run; when run, the Numpy array passed in is stored here.
     """
     def __init__(self, name, input_shape=()):
+        self.is_default_name = False
         self.layer_name = 'Input'
         self.input_shape = input_shape
         super().__init__([], name)
