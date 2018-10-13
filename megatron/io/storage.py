@@ -90,7 +90,7 @@ class DataStore:
         self.input_names = list(input_data.keys())
         self.output_names = list(output_data.keys())
 
-    def read(self, output_cols=None, lookup_vals=None, **kwargs):
+    def read(self, output_cols=None, lookup=None):
         """Retrieve all processed features from cache, or lookup a single observation.
 
         Parameters
