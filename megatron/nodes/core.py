@@ -2,6 +2,28 @@ from .. import utils
 
 
 class Node:
+    """Base class of pipeline nodes.
+
+    Parameters
+    ----------
+    inbound_nodes : list of megatron.Node
+        nodes who are to be connected as inputs to this node.
+    name : str
+        name to give the node.
+
+    Attributes
+    ----------
+    inbound_nodes : list of megatron.Node
+        nodes who are to be connected as inputs to this node.
+    name : str
+        name to give the node.
+    outbound_nodes : list of megatron.Node
+        nodes to whom this node is connected as an input.
+    output : np.ndarray
+        holds the data output by the node's having been run on its inputs.
+    has_run : bool
+        indicates whether the node has executed a transformation.
+    """
     def __init__(self, inbound_nodes, name):
         self.inbound_nodes = inbound_nodes
         self.name = name

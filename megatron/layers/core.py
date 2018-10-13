@@ -5,9 +5,22 @@ from .. import utils
 
 
 class Layer:
-    """Base class of all layers."""
-    def __init__(self, name=None, **kwargs):
-        self.name = name if name else self.__class__.__name__
+    """Base class of all layers.
+
+    Parameters
+    ----------
+    **kwargs
+        hyperparameters of the transformation function.
+
+    Attributes
+    ----------
+    name : str
+        name for the layer, which is the class name.
+    kwargs
+        hyperparameters of the transformation function.
+    """
+    def __init__(self, **kwargs):
+        self.name = self.__class__.__name__
         self.kwargs = kwargs
 
     def _call_on_nodes(self, nodes, out_name):
@@ -17,6 +30,8 @@ class Layer:
         ----------
         nodes : megatron.Node(s)
             nodes given as input to the layer's transformation.
+        out_name : str
+            name to give the newly created node.
         """
         out_node = TransformationNode(self, nodes, out_name)
         for node in nodes:
@@ -46,6 +61,8 @@ class Layer:
         ----------
         inbound_nodes : list of megatron.InputNode / megatron.TransformationNode or megatron.FeatureSet
             the input nodes, whose data are to be passed to transform_fn when run.
+        name : str (default: None)
+            name for the newly created node. Not used for FeatureSet input, and only required for output nodes.
         """
         inbound_nodes = utils.generic.listify(inbound_nodes)
         if isinstance(inbound_nodes[0], FeatureSet):
@@ -88,22 +105,7 @@ class Layer:
 
 
 class StatelessLayer(Layer):
-    """A layer holding a stateless transformation.
-
-    Parameters
-    ----------
-    name : str (optional)
-        name to give the layer, used in visualization.
-    **kwargs : dict
-        the hyperparameters of the transformation function.
-
-    Attributes
-    ----------
-    name : str (optional)
-        name of the layer, used in visualization.
-    kwargs : dict
-        the hyperparameters of the transformation function.
-    """
+    """A layer holding a stateless transformation."""
     pass
 
 
@@ -115,15 +117,13 @@ class StatefulLayer(Layer):
 
     Parameters
     ----------
-    name : str (optional)
-        name of the layer, used in visualization.
     **kwargs : dict
         the hyperparameters of the transformation function.
 
     Attributes
     ----------
     name : str (optional)
-        name of the layer, used in visualization.
+        name of the layer, which is the class name.
     kwargs : dict
         the hyperparameters of the transformation function.
     metadata : dict
@@ -134,7 +134,15 @@ class StatefulLayer(Layer):
         self.metadata = {}
 
     def partial_fit(self, *inputs):
-        """Must be implemented for a layer to be considered stateful."""
+        """Updates metadata based on given batch of data or full dataset.
+
+        Contains the main logic of fitting. This is what should be overwritten by all child classes.
+
+        Parameters
+        ----------
+        inputs : numpy.ndarray(s)
+            the input data to be fit to; could be one array or a list of arrays.
+        """
         raise NotImplementedError
 
     def fit(self, *inputs):
@@ -161,7 +169,7 @@ class Lambda(StatelessLayer):
     transform_fn : function
         the function to be applied, which accepts one or more
         Numpy arrays as positional arguments.
-    **kwargs
+    kwargs
         keyword arguments to whatever custom function is passed in as transform_fn.
     """
     def __init__(self, transform_fn, **kwargs):

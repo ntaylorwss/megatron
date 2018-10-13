@@ -3,9 +3,21 @@ import sqlite3
 import pandas as pd
 
 
-class LocalStorage:
-    def __init__(self, table_name):
-        self.db = sqlite3.connect('megatron_default')
+class DataStore:
+    """SQL table of input data and output features, associated with a single pipeline.
+
+    Parameters
+    ----------
+    table_name : str
+        name of pipeline's cache table in the database.
+    db_conn : Connection
+        database connection to query.
+    """
+    def __init__(self, table_name, db_conn=None):
+        if db_conn:
+            self.db = db_conn
+        else:
+            self.db = sqlite3.connect('megatron_default')
         if table_name:
             self.table_name = table_name
         else:
@@ -18,13 +30,28 @@ class LocalStorage:
         self.input_names = []
 
     def delete_table(self, table_name=None):
+        """Remove either this table or another table by name from the database.
+
+        Parameters
+        ----------
+        table_name : str (default: None)
+            the table to be removed. If None, remove this object's associated table.
+        """
         if table_name is None:
             table_name = self.table_name
         self.db.execute('DROP TABLE IF EXISTS {}'.format(table_name))
         self.db.commit()
 
     def write(self, input_data, output_data):
-        """Write set of observations to database, which includes input data and output data."""
+        """Write set of observations to database.
+
+        Parameters
+        ----------
+        input_data : dict of ndarray
+            input fields and associated data fed through pipeline.
+        output_data : dict of ndarray
+            resulting features from applying pipeline to input_data.
+        """
         in_df = pd.DataFrame(input_data)
         in_df.columns = ['in_{}'.format(col) for col in in_df.columns]
         out_df = pd.DataFrame(output_data)
@@ -57,11 +84,20 @@ class LocalStorage:
         self.input_names = list(input_data.keys())
 
     def lookup(self, output_cols=None, lookup_obs=None, **kwargs):
+        """Retrieve all processed features from cache, or lookup a single observation.
+
+        Parameters
+        ----------
+        output_cols : list of str
+            names of output columns to retrieve. If none, get all outputs.
+        lookup_obs : dict of ndarray
+            input data to lookup output for, in dictionary form.
+        """
         out = pd.read_sql_table(self.table_name, self.db, **kwargs)
         if lookup_obs:
             masks = []
-            for col in self.input_names:
-                same_obs = out[col] == lookup_obs[col]
+            for name in self.input_names:
+                same_obs = out[name] == lookup_obs[name]
                 while len(same_obs.shape) > 1:
                     same_obs = same_obs.all(axis=-1)
                 masks.append(same_obs)

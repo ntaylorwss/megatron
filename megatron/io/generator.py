@@ -3,20 +3,20 @@ import numpy as np
 import pandas as pd
 
 
-class DataGenerator:
-    def __init__(self, batch_size):
-        self.batch_size = batch_size
+class PandasGenerator:
+    """A generator of data batches from a Pandas dataframe in pipeline Input format.
 
-    def __iter__(self):
-        return self
-
-    def __next__(self):
-        raise NotImplementedError
-
-
-class PandasGenerator(DataGenerator):
+    Parameters
+    ----------
+    dataframe : Pandas.DataFrame
+        dataframe to load data from.
+    batch_size : int
+        number of observations to yield in each iteration.
+    exclude_cols : list of str (default: [])
+        any columns that should not be loaded as Input.
+    """
     def __init__(self, dataframe, batch_size, exclude_cols=[]):
-        super().__init__(batch_size)
+        self.batch_size = batch_size
         self.dataframe = dataframe
         self.n = 0
         if self.batch_size:
@@ -41,9 +41,20 @@ class PandasGenerator(DataGenerator):
         return dict(zip(out.columns, out.T.values))
 
 
-class CSVGenerator(DataGenerator):
+class CSVGenerator:
+    """A generator of data batches from a CSV file in pipeline Input format.
+
+    Parameters
+    ----------
+    filepath : str
+        the CSV filepath to be loaded from.
+    batch_size : int
+        number of observations to yield in each iteration.
+    exclude_cols : list of str (default: [])
+        any columns that should not be loaded as Input.
+    """
     def __init__(self, filepath, batch_size, exclude_cols=[]):
-        super().__init__(batch_size)
+        self.batch_size = batch_size
         self.filepath = filepath
         # take advantage of Pandas read_csv function to make it simpler and more robust
         self.cursor = pd.read_csv(self.filepath, chunksize=self.batch_size)
@@ -58,9 +69,22 @@ class CSVGenerator(DataGenerator):
         return dict(zip(new_df.columns, new_df.T.values))
 
 
-class SQLGenerator(DataGenerator):
+class SQLGenerator:
+    """A generator of data batches from a SQL query in pipeline Input format.
+
+    Parameters
+    ----------
+    connection : Connection
+        a database connection to any valid SQL database engine.
+    query : str
+        a valid SQL query according to the engine being used, that extracts the data for Inputs.
+    batch_size : int
+        number of observations to yield in each iteration.
+    limit : int
+        number of observations to use from the query in total.
+    """
     def __init__(self, connection, query, batch_size, limit=None):
-        super().__init__(batch_size)
+        self.batch_size = batch_size
         self.connection = connection
         self.query = query
         if limit:

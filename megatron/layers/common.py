@@ -11,8 +11,10 @@ class TimeSeries(StatelessLayer):
         length of the window; number of timesteps in the time series.
     time_axis : int
         on which axis in the array to place the time dimension.
-    reverse : bool
+    reverse : bool (default: False)
         if True, oldest data is first; if False, newest data is first.
+    name : str (default: None)
+        name for the layer. If None, defaults to name of class.
     """
     def __init__(self, window_size, time_axis=1, reverse=False, name=None):
         super().__init__(window_size=window_size, time_axis=time_axis, reverse=reverse)
@@ -31,10 +33,12 @@ class Cast(StatelessLayer):
     ----------
     new_type : type
         the new type for the array to be cast to.
+    name : str (default: None)
+        name for the layer. If None, defaults to name of new type.
     """
-    def __init__(self, new_type):
+    def __init__(self, new_type, name=None):
         super().__init__(new_type=new_type)
-        self.name = new_type.__name__
+        self.name = name if name else new_type.__name__
 
     def transform(self, X):
         return X.astype(self.kwargs['new_type'])

@@ -15,22 +15,34 @@ class Pipeline:
 
     Parameters
     ----------
-    cache_dir : str (default: '../feature_cache')
-        the relative path from the current working directory to store numpy data results
-        for particular executions of nodes.
+    inputs : list of megatron.Node(s)
+        input nodes of the pipeline, where raw data is fed in.
+    outputs : list of megatron.Node(s)
+        output nodes of the pipeline, the processed features.
+    name : str
+        unique identifying name of the pipeline.
+    storage_db : Connection (defeault: None)
+        database connection to be used for input and output data storage.
 
     Attributes
     ----------
-    cache_dir : str
-        the relative path from the current working directory to store numpy data results
-        for particular executions of nodes.
+    inputs : list of megatron.Node(s)
+        input nodes of the pipeline, where raw data is fed in.
+    outputs : list of megatron.Node(s)
+        output nodes of the pipeline, the processed features.
+    path : list of megatron.Nodes
+        full topological sort of pipeline from inputs to outputs.
     eager : bool
         when True, TransformationNode outputs are to be calculated on creation. This is indicated by
         data being passed to an InputNode node as a function call.
     nodes : list of TransformationNode / InputNode
         all InputNode and TransformationNode nodes belonging to the Pipeline.
+    name : str
+        unique identifying name of the pipeline.
+    storage: Connection (defeault: None)
+        storage database for input and output data.
     """
-    def __init__(self, inputs, outputs, name=None, storage='local'):
+    def __init__(self, inputs, outputs, name=None, storage_db=None):
         self.eager = False
 
         # flatten inputs into list of nodes
@@ -69,16 +81,21 @@ class Pipeline:
 
         # setup output data storage
         self.name = name
-        if storage == 'local':
-            self.storage = io.storage.LocalStorage(self.name)
-        elif storage == 's3':
-            self.storage = io.storage.S3Storage(self.name)
+        self.storage = io.storage.DataStore(self.name, storage)
 
     def _reload(self):
+        """Reset all nodes' has_run indicators to False."""
         for node in self.path:
             node.has_run = False
 
     def _load_inputs(self, input_data):
+        """Load data into Input nodes.
+
+        Parameters
+        ----------
+        input_data : dict of np.ndarray
+            dict mapping input names to input data arrays.
+        """
         inputs_loaded = 0
         num_inputs = sum(1 for node in self.path if utils.generic.isinstance_str(node, 'InputNode'))
         for node in self.path:
@@ -89,6 +106,15 @@ class Pipeline:
                 break
 
     def _fit(self, input_data, partial):
+        """General fitting method for input data.
+
+        Parameters
+        ----------
+        input_data : dict of np.ndarray
+            dict mapping input names to input data arrays.
+        partial : bool
+            whether this is a partial or full fit.
+        """
         self._reload()
         self._load_inputs(input_data)
         for index, node in enumerate(self.path):
@@ -149,12 +175,33 @@ class Pipeline:
                     predecessor.output = None
 
     def partial_fit(self, input_data):
+        """Fit to input data in an incremental way if possible.
+
+        Parameters
+        ----------
+        input_data : dict of Numpy array
+            the input data to be passed to InputNodes to begin execution.
+        """
         self._fit(input_data, True)
 
     def fit(self, input_data):
+        """Fit to input data and overwrite the metadata.
+
+        Parameters
+        ----------
+        input_data : dict of Numpy array
+            the input data to be passed to InputNodes to begin execution.
+        """
         self._fit(input_data, False)
 
     def fit_generator(self, input_generator):
+        """Perform partial fit to every batch of input generator.
+
+        Parameters
+        ----------
+        input_generator : generator of dict of Numpy array
+            generator producing input data to be passed to Input nodes.
+        """
         for batch in input_generator:
             self.partial_fit(batch)
 
@@ -164,10 +211,10 @@ class Pipeline:
         Parameters
         ----------
         input_data : dict of Numpy array
-            the input data to be passed to InputNode TransformationNodes to begin execution.
+            the input data to be passed to InputNodes to begin execution.
         cache_result : bool
             whether to store the resulting Numpy array in the cache.
-        form : {'array', 'dataframe'}
+        out_type : {'array', 'dataframe'}
             data type to return as. If dataframe, colnames are node names.
         """
         if self.eager:
@@ -179,6 +226,17 @@ class Pipeline:
         return utils.pipeline.format_output(output_data, out_type)
 
     def transform_generator(self, input_generator, cache_result=True, out_type='array'):
+        """Execute the graph with some input data from a generator, create generator.
+
+        Parameters
+        ----------
+        input_generator : dict of Numpy array
+            generator producing input data to be passed to Input nodes.
+        cache_result : bool
+            whether to store the resulting Numpy array in the cache.
+        out_type : {'array', 'dataframe'}
+            data type to return as. If dataframe, colnames are node names.
+        """
         for batch in input_generator:
             yield self.transform(batch, cache_result, out_type)
 
