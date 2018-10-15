@@ -1,4 +1,5 @@
 import os
+import sqlite3
 import numpy as np
 import pandas as pd
 import dill as pickle
@@ -21,7 +22,7 @@ class Pipeline:
         output nodes of the pipeline, the processed features.
     name : str
         unique identifying name of the pipeline.
-    storage_db : Connection (defeault: None)
+    storage_db : Connection (defeault: 'sqlite')
         database connection to be used for input and output data storage.
 
     Attributes
@@ -42,7 +43,8 @@ class Pipeline:
     storage: Connection (defeault: None)
         storage database for input and output data.
     """
-    def __init__(self, inputs, outputs, name=None, storage_db=None):
+    def __init__(self, inputs, outputs, name,
+                 version=None, storage_db=sqlite3.connect('megatron_default')):
         self.eager = False
 
         # flatten inputs into list of nodes
@@ -81,7 +83,10 @@ class Pipeline:
 
         # setup output data storage
         self.name = name
-        self.storage = io.storage.DataStore(self.name, storage_db)
+        self.version = version
+        self.storage_db = storage_db
+        version = str(self.version).replace('.', '_')
+        self.storage = io.storage.DataStore(self.name, version, storage_db)
 
     def _reload(self):
         """Reset all nodes' has_run indicators to False."""
@@ -120,10 +125,8 @@ class Pipeline:
         for index, node in enumerate(self.path):
             if utils.generic.isinstance_str(node, 'TransformationNode'):
                 try:
-                    if partial:
-                        node.partial_fit()
-                    else:
-                        node.fit()
+                    node.partial_fit() if partial else node.fit()
+                    node.transform()
                 except Exception as e:
                     print("Error thrown at node named {}".format(node.name))
                     raise
@@ -134,10 +137,9 @@ class Pipeline:
         # erase last node
         self.path[-1].output = None
         # restore has_run
-        for node in self.path:
-            node.has_run = False
+        self._reload()
 
-    def _transform(self, input_data, cache_result):
+    def _transform(self, input_data):
         """Execute all non-cached nodes along the path given input data.
 
         Can cache the result for a path if requested.
@@ -146,8 +148,6 @@ class Pipeline:
         ----------
         input_data : dict of Numpy array
             the input data to be passed to InputNode TransformationNodes to begin execution.
-        cache_result : bool
-            whether to store the resulting Numpy arrays in the cache.
 
         Returns
         -------
@@ -155,8 +155,6 @@ class Pipeline:
             the data for the target node of the path given the input data.
         """
         self._reload()
-
-        # run just the InputNode nodes to get the data hashes
         self._load_inputs(input_data)
 
         # run transformation nodes to end of path
@@ -222,9 +220,10 @@ class Pipeline:
             raise utils.errors.EagerRunError()
 
         input_data, input_index = input_data
-        self._transform(input_data, cache_result)
+        self._transform(input_data)
         output_data = {node.name: node.output for node in self.outputs}
-        self.storage.write(input_data, output_data, input_index)
+        if cache_result:
+            self.storage.write(input_data, output_data, input_index)
         return utils.pipeline.format_output(output_data, out_type), input_index
 
     def transform_generator(self, input_generator, cache_result=True, out_type='array'):
@@ -242,7 +241,7 @@ class Pipeline:
         for batch in input_generator:
             yield self.transform(batch, cache_result, out_type)
 
-    def save(self, filepath):
+    def save(self, save_dir):
         """Store just the nodes without their data (i.e. pre-execution) in a given file.
 
         Parameters
@@ -250,23 +249,24 @@ class Pipeline:
         filepath : str
             the desired location of the stored nodes, filename included.
         """
-        # TODO: make this more like Keras by outputting a JSON description of the model structure
-
         # store ref to data outside of Pipeline and remove ref to data in TransformationNodes
         data = {}
         for node in self.path:
             data[node] = node.output
             node.output = None
-        with open(filepath, 'wb') as f:
+        if not os.path.exists(save_dir):
+            os.mkdir(save_dir)
+        with open('{}/{}.pkl'.format(save_dir, self.name), 'wb') as f:
             # keep same cache_dir too for new pipeline when loaded
-            pipeline_info = {'nodes': self.path, 'cache_dir': self.cache_dir}
+            pipeline_info = {'inputs': self.inputs, 'nodes': self.path,
+                             'outputs': self.outputs, 'name': self.name, 'version': self.version}
             pickle.dump(pipeline_info, f)
         # reinsert data into Pipeline
         for node in self.path:
             node.output = data[node]
 
 
-def load_pipeline(filepath):
+def load_pipeline(filepath, storage_db=sqlite3.connect('megatron_default')):
     """Load a set of nodes from a given file, stored previously with Pipeline.save().
 
     Parameters
@@ -275,8 +275,8 @@ def load_pipeline(filepath):
         the file from which to load a Pipeline.
     """
     with open(filepath, 'rb') as f:
-        pipeline_info = pickle.load(f)
-    G = Pipeline(cache_dir=pipeline_info['cache_dir'])
-    for node in pipeline_info['nodes']:
-        G._add_node(node)
-    return G
+        stored = pickle.load(f)
+    P = Pipeline(stored['inputs'], stored['outputs'], stored['name'],
+                          stored['version'], storage_db)
+    P.path = stored['path']
+    return P

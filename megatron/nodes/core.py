@@ -106,7 +106,7 @@ class InputNode(Node):
         megatron.utils.ShapeError
             error indicating that the shape of the data does not match the shape of the node.
         """
-        self.load(observations)
+        self.transform(observations)
         return self
 
 
@@ -145,13 +145,12 @@ class TransformationNode(Node):
     def partial_fit(self):
         inputs = [node.output for node in self.inbound_nodes]
         self.layer.partial_fit(*inputs)
-        self.output = self.layer.transform(*inputs)
+        self.has_run = True
 
     def fit(self):
         """Calculates metadata based on provided data."""
         inputs = [node.output for node in self.inbound_nodes]
         self.layer.fit(*inputs)
-        self.output = self.layer.transform(*inputs)
         self.has_run = True
 
     def transform(self):

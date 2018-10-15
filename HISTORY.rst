@@ -12,6 +12,7 @@
 - Remove SklearnTransformation wrapper; classes can now be used as long as they adhere to the fit/transform API.
 - Adjust naming so that Layer and Node have their own names.
 - Name argument for node is now received in the call of the Layer, not its init.
+- Observations can be given an index, and by default the index is just integers. This is how cache lookup is done.
 
 ## 0.2.1
 

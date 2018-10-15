@@ -43,7 +43,7 @@ class PandasGenerator:
             out = self.dataframe.drop(self.exclude_cols, axis=1)
         self.n += 1
 
-        return dict(zip(out.columns, out.T.values)), out.index
+        return dict(zip(out.columns, out.values.T)), out.index
 
 
 class CSVGenerator:
@@ -75,7 +75,7 @@ class CSVGenerator:
         except StopIteration:
             self.cursor = pd.read_csv(self.filepath, index_col=index_col, chunksize=self.batch_size)
             raise
-        return dict(zip(out.columns, out.T.values)), out.index
+        return dict(zip(out.columns, out.values.T)), out.index
 
 
 class SQLGenerator:
