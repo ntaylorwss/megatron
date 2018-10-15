@@ -258,7 +258,7 @@ class Pipeline:
             os.mkdir(save_dir)
         with open('{}/{}.pkl'.format(save_dir, self.name), 'wb') as f:
             # keep same cache_dir too for new pipeline when loaded
-            pipeline_info = {'inputs': self.inputs, 'nodes': self.path,
+            pipeline_info = {'inputs': self.inputs, 'path': self.path,
                              'outputs': self.outputs, 'name': self.name, 'version': self.version}
             pickle.dump(pipeline_info, f)
         # reinsert data into Pipeline
