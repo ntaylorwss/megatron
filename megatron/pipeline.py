@@ -44,7 +44,7 @@ class Pipeline:
         storage database for input and output data.
     """
     def __init__(self, inputs, outputs, name,
-                 version=None, storage_db=sqlite3.connect('megatron_default')):
+                 version=None, storage_db=sqlite3.connect('megatron_default.db')):
         self.eager = False
 
         # flatten inputs into list of nodes
@@ -219,12 +219,18 @@ class Pipeline:
         if self.eager:
             raise utils.errors.EagerRunError()
 
-        input_data, input_index = input_data
+        # if data is created manually with Input, it's not likely to come with an index
+        if isinstance(input_data, tuple):
+            input_data, input_index = input_data
+        else:
+            nrows = input_data[list(input_data)[0]].shape[0]
+            input_index = pd.RangeIndex(stop=nrows)
+
         self._transform(input_data)
         output_data = {node.name: node.output for node in self.outputs}
         if cache_result:
-            self.storage.write(input_data, output_data, input_index)
-        return utils.pipeline.format_output(output_data, out_type), input_index
+            self.storage.write(output_data, input_index)
+        return utils.pipeline.format_output(output_data, out_type)
 
     def transform_generator(self, input_generator, cache_result=True, out_type='array'):
         """Execute the graph with some input data from a generator, create generator.
@@ -259,14 +265,15 @@ class Pipeline:
         with open('{}/{}.pkl'.format(save_dir, self.name), 'wb') as f:
             # keep same cache_dir too for new pipeline when loaded
             pipeline_info = {'inputs': self.inputs, 'path': self.path,
-                             'outputs': self.outputs, 'name': self.name, 'version': self.version}
+                             'outputs': self.outputs, 'name': self.name, 'version': self.version,
+                             'storage': self.storage}
             pickle.dump(pipeline_info, f)
         # reinsert data into Pipeline
         for node in self.path:
             node.output = data[node]
 
 
-def load_pipeline(filepath, storage_db=sqlite3.connect('megatron_default')):
+def load_pipeline(filepath, storage_db):
     """Load a set of nodes from a given file, stored previously with Pipeline.save().
 
     Parameters
@@ -278,5 +285,9 @@ def load_pipeline(filepath, storage_db=sqlite3.connect('megatron_default')):
         stored = pickle.load(f)
     P = Pipeline(stored['inputs'], stored['outputs'], stored['name'],
                           stored['version'], storage_db)
+    # storage members that were calculated during writing
+    P.storage.output_names = stored['storage'].output_names
+    P.storage.dtypes = stored['storage'].dtypes
+    P.storage.original_shapes = stored['storage'].original_shapes
     P.path = stored['path']
     return P

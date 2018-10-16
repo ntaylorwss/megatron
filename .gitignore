@@ -10,3 +10,4 @@ data/
 img/
 creds/
 TODO
+*.db
