@@ -7,8 +7,6 @@ from collections import defaultdict
 from . import utils
 from . import io
 
-default_db = sqlite3.connect('megatron_default.db')
-
 
 class Pipeline:
     """A pipeline with nodes as Transformations and InputNodes, edges as I/O relationships.
@@ -46,7 +44,7 @@ class Pipeline:
         storage database for input and output data.
     """
     def __init__(self, inputs, outputs, name,
-                 version=None, storage_db=default_db):
+                 version=None, storage=None):
         self.eager = False
 
         # flatten inputs into list of nodes
@@ -86,9 +84,12 @@ class Pipeline:
         # setup output data storage
         self.name = name
         self.version = version
-        self.storage_db = storage_db
-        version = str(self.version).replace('.', '_')
-        self.storage = io.storage.DataStore(self.name, version, storage_db)
+        if self.version:
+            version = str(self.version).replace('.', '_')
+        if storage:
+            self.storage = io.storage.DataStore(self.name, version, storage)
+        else:
+            self.storage = None
 
     def _reload(self):
         """Reset all nodes' has_run indicators to False."""
@@ -206,7 +207,7 @@ class Pipeline:
         for batch in input_generator:
             self.partial_fit(batch)
 
-    def transform(self, input_data, cache_result=True, out_type='array'):
+    def transform(self, input_data, out_type='array'):
         """Execute the graph with some input data, get the output nodes' data.
 
         Parameters
@@ -223,18 +224,18 @@ class Pipeline:
 
         # if data is created manually with Input, it's not likely to come with an index
         if isinstance(input_data, tuple):
-            input_data, input_index = input_data
+            input_data, data_index = input_data
         else:
             nrows = input_data[list(input_data)[0]].shape[0]
-            input_index = pd.RangeIndex(stop=nrows)
+            data_index = pd.RangeIndex(stop=nrows)
 
         self._transform(input_data)
         output_data = {node.name: node.output for node in self.outputs}
-        if cache_result:
-            self.storage.write(output_data, input_index)
+        if self.storage:
+            self.storage.write(output_data, data_index)
         return utils.pipeline.format_output(output_data, out_type)
 
-    def transform_generator(self, input_generator, cache_result=True, out_type='array'):
+    def transform_generator(self, input_generator, out_type='array'):
         """Execute the graph with some input data from a generator, create generator.
 
         Parameters
@@ -247,7 +248,7 @@ class Pipeline:
             data type to return as. If dataframe, colnames are node names.
         """
         for batch in input_generator:
-            yield self.transform(batch, cache_result, out_type)
+            yield self.transform(batch, out_type)
 
     def save(self, save_dir):
         """Store just the nodes without their data (i.e. pre-execution) in a given file.
@@ -264,19 +265,22 @@ class Pipeline:
             node.output = None
         if not os.path.exists(save_dir):
             os.mkdir(save_dir)
-        with open('{}/{}.pkl'.format(save_dir, self.name), 'wb') as f:
+        with open('{}/{}{}.pkl'.format(save_dir, self.name, self.version), 'wb') as f:
             # keep same cache_dir too for new pipeline when loaded
             pipeline_info = {'inputs': self.inputs, 'path': self.path,
-                             'outputs': self.outputs, 'name': self.name, 'version': self.version,
-                             'output_names': self.storage.output_names, 'dtypes': self.storage.dtypes,
-                             'original_shapes': self.storage.original_shapes}
+                             'outputs': self.outputs, 'name': self.name, 'version': self.version}
+            if self.storage:
+                storage_info = {'output_names': self.storage.output_names,
+                                'dtypes': self.storage.dtypes,
+                                'original_shapes': self.storage.original_shapes}
+                pipeline_info.update(storage_info)
             pickle.dump(pipeline_info, f)
         # reinsert data into Pipeline
         for node in self.path:
             node.output = data[node]
 
 
-def load_pipeline(filepath, storage_db=default_db):
+def load_pipeline(filepath, storage_db=None):
     """Load a set of nodes from a given file, stored previously with Pipeline.save().
 
     Parameters
@@ -289,10 +293,11 @@ def load_pipeline(filepath, storage_db=default_db):
     with open(filepath, 'rb') as f:
         stored = pickle.load(f)
     P = Pipeline(stored['inputs'], stored['outputs'], stored['name'],
-                          stored['version'], storage_db)
-    # storage members that were calculated during writing
-    P.storage.output_names = stored['output_names']
-    P.storage.dtypes = stored['dtypes']
-    P.storage.original_shapes = stored['original_shapes']
+                 stored['version'], storage_db)
+    if storage_db:
+        # storage members that were calculated during writing
+        P.storage.output_names = stored['output_names']
+        P.storage.dtypes = stored['dtypes']
+        P.storage.original_shapes = stored['original_shapes']
     P.path = stored['path']
     return P
