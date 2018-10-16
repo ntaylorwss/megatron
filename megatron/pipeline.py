@@ -7,6 +7,7 @@ from collections import defaultdict
 from . import utils
 from . import io
 
+default_db = sqlite3.connect('megatron_default.db')
 
 class Pipeline:
     """A pipeline with nodes as Transformations and InputNodes, edges as I/O relationships.
@@ -44,7 +45,7 @@ class Pipeline:
         storage database for input and output data.
     """
     def __init__(self, inputs, outputs, name,
-                 version=None, storage_db=sqlite3.connect('megatron_default.db')):
+                 version=None, storage_db=default_db):
         self.eager = False
 
         # flatten inputs into list of nodes
@@ -266,14 +267,15 @@ class Pipeline:
             # keep same cache_dir too for new pipeline when loaded
             pipeline_info = {'inputs': self.inputs, 'path': self.path,
                              'outputs': self.outputs, 'name': self.name, 'version': self.version,
-                             'storage': self.storage}
+                             'output_names': self.storage.output_names, 'dtypes': self.storage.dtypes,
+                             'original_shapes': self.storage.original_shapes}
             pickle.dump(pipeline_info, f)
         # reinsert data into Pipeline
         for node in self.path:
             node.output = data[node]
 
 
-def load_pipeline(filepath, storage_db):
+def load_pipeline(filepath, storage_db=default_db):
     """Load a set of nodes from a given file, stored previously with Pipeline.save().
 
     Parameters
@@ -286,8 +288,8 @@ def load_pipeline(filepath, storage_db):
     P = Pipeline(stored['inputs'], stored['outputs'], stored['name'],
                           stored['version'], storage_db)
     # storage members that were calculated during writing
-    P.storage.output_names = stored['storage'].output_names
-    P.storage.dtypes = stored['storage'].dtypes
-    P.storage.original_shapes = stored['storage'].original_shapes
+    P.storage.output_names = stored['output_names']
+    P.storage.dtypes = stored['dtypes']
+    P.storage.original_shapes = stored['original_shapes']
     P.path = stored['path']
     return P
