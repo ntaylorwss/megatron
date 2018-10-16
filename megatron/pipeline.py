@@ -9,6 +9,7 @@ from . import io
 
 default_db = sqlite3.connect('megatron_default.db')
 
+
 class Pipeline:
     """A pipeline with nodes as Transformations and InputNodes, edges as I/O relationships.
 
@@ -253,8 +254,8 @@ class Pipeline:
 
         Parameters
         ----------
-        filepath : str
-            the desired location of the stored nodes, filename included.
+        save_dir : str
+            the desired location of the stored nodes, without the filename.
         """
         # store ref to data outside of Pipeline and remove ref to data in TransformationNodes
         data = {}
@@ -282,6 +283,8 @@ def load_pipeline(filepath, storage_db=default_db):
     ----------
     filepath : str
         the file from which to load a Pipeline.
+    storage_db : Connection (default: sqlite3.connect('megatron_default.db'))
+        database connection object to query for cached data from the pipeline.
     """
     with open(filepath, 'rb') as f:
         stored = pickle.load(f)
