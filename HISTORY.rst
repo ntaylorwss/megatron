@@ -13,6 +13,7 @@
 - Adjust naming so that Layer and Node have their own names.
 - Name argument for node is now received in the call of the Layer, not its init.
 - Observations can be given an index, and by default the index is just integers. This is how cache lookup is done.
+- Cache now supports multi-dimensional outputs, such as images.
 
 ## 0.2.1
 
