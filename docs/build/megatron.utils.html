@@ -199,15 +199,23 @@
 <div class="section" id="module-megatron.utils.helpers">
 <span id="megatron-utils-helpers-module"></span><h2>megatron.utils.helpers module<a class="headerlink" href="#module-megatron.utils.helpers" title="Permalink to this headline">¶</a></h2>
 <dl class="function">
-<dt id="megatron.utils.helpers.column_stack">
-<code class="descclassname">megatron.utils.helpers.</code><code class="descname">column_stack</code><span class="sig-paren">(</span><em>arrays</em><span class="sig-paren">)</span><a class="headerlink" href="#megatron.utils.helpers.column_stack" title="Permalink to this definition">¶</a></dt>
-<dd><p>Given a list of arrays, some of which are 2D, turn the 2D ones into 1D arrays.</p>
-</dd></dl>
-
-<dl class="function">
 <dt id="megatron.utils.helpers.safe_divide">
 <code class="descclassname">megatron.utils.helpers.</code><code class="descname">safe_divide</code><span class="sig-paren">(</span><em>X1</em>, <em>X2</em>, <em>impute=0</em><span class="sig-paren">)</span><a class="headerlink" href="#megatron.utils.helpers.safe_divide" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Divide one array by another, while imputing the ones that are dividing by zero.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>X1</strong> (<em>Numpy array</em>) – numerator array.</li>
+<li><strong>X2</strong> (<em>Numpy array</em>) – denominator array.</li>
+<li><strong>impute</strong> (<em>int</em><em> or </em><em>float</em>) – value to place in those elements which are dividing by zero.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
 
 </div>
 <div class="section" id="module-megatron.utils.pipeline">

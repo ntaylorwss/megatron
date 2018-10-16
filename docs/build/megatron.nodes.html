@@ -232,6 +232,49 @@ stores its given data (either from a feed dict or a function call) in its output
 <dt id="megatron.nodes.core.Node">
 <em class="property">class </em><code class="descclassname">megatron.nodes.core.</code><code class="descname">Node</code><span class="sig-paren">(</span><em>inbound_nodes</em>, <em>name</em><span class="sig-paren">)</span><a class="headerlink" href="#megatron.nodes.core.Node" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Base class of pipeline nodes.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>inbound_nodes</strong> (<em>list of megatron.Node</em>) – nodes who are to be connected as inputs to this node.</li>
+<li><strong>name</strong> (<em>str</em>) – name to give the node.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<dl class="attribute">
+<dt id="megatron.nodes.core.Node.inbound_nodes">
+<code class="descname">inbound_nodes</code><a class="headerlink" href="#megatron.nodes.core.Node.inbound_nodes" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>list of megatron.Node</em> – nodes who are to be connected as inputs to this node.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="megatron.nodes.core.Node.name">
+<code class="descname">name</code><a class="headerlink" href="#megatron.nodes.core.Node.name" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>str</em> – name to give the node.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="megatron.nodes.core.Node.outbound_nodes">
+<code class="descname">outbound_nodes</code><a class="headerlink" href="#megatron.nodes.core.Node.outbound_nodes" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>list of megatron.Node</em> – nodes to whom this node is connected as an input.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="megatron.nodes.core.Node.output">
+<code class="descname">output</code><a class="headerlink" href="#megatron.nodes.core.Node.output" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>np.ndarray</em> – holds the data output by the node’s having been run on its inputs.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="megatron.nodes.core.Node.has_run">
+<code class="descname">has_run</code><a class="headerlink" href="#megatron.nodes.core.Node.has_run" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>bool</em> – indicates whether the node has executed a transformation.</p>
+</dd></dl>
+
 </dd></dl>
 
 <dl class="class">
@@ -296,18 +339,63 @@ has, if necessary, been fit to data.</p>
 <span id="megatron-nodes-fromfile-module"></span><h2>megatron.nodes.fromfile module<a class="headerlink" href="#module-megatron.nodes.fromfile" title="Permalink to this headline">¶</a></h2>
 <dl class="function">
 <dt id="megatron.nodes.fromfile.from_csv">
-<code class="descclassname">megatron.nodes.fromfile.</code><code class="descname">from_csv</code><span class="sig-paren">(</span><em>csv</em>, <em>exclude_cols=[]</em>, <em>eager=False</em>, <em>nrows=None</em><span class="sig-paren">)</span><a class="headerlink" href="#megatron.nodes.fromfile.from_csv" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<code class="descclassname">megatron.nodes.fromfile.</code><code class="descname">from_csv</code><span class="sig-paren">(</span><em>filepath</em>, <em>exclude_cols=[]</em>, <em>eager=False</em>, <em>nrows=None</em><span class="sig-paren">)</span><a class="headerlink" href="#megatron.nodes.fromfile.from_csv" title="Permalink to this definition">¶</a></dt>
+<dd><p>Load Input nodes from columns of a CSV file.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>filepath</strong> (<em>str</em>) – path of CSV file to be loaded.</li>
+<li><strong>exclude_cols</strong> (<em>list of str</em><em> (</em><em>default:</em><em> [</em><em>]</em><em>)</em>) – any columns that should not be loaded as Input.</li>
+<li><strong>eager</strong> (<em>bool</em>) – whether to load data as well, making for eager execution.</li>
+<li><strong>nrows</strong> (<em>int</em>) – number of rows to load when eager is True. Default is for all rows to load.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
 
 <dl class="function">
 <dt id="megatron.nodes.fromfile.from_dataframe">
 <code class="descclassname">megatron.nodes.fromfile.</code><code class="descname">from_dataframe</code><span class="sig-paren">(</span><em>df</em>, <em>exclude_cols=[]</em>, <em>eager=False</em>, <em>nrows=None</em><span class="sig-paren">)</span><a class="headerlink" href="#megatron.nodes.fromfile.from_dataframe" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Load Input nodes from columns of a Pandas dataframe.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>df</strong> (<em>Pandas.DataFrame</em>) – dataframe from which to load columns.</li>
+<li><strong>exclude_cols</strong> (<em>list of str</em><em> (</em><em>default:</em><em> [</em><em>]</em><em>)</em>) – any columns that should not be loaded as Input.</li>
+<li><strong>eager</strong> (<em>bool</em>) – whether to load data as well, making for eager execution.</li>
+<li><strong>nrows</strong> (<em>int</em>) – number of rows to load when eager is True. Default is for all rows to load.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
 
 <dl class="function">
 <dt id="megatron.nodes.fromfile.from_sql">
 <code class="descclassname">megatron.nodes.fromfile.</code><code class="descname">from_sql</code><span class="sig-paren">(</span><em>connection</em>, <em>query</em>, <em>eager=False</em>, <em>nrows=None</em><span class="sig-paren">)</span><a class="headerlink" href="#megatron.nodes.fromfile.from_sql" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Load Input nodes from columns of a Pandas dataframe.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>connection</strong> (<em>Connection</em>) – database connection to load from.</li>
+<li><strong>query</strong> (<em>str</em>) – query to execute in connection to load columns.</li>
+<li><strong>eager</strong> (<em>bool</em>) – whether to load data as well, making for eager execution.</li>
+<li><strong>nrows</strong> (<em>int</em>) – number of rows to load when eager is True. Default is for all rows to load.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
 
 </div>
 <div class="section" id="module-megatron.nodes.wrappers">

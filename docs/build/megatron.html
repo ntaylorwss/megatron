@@ -203,7 +203,7 @@
 <span id="megatron-pipeline-module"></span><h2>megatron.pipeline module<a class="headerlink" href="#module-megatron.pipeline" title="Permalink to this headline">¶</a></h2>
 <dl class="class">
 <dt id="megatron.pipeline.Pipeline">
-<em class="property">class </em><code class="descclassname">megatron.pipeline.</code><code class="descname">Pipeline</code><span class="sig-paren">(</span><em>inputs</em>, <em>outputs</em>, <em>name=None</em>, <em>storage='local'</em><span class="sig-paren">)</span><a class="headerlink" href="#megatron.pipeline.Pipeline" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="descclassname">megatron.pipeline.</code><code class="descname">Pipeline</code><span class="sig-paren">(</span><em>inputs</em>, <em>outputs</em>, <em>name</em>, <em>version=None</em>, <em>storage_db=&lt;sqlite3.Connection object&gt;</em><span class="sig-paren">)</span><a class="headerlink" href="#megatron.pipeline.Pipeline" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
 <p>A pipeline with nodes as Transformations and InputNodes, edges as I/O relationships.</p>
 <p>Pipelines internally implement intelligent caching for maximal data re-use.
@@ -212,16 +212,32 @@ Pipelines can also be saved with metadata intact for future use.</p>
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>cache_dir</strong> (<em>str</em><em> (</em><em>default: '../feature_cache'</em><em>)</em>) – the relative path from the current working directory to store numpy data results
-for particular executions of nodes.</td>
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>inputs</strong> (<em>list of megatron.Node</em><em>(</em><em>s</em><em>)</em>) – input nodes of the pipeline, where raw data is fed in.</li>
+<li><strong>outputs</strong> (<em>list of megatron.Node</em><em>(</em><em>s</em><em>)</em>) – output nodes of the pipeline, the processed features.</li>
+<li><strong>name</strong> (<em>str</em>) – unique identifying name of the pipeline.</li>
+<li><strong>storage_db</strong> (<em>Connection</em><em> (</em><em>defeault: 'sqlite'</em><em>)</em>) – database connection to be used for input and output data storage.</li>
+</ul>
+</td>
 </tr>
 </tbody>
 </table>
 <dl class="attribute">
-<dt id="megatron.pipeline.Pipeline.cache_dir">
-<code class="descname">cache_dir</code><a class="headerlink" href="#megatron.pipeline.Pipeline.cache_dir" title="Permalink to this definition">¶</a></dt>
-<dd><p><em>str</em> – the relative path from the current working directory to store numpy data results
-for particular executions of nodes.</p>
+<dt id="megatron.pipeline.Pipeline.inputs">
+<code class="descname">inputs</code><a class="headerlink" href="#megatron.pipeline.Pipeline.inputs" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>list of megatron.Node(s)</em> – input nodes of the pipeline, where raw data is fed in.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="megatron.pipeline.Pipeline.outputs">
+<code class="descname">outputs</code><a class="headerlink" href="#megatron.pipeline.Pipeline.outputs" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>list of megatron.Node(s)</em> – output nodes of the pipeline, the processed features.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="megatron.pipeline.Pipeline.path">
+<code class="descname">path</code><a class="headerlink" href="#megatron.pipeline.Pipeline.path" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>list of megatron.Nodes</em> – full topological sort of pipeline from inputs to outputs.</p>
 </dd></dl>
 
 <dl class="attribute">
@@ -237,24 +253,63 @@ data being passed to an InputNode node as a function call.</p>
 <dd><p><em>list of TransformationNode / InputNode</em> – all InputNode and TransformationNode nodes belonging to the Pipeline.</p>
 </dd></dl>
 
+<dl class="attribute">
+<dt id="megatron.pipeline.Pipeline.name">
+<code class="descname">name</code><a class="headerlink" href="#megatron.pipeline.Pipeline.name" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>str</em> – unique identifying name of the pipeline.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="megatron.pipeline.Pipeline.storage">
+<code class="descname">storage</code><a class="headerlink" href="#megatron.pipeline.Pipeline.storage" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>Connection (defeault: None)</em> – storage database for input and output data.</p>
+</dd></dl>
+
 <dl class="method">
 <dt id="megatron.pipeline.Pipeline.fit">
 <code class="descname">fit</code><span class="sig-paren">(</span><em>input_data</em><span class="sig-paren">)</span><a class="headerlink" href="#megatron.pipeline.Pipeline.fit" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Fit to input data and overwrite the metadata.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>input_data</strong> (<em>2-tuple of dict of Numpy array</em><em>, </em><em>Numpy array</em>) – the input data to be passed to InputNodes to begin execution, and the index.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
 
 <dl class="method">
 <dt id="megatron.pipeline.Pipeline.fit_generator">
 <code class="descname">fit_generator</code><span class="sig-paren">(</span><em>input_generator</em><span class="sig-paren">)</span><a class="headerlink" href="#megatron.pipeline.Pipeline.fit_generator" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Perform partial fit to every batch of input generator.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>input_generator</strong> (<em>generator of dict of Numpy array</em>) – generator producing input data to be passed to Input nodes.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
 
 <dl class="method">
 <dt id="megatron.pipeline.Pipeline.partial_fit">
 <code class="descname">partial_fit</code><span class="sig-paren">(</span><em>input_data</em><span class="sig-paren">)</span><a class="headerlink" href="#megatron.pipeline.Pipeline.partial_fit" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Fit to input data in an incremental way if possible.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>input_data</strong> (<em>dict of Numpy array</em>) – the input data to be passed to InputNodes to begin execution.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
 
 <dl class="method">
 <dt id="megatron.pipeline.Pipeline.save">
-<code class="descname">save</code><span class="sig-paren">(</span><em>filepath</em><span class="sig-paren">)</span><a class="headerlink" href="#megatron.pipeline.Pipeline.save" title="Permalink to this definition">¶</a></dt>
+<code class="descname">save</code><span class="sig-paren">(</span><em>save_dir</em><span class="sig-paren">)</span><a class="headerlink" href="#megatron.pipeline.Pipeline.save" title="Permalink to this definition">¶</a></dt>
 <dd><p>Store just the nodes without their data (i.e. pre-execution) in a given file.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -275,9 +330,9 @@ data being passed to an InputNode node as a function call.</p>
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>input_data</strong> (<em>dict of Numpy array</em>) – the input data to be passed to InputNode TransformationNodes to begin execution.</li>
+<li><strong>input_data</strong> (<em>dict of Numpy array</em>) – the input data to be passed to InputNodes to begin execution.</li>
 <li><strong>cache_result</strong> (<em>bool</em>) – whether to store the resulting Numpy array in the cache.</li>
-<li><strong>form</strong> (<em>{'array'</em><em>, </em><em>'dataframe'}</em>) – data type to return as. If dataframe, colnames are node names.</li>
+<li><strong>out_type</strong> (<em>{'array'</em><em>, </em><em>'dataframe'}</em>) – data type to return as. If dataframe, colnames are node names.</li>
 </ul>
 </td>
 </tr>
@@ -288,13 +343,27 @@ data being passed to an InputNode node as a function call.</p>
 <dl class="method">
 <dt id="megatron.pipeline.Pipeline.transform_generator">
 <code class="descname">transform_generator</code><span class="sig-paren">(</span><em>input_generator</em>, <em>cache_result=True</em>, <em>out_type='array'</em><span class="sig-paren">)</span><a class="headerlink" href="#megatron.pipeline.Pipeline.transform_generator" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Execute the graph with some input data from a generator, create generator.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>input_generator</strong> (<em>dict of Numpy array</em>) – generator producing input data to be passed to Input nodes.</li>
+<li><strong>cache_result</strong> (<em>bool</em>) – whether to store the resulting Numpy array in the cache.</li>
+<li><strong>out_type</strong> (<em>{'array'</em><em>, </em><em>'dataframe'}</em>) – data type to return as. If dataframe, colnames are node names.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
 
 </dd></dl>
 
 <dl class="function">
 <dt id="megatron.pipeline.load_pipeline">
-<code class="descclassname">megatron.pipeline.</code><code class="descname">load_pipeline</code><span class="sig-paren">(</span><em>filepath</em><span class="sig-paren">)</span><a class="headerlink" href="#megatron.pipeline.load_pipeline" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">megatron.pipeline.</code><code class="descname">load_pipeline</code><span class="sig-paren">(</span><em>filepath</em>, <em>storage_db=&lt;sqlite3.Connection object&gt;</em><span class="sig-paren">)</span><a class="headerlink" href="#megatron.pipeline.load_pipeline" title="Permalink to this definition">¶</a></dt>
 <dd><p>Load a set of nodes from a given file, stored previously with Pipeline.save().</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />

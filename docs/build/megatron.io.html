@@ -160,66 +160,177 @@
 <dl class="function">
 <dt id="megatron.io.dataset.CSVData">
 <code class="descclassname">megatron.io.dataset.</code><code class="descname">CSVData</code><span class="sig-paren">(</span><em>filepath</em>, <em>exclude_cols=[]</em><span class="sig-paren">)</span><a class="headerlink" href="#megatron.io.dataset.CSVData" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Load full dataset from CSV file in pipeline Input format.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>filepath</strong> (<em>str</em>) – the CSV filepath to be loaded from.</li>
+<li><strong>exclude_cols</strong> (<em>list of str</em><em> (</em><em>default:</em><em> [</em><em>]</em><em>)</em>) – any columns that should not be loaded as Input.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
 
 <dl class="function">
 <dt id="megatron.io.dataset.PandasData">
 <code class="descclassname">megatron.io.dataset.</code><code class="descname">PandasData</code><span class="sig-paren">(</span><em>dataframe</em>, <em>exclude_cols=[]</em><span class="sig-paren">)</span><a class="headerlink" href="#megatron.io.dataset.PandasData" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Load full Pandas dataframe in pipeline Input format.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>dataframe</strong> (<em>Pandas.DataFrame</em>) – the dataframe to be used.</li>
+<li><strong>exclude_cols</strong> (<em>list of str</em><em> (</em><em>default:</em><em> [</em><em>]</em><em>)</em>) – any columns that should not be loaded as Input.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
 
 <dl class="function">
 <dt id="megatron.io.dataset.SQLData">
 <code class="descclassname">megatron.io.dataset.</code><code class="descname">SQLData</code><span class="sig-paren">(</span><em>connection</em>, <em>query</em><span class="sig-paren">)</span><a class="headerlink" href="#megatron.io.dataset.SQLData" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Query full dataset from SQL database connection, in pipeline Input format.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>connection</strong> (<em>Connection</em>) – a database connection to any valid SQL database engine.</li>
+<li><strong>query</strong> (<em>str</em>) – a valid SQL query according to the engine being used, that extracts the data for Inputs.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
 
 </div>
 <div class="section" id="module-megatron.io.generator">
 <span id="megatron-io-generator-module"></span><h2>megatron.io.generator module<a class="headerlink" href="#module-megatron.io.generator" title="Permalink to this headline">¶</a></h2>
 <dl class="class">
 <dt id="megatron.io.generator.CSVGenerator">
-<em class="property">class </em><code class="descclassname">megatron.io.generator.</code><code class="descname">CSVGenerator</code><span class="sig-paren">(</span><em>filepath</em>, <em>batch_size</em>, <em>exclude_cols=[]</em><span class="sig-paren">)</span><a class="headerlink" href="#megatron.io.generator.CSVGenerator" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference internal" href="#megatron.io.generator.DataGenerator" title="megatron.io.generator.DataGenerator"><code class="xref py py-class docutils literal notranslate"><span class="pre">megatron.io.generator.DataGenerator</span></code></a></p>
-</dd></dl>
-
-<dl class="class">
-<dt id="megatron.io.generator.DataGenerator">
-<em class="property">class </em><code class="descclassname">megatron.io.generator.</code><code class="descname">DataGenerator</code><span class="sig-paren">(</span><em>batch_size</em><span class="sig-paren">)</span><a class="headerlink" href="#megatron.io.generator.DataGenerator" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="descclassname">megatron.io.generator.</code><code class="descname">CSVGenerator</code><span class="sig-paren">(</span><em>filepath</em>, <em>batch_size</em>, <em>index_col=None</em>, <em>exclude_cols=[]</em><span class="sig-paren">)</span><a class="headerlink" href="#megatron.io.generator.CSVGenerator" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>A generator of data batches from a CSV file in pipeline Input format.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>filepath</strong> (<em>str</em>) – the CSV filepath to be loaded from.</li>
+<li><strong>batch_size</strong> (<em>int</em>) – number of observations to yield in each iteration.</li>
+<li><strong>exclude_cols</strong> (<em>list of str</em><em> (</em><em>default:</em><em> [</em><em>]</em><em>)</em>) – any columns that should not be loaded as Input.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
 </dd></dl>
 
 <dl class="class">
 <dt id="megatron.io.generator.PandasGenerator">
-<em class="property">class </em><code class="descclassname">megatron.io.generator.</code><code class="descname">PandasGenerator</code><span class="sig-paren">(</span><em>dataframe</em>, <em>batch_size</em>, <em>exclude_cols=[]</em><span class="sig-paren">)</span><a class="headerlink" href="#megatron.io.generator.PandasGenerator" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference internal" href="#megatron.io.generator.DataGenerator" title="megatron.io.generator.DataGenerator"><code class="xref py py-class docutils literal notranslate"><span class="pre">megatron.io.generator.DataGenerator</span></code></a></p>
+<em class="property">class </em><code class="descclassname">megatron.io.generator.</code><code class="descname">PandasGenerator</code><span class="sig-paren">(</span><em>dataframe</em>, <em>batch_size</em>, <em>index_col=None</em>, <em>exclude_cols=[]</em><span class="sig-paren">)</span><a class="headerlink" href="#megatron.io.generator.PandasGenerator" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>A generator of data batches from a Pandas dataframe in pipeline Input format.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>dataframe</strong> (<em>Pandas.DataFrame</em>) – dataframe to load data from.</li>
+<li><strong>batch_size</strong> (<em>int</em>) – number of observations to yield in each iteration.</li>
+<li><strong>exclude_cols</strong> (<em>list of str</em><em> (</em><em>default:</em><em> [</em><em>]</em><em>)</em>) – any columns that should not be loaded as Input.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
 </dd></dl>
 
 <dl class="class">
 <dt id="megatron.io.generator.SQLGenerator">
-<em class="property">class </em><code class="descclassname">megatron.io.generator.</code><code class="descname">SQLGenerator</code><span class="sig-paren">(</span><em>connection</em>, <em>query</em>, <em>batch_size</em>, <em>limit=None</em><span class="sig-paren">)</span><a class="headerlink" href="#megatron.io.generator.SQLGenerator" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference internal" href="#megatron.io.generator.DataGenerator" title="megatron.io.generator.DataGenerator"><code class="xref py py-class docutils literal notranslate"><span class="pre">megatron.io.generator.DataGenerator</span></code></a></p>
+<em class="property">class </em><code class="descclassname">megatron.io.generator.</code><code class="descname">SQLGenerator</code><span class="sig-paren">(</span><em>connection</em>, <em>query</em>, <em>batch_size</em>, <em>index_col=None</em>, <em>limit=None</em><span class="sig-paren">)</span><a class="headerlink" href="#megatron.io.generator.SQLGenerator" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>A generator of data batches from a SQL query in pipeline Input format.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>connection</strong> (<em>Connection</em>) – a database connection to any valid SQL database engine.</li>
+<li><strong>query</strong> (<em>str</em>) – a valid SQL query according to the engine being used, that extracts the data for Inputs.</li>
+<li><strong>batch_size</strong> (<em>int</em>) – number of observations to yield in each iteration.</li>
+<li><strong>limit</strong> (<em>int</em>) – number of observations to use from the query in total.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
 </dd></dl>
 
 </div>
 <div class="section" id="module-megatron.io.storage">
 <span id="megatron-io-storage-module"></span><h2>megatron.io.storage module<a class="headerlink" href="#module-megatron.io.storage" title="Permalink to this headline">¶</a></h2>
 <dl class="class">
-<dt id="megatron.io.storage.LocalStorage">
-<em class="property">class </em><code class="descclassname">megatron.io.storage.</code><code class="descname">LocalStorage</code><span class="sig-paren">(</span><em>table_name</em><span class="sig-paren">)</span><a class="headerlink" href="#megatron.io.storage.LocalStorage" title="Permalink to this definition">¶</a></dt>
+<dt id="megatron.io.storage.DataStore">
+<em class="property">class </em><code class="descclassname">megatron.io.storage.</code><code class="descname">DataStore</code><span class="sig-paren">(</span><em>table_name</em>, <em>version</em>, <em>db_conn</em><span class="sig-paren">)</span><a class="headerlink" href="#megatron.io.storage.DataStore" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>SQL table of input data and output features, associated with a single pipeline.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>table_name</strong> (<em>str</em>) – name of pipeline’s cache table in the database.</li>
+<li><strong>db_conn</strong> (<em>Connection</em>) – database connection to query.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
 <dl class="method">
-<dt id="megatron.io.storage.LocalStorage.delete_table">
-<code class="descname">delete_table</code><span class="sig-paren">(</span><em>table_name=None</em><span class="sig-paren">)</span><a class="headerlink" href="#megatron.io.storage.LocalStorage.delete_table" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dt id="megatron.io.storage.DataStore.read">
+<code class="descname">read</code><span class="sig-paren">(</span><em>output_names=None</em>, <em>lookup=None</em><span class="sig-paren">)</span><a class="headerlink" href="#megatron.io.storage.DataStore.read" title="Permalink to this definition">¶</a></dt>
+<dd><p>Retrieve all processed features from cache, or lookup a single observation.</p>
+<p>For features that are multi-dimensional, use pickle to read string.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>output_names</strong> (<em>list of str</em>) – names of output columns to retrieve. If none, get all outputs.</li>
+<li><strong>lookup</strong> (<em>dict of ndarray</em>) – input data to lookup output for, in dictionary form.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
 
 <dl class="method">
-<dt id="megatron.io.storage.LocalStorage.lookup">
-<code class="descname">lookup</code><span class="sig-paren">(</span><em>output_cols=None</em>, <em>lookup_obs=None</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#megatron.io.storage.LocalStorage.lookup" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="method">
-<dt id="megatron.io.storage.LocalStorage.write">
-<code class="descname">write</code><span class="sig-paren">(</span><em>input_data</em>, <em>output_data</em><span class="sig-paren">)</span><a class="headerlink" href="#megatron.io.storage.LocalStorage.write" title="Permalink to this definition">¶</a></dt>
-<dd><p>Write set of observations to database, which includes input data and output data.</p>
+<dt id="megatron.io.storage.DataStore.write">
+<code class="descname">write</code><span class="sig-paren">(</span><em>output_data</em>, <em>data_index</em><span class="sig-paren">)</span><a class="headerlink" href="#megatron.io.storage.DataStore.write" title="Permalink to this definition">¶</a></dt>
+<dd><p>Write set of observations to database.</p>
+<p>For features that are multi-dimensional, use pickle to compress to string.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>output_data</strong> (<em>dict of ndarray</em>) – resulting features from applying pipeline to input_data.</li>
+<li><strong>data_index</strong> (<em>np.array</em>) – index of observations.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
 </dd></dl>
 
 </dd></dl>
