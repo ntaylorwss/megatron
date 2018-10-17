@@ -159,7 +159,7 @@
 <span id="megatron-nodes-core-module"></span><h2>megatron.nodes.core module<a class="headerlink" href="#module-megatron.nodes.core" title="Permalink to this headline">¶</a></h2>
 <dl class="class">
 <dt id="megatron.nodes.core.InputNode">
-<em class="property">class </em><code class="descclassname">megatron.nodes.core.</code><code class="descname">InputNode</code><span class="sig-paren">(</span><em>name</em>, <em>input_shape=()</em><span class="sig-paren">)</span><a class="headerlink" href="#megatron.nodes.core.InputNode" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="descclassname">megatron.nodes.core.</code><code class="descname">InputNode</code><span class="sig-paren">(</span><em>name</em>, <em>shape=()</em><span class="sig-paren">)</span><a class="headerlink" href="#megatron.nodes.core.InputNode" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#megatron.nodes.core.Node" title="megatron.nodes.core.Node"><code class="xref py py-class docutils literal notranslate"><span class="pre">megatron.nodes.core.Node</span></code></a></p>
 <p>A pipeline node holding input data as a Numpy array.</p>
 <p>It is always an initial node in a Pipeline (has no input nodes) and, when run,
@@ -170,7 +170,7 @@ stores its given data (either from a feed dict or a function call) in its output
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
 <li><strong>name</strong> (<em>str</em>) – a name to associate with the data; the keys of the Pipeline feed dict will be these names.</li>
-<li><strong>input_shape</strong> (<em>tuple of int</em>) – the shape, not including the observation dimension (1st), of the Numpy arrays to be input.</li>
+<li><strong>shape</strong> (<em>tuple of int</em>) – the shape, not including the observation dimension (1st), of the Numpy arrays to be input.</li>
 </ul>
 </td>
 </tr>
@@ -183,8 +183,8 @@ stores its given data (either from a feed dict or a function call) in its output
 </dd></dl>
 
 <dl class="attribute">
-<dt id="megatron.nodes.core.InputNode.input_shape">
-<code class="descname">input_shape</code><a class="headerlink" href="#megatron.nodes.core.InputNode.input_shape" title="Permalink to this definition">¶</a></dt>
+<dt id="megatron.nodes.core.InputNode.shape">
+<code class="descname">shape</code><a class="headerlink" href="#megatron.nodes.core.InputNode.shape" title="Permalink to this definition">¶</a></dt>
 <dd><p><em>tuple of int</em> – the shape, not including the observation dimension (1st), of the Numpy arrays to be input.</p>
 </dd></dl>
 
@@ -321,6 +321,11 @@ has, if necessary, been fit to data.</p>
 <dd><p>Calculates metadata based on provided data.</p>
 </dd></dl>
 
+<dl class="attribute">
+<dt id="megatron.nodes.core.TransformationNode.metadata">
+<code class="descname">metadata</code><a class="headerlink" href="#megatron.nodes.core.TransformationNode.metadata" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
 <dl class="method">
 <dt id="megatron.nodes.core.TransformationNode.partial_fit">
 <code class="descname">partial_fit</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#megatron.nodes.core.TransformationNode.partial_fit" title="Permalink to this definition">¶</a></dt>
@@ -451,7 +456,7 @@ if strs provided, shape of each is assumed to be a single column.</td>
 
 <dl class="class">
 <dt id="megatron.nodes.wrappers.Input">
-<em class="property">class </em><code class="descclassname">megatron.nodes.wrappers.</code><code class="descname">Input</code><span class="sig-paren">(</span><em>name</em>, <em>input_shape=()</em><span class="sig-paren">)</span><a class="headerlink" href="#megatron.nodes.wrappers.Input" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="descclassname">megatron.nodes.wrappers.</code><code class="descname">Input</code><span class="sig-paren">(</span><em>name</em>, <em>shape=()</em><span class="sig-paren">)</span><a class="headerlink" href="#megatron.nodes.wrappers.Input" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#megatron.nodes.core.InputNode" title="megatron.nodes.core.InputNode"><code class="xref py py-class docutils literal notranslate"><span class="pre">megatron.nodes.core.InputNode</span></code></a></p>
 </dd></dl>
 

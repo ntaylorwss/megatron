@@ -52,6 +52,14 @@ megatron.layers.text module
     :undoc-members:
     :show-inheritance:
 
+megatron.layers.wrappers module
+-------------------------------
+
+.. automodule:: megatron.layers.wrappers
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
 
 Module contents
 ---------------

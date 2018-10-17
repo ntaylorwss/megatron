@@ -172,6 +172,7 @@
 <li class="toctree-l2"><a class="reference internal" href="megatron.layers.html#module-megatron.layers.missing">megatron.layers.missing module</a></li>
 <li class="toctree-l2"><a class="reference internal" href="megatron.layers.html#module-megatron.layers.numeric">megatron.layers.numeric module</a></li>
 <li class="toctree-l2"><a class="reference internal" href="megatron.layers.html#module-megatron.layers.text">megatron.layers.text module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="megatron.layers.html#module-megatron.layers.wrappers">megatron.layers.wrappers module</a></li>
 <li class="toctree-l2"><a class="reference internal" href="megatron.layers.html#module-megatron.layers">Module contents</a></li>
 </ul>
 </li>
@@ -203,7 +204,7 @@
 <span id="megatron-pipeline-module"></span><h2>megatron.pipeline module<a class="headerlink" href="#module-megatron.pipeline" title="Permalink to this headline">¶</a></h2>
 <dl class="class">
 <dt id="megatron.pipeline.Pipeline">
-<em class="property">class </em><code class="descclassname">megatron.pipeline.</code><code class="descname">Pipeline</code><span class="sig-paren">(</span><em>inputs</em>, <em>outputs</em>, <em>name</em>, <em>version=None</em>, <em>storage_db=&lt;sqlite3.Connection object&gt;</em><span class="sig-paren">)</span><a class="headerlink" href="#megatron.pipeline.Pipeline" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="descclassname">megatron.pipeline.</code><code class="descname">Pipeline</code><span class="sig-paren">(</span><em>inputs</em>, <em>outputs</em>, <em>name</em>, <em>version=None</em>, <em>storage=None</em><span class="sig-paren">)</span><a class="headerlink" href="#megatron.pipeline.Pipeline" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
 <p>A pipeline with nodes as Transformations and InputNodes, edges as I/O relationships.</p>
 <p>Pipelines internally implement intelligent caching for maximal data re-use.
@@ -315,7 +316,7 @@ data being passed to an InputNode node as a function call.</p>
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>filepath</strong> (<em>str</em>) – the desired location of the stored nodes, filename included.</td>
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>save_dir</strong> (<em>str</em>) – the desired location of the stored nodes, without the filename.</td>
 </tr>
 </tbody>
 </table>
@@ -323,7 +324,7 @@ data being passed to an InputNode node as a function call.</p>
 
 <dl class="method">
 <dt id="megatron.pipeline.Pipeline.transform">
-<code class="descname">transform</code><span class="sig-paren">(</span><em>input_data</em>, <em>cache_result=True</em>, <em>out_type='array'</em><span class="sig-paren">)</span><a class="headerlink" href="#megatron.pipeline.Pipeline.transform" title="Permalink to this definition">¶</a></dt>
+<code class="descname">transform</code><span class="sig-paren">(</span><em>input_data</em>, <em>out_type='array'</em><span class="sig-paren">)</span><a class="headerlink" href="#megatron.pipeline.Pipeline.transform" title="Permalink to this definition">¶</a></dt>
 <dd><p>Execute the graph with some input data, get the output nodes’ data.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -342,7 +343,7 @@ data being passed to an InputNode node as a function call.</p>
 
 <dl class="method">
 <dt id="megatron.pipeline.Pipeline.transform_generator">
-<code class="descname">transform_generator</code><span class="sig-paren">(</span><em>input_generator</em>, <em>cache_result=True</em>, <em>out_type='array'</em><span class="sig-paren">)</span><a class="headerlink" href="#megatron.pipeline.Pipeline.transform_generator" title="Permalink to this definition">¶</a></dt>
+<code class="descname">transform_generator</code><span class="sig-paren">(</span><em>input_generator</em>, <em>out_type='array'</em><span class="sig-paren">)</span><a class="headerlink" href="#megatron.pipeline.Pipeline.transform_generator" title="Permalink to this definition">¶</a></dt>
 <dd><p>Execute the graph with some input data from a generator, create generator.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -363,13 +364,17 @@ data being passed to an InputNode node as a function call.</p>
 
 <dl class="function">
 <dt id="megatron.pipeline.load_pipeline">
-<code class="descclassname">megatron.pipeline.</code><code class="descname">load_pipeline</code><span class="sig-paren">(</span><em>filepath</em>, <em>storage_db=&lt;sqlite3.Connection object&gt;</em><span class="sig-paren">)</span><a class="headerlink" href="#megatron.pipeline.load_pipeline" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">megatron.pipeline.</code><code class="descname">load_pipeline</code><span class="sig-paren">(</span><em>filepath</em>, <em>storage_db=None</em><span class="sig-paren">)</span><a class="headerlink" href="#megatron.pipeline.load_pipeline" title="Permalink to this definition">¶</a></dt>
 <dd><p>Load a set of nodes from a given file, stored previously with Pipeline.save().</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>filepath</strong> (<em>str</em>) – the file from which to load a Pipeline.</td>
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>filepath</strong> (<em>str</em>) – the file from which to load a Pipeline.</li>
+<li><strong>storage_db</strong> (<em>Connection</em><em> (</em><em>default: sqlite3.connect</em><em>(</em><em>'megatron_default.db'</em><em>)</em><em>)</em>) – database connection object to query for cached data from the pipeline.</li>
+</ul>
+</td>
 </tr>
 </tbody>
 </table>
