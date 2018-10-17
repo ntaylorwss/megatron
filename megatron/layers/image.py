@@ -13,18 +13,22 @@ class RGBtoGrey(StatelessLayer):
     ----------
     method : {'luminosity', 'lightness', 'average'}
     """
-    def __init__(self, method='luminosity'):
-        super().__init__(method=method)
+    def __init__(self, method='luminosity', keep_dim=False):
+        super().__init__(method=method, keep_dim=keep_dim)
 
     def transform(self, X):
         if self.kwargs['method'] == 'lightness':
-            return (X.max(axis=2) + X.min(axis=2)) / 2.
+            out = (X.max(axis=2) + X.min(axis=2)) / 2.
         elif self.kwargs['method'] == 'average':
-            return X.mean(axis=2)
+            out = X.mean(axis=2)
         elif self.kwargs['method'] == 'luminosity':
-            return np.matmul(X, np.array([0.21, 0.72, 0.07]))
+            out = np.matmul(X, np.array([0.21, 0.72, 0.07]))
         else:
             raise ValueError("Invalid averaging method for rgb_to_grey.")
+
+        if self.kwargs['keep_dim']:
+            out = np.expand_dims(out, -1)
+        return out
 
 
 class RGBtoBinary(StatelessLayer):

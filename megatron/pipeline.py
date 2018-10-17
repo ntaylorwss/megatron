@@ -53,8 +53,10 @@ class Pipeline:
         for node in inputs:
             if utils.generic.isinstance_str(node, 'FeatureSet'):
                 self.inputs += node.nodes
-            else:
+            elif utils.generic.isinstance_str(node, 'InputNode'):
                 self.inputs.append(node)
+            else:
+                raise ValueError("Node provided as input that is not an InputNode")
 
         # flatten outputs into list of nodes
         self.outputs = []

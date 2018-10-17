@@ -5,6 +5,7 @@
 ### Changes
 - SQLite no longer the default caching database. By default, there is no caching.
 - No more cache_result parameter to transform methods. If a database is passed at init, it caches, otherwise not.
+- Add support for Sklearn supervised learning models, and Keras models, as layers.
 
 ## 0.3.0
 

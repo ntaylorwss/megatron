@@ -85,7 +85,7 @@ class OneHot(StatelessLayer):
     min_val : int (default: 0)
         minimum possible value.
     """
-    def __init__(self, max_val, min_val=0):
+    def __init__(self, min_val=0, max_val=None):
         super().__init__(max_val=max_val, min_val=min_val)
 
     def transform(self, X):
