@@ -44,7 +44,6 @@ class Cast(StatelessLayer):
         return X.astype(self.kwargs['new_type'])
 
 
-
 class Concatenate(StatelessLayer):
     """Combine Nodes, creating n-length array for each observation."""
     def transform(self, *arrays):

@@ -42,22 +42,22 @@ class InputNode(Node):
     ----------
     name : str
         a name to associate with the data; the keys of the Pipeline feed dict will be these names.
-    input_shape : tuple of int
+    shape : tuple of int
         the shape, not including the observation dimension (1st), of the Numpy arrays to be input.
 
     Attributes
     ----------
     name : str
         a name to associate with the data; the keys of the Pipeline feed dict will be these names.
-    input_shape : tuple of int
+    shape : tuple of int
         the shape, not including the observation dimension (1st), of the Numpy arrays to be input.
     output : np.ndarray
         is None until node is run; when run, the Numpy array passed in is stored here.
     """
-    def __init__(self, name, input_shape=()):
+    def __init__(self, name, shape=()):
         self.is_default_name = False
         self.layer_name = 'Input'
-        self.input_shape = input_shape
+        self.shape = shape
         super().__init__([], name)
 
     def load(self, observations):
@@ -90,8 +90,8 @@ class InputNode(Node):
         megatron.utils.ShapeError
             error indicating that the shape of the data does not match the shape of the node.
         """
-        if hasattr(observations, 'shape') and (list(observations.shape[1:]) != list(self.input_shape)):
-            raise utils.errors.ShapeError(self.name, self.input_shape, observations.shape[1:])
+        if hasattr(observations, 'shape') and (list(observations.shape[1:]) != list(self.shape)):
+            raise utils.errors.ShapeError(self.name, self.shape, observations.shape[1:])
 
     def __call__(self, observations):
         """Run the node, storing the given data. Intended for eager execution.
@@ -135,12 +135,13 @@ class TransformationNode(Node):
     """
     def __init__(self, layer, inbound_nodes, name=None):
         self.is_default_name = name is None
-        if name is None:
-            name = '{}({})'.format(self.__class__.__name__,
-                                   ','.join([node.name for node in inbound_nodes]))
         self.layer = layer
         self.layer_name = layer.name
         super().__init__(inbound_nodes, name)
+
+    @property
+    def metadata(self):
+        return self.layer.metadata
 
     def partial_fit(self):
         inputs = [node.output for node in self.inbound_nodes]
