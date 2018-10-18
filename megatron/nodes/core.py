@@ -143,19 +143,24 @@ class TransformationNode(Node):
     def metadata(self):
         return self.layer.metadata
 
+    @staticmethod
+    def _get_outputs(nodes):
+        # if one of the arguments to the layer is a list of nodes, dig in to grab the data
+        return [node.output for node in nodes]
+
     def partial_fit(self):
-        inputs = [node.output for node in self.inbound_nodes]
+        inputs = self._get_outputs(self.inbound_nodes)
         self.layer.partial_fit(*inputs)
         self.has_run = True
 
     def fit(self):
         """Calculates metadata based on provided data."""
-        inputs = [node.output for node in self.inbound_nodes]
+        inputs = self._get_outputs(self.inbound_nodes)
         self.layer.fit(*inputs)
         self.has_run = True
 
     def transform(self):
         """Stores result of given Transformation on input Nodes in output variable."""
-        inputs = [node.output for node in self.inbound_nodes]
+        inputs = self._get_outputs(self.inbound_nodes)
         self.output = self.layer.transform(*inputs)
         self.has_run = True

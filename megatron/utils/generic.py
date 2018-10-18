@@ -1,5 +1,6 @@
 import inspect
 import functools
+import collections
 
 
 def initializer(func):

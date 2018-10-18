@@ -30,13 +30,22 @@ class Keras(Layer):
         super().__init__()
         self.model = keras_model
         self.name = 'KerasModel'
+        self.n_inputs = len(self.model.inputs)
 
     def partial_fit(self, *inputs):
-        self.model.fit(*inputs)
+        if self.n_inputs == 1:
+            X, Y = inputs
+        else:
+            X = list(inputs[:self.n_inputs])
+            Y = list(inputs[self.n_inputs:])
+        self.model.fit(X, Y)
 
     def fit(self, *inputs):
-        self.model.fit(*inputs)
+        self.partial_fit(*inputs)
 
     def transform(self, *inputs):
         # don't use the labels for this
-        return self.model.predict(inputs[0])
+        if self.n_inputs == 1:
+            return self.model.predict(inputs[0])
+        else:
+            return self.model.predict(list(inputs[:self.n_inputs]))
