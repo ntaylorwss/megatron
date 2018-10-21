@@ -1,6 +1,6 @@
 # Megatron: Machine Learning Pipelines
 
-Megatron is a Python module for building data pipelines that go from raw data to features, or raw data all the way to predictions.
+Megatron is a Python module for building data pipelines that encapsulate the entire machine learning process, from raw data to predictions.
 
 The advantages of using Megatron:
 
