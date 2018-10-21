@@ -1,93 +1,170 @@
-# Megatron: Feature Engineering Pipelines
+# Megatron: Machine Learning Pipelines
 
-Megatron is a library that facilitates fully customizable pipelines for feature engineering by implementing the process as a graph of functions on Numpy/Pandas data. It can be used to clearly define complex feature engineering concepts as a series of simple functions; it also allows for clear visualization as a graph, fast re-use through caching, and the ability to fit to training data and apply fitted transformations to testing data. It supports eager execution for transparency at every step. It provides a comprehensive suite of transformations, as well as the ability to apply user-defined transformations, and transformations from other libraries like Sklearn. With a design heavily inspired by the Keras Functional API, Megatron aims to be the simplest interface to both straightforward and arbitrarily complex feature engineering.
+Megatron is a Python module for building data pipelines that go from raw data to features, or raw data all the way to predictions.
 
-## Sabermetrics Demo
-Coming Soon.
+The advantages of using Megatron:
 
-## Installation and Requirements
-Megatron comes with a Docker image that provides a minimal environment with all its required dependencies and Jupyter. If you wish to use the package on its own, it can be installed via pip:
+- A wide array of data transformations can be applied, including:
+    - Built-in preprocessing transformations such as one-hot encoding, whitening, time-series windowing, etc.
+    - Any custom transformations you want, provided they take in Numpy arrays and output Numpy arrays.
+    - Sklearn preprocessors, unsupervised models (e.g. PCA), and supervised models. Basically, anything from sklearn.
+    - Keras models.
+- To any Keras users, the API will be familiar: Megatron's API is heavily inspired by the [Keras Functional API](https://keras.io/getting-started/functional-api-guide/), where each data transformation (whether a simple one-hot encoding or an entire neural network) is applied as a Layer.
+- Since all datasets should be versioned, Megatron allows you to name and version your pipelines and associated output data.
+- Pipeline outputs can be cached and looked up easily for each pipeline and version.
+- The pipeline can be elegantly visualized as a graph, showing connections between layers similar to a Keras visualization.
+- Data and input layer shapes can be loaded from structured data sources including:
+    - Pandas dataframes.
+    - CSVs.
+    - SQL database connections and queries.
+- Pipelines can either take in and produce full datasets, or take in and produce batch generators, for maximum flexibility.
+- Pipelines support eager execution for immediate examination of data and simpler debugging.
+
+## Installation
+
+To install megatron, just grab it from pip:
 
 `pip install megatron`
 
-And the dependencies are as follows:
+There's also a Docker image available with all dependencies and optional dependencies installed:
 
-- Numpy (required)
-- Sklearn (optional: only if using transformation functions from sklearn with the `SklearnTransformer` wrapper)
-- NLTK (optional: only if using `megatron.transforms.text` module)
-- Scikit-Image (optional: only if using `megatron.transforms.image` module)
-- PyArrow (optional: only if loading Parquet-formatted raw data)
+`docker pull ntaylor22/megatron`
 
-## Using Transformations
-Transformations take keyword arguments in their initialization. These are like "hyperparameters" for the function, those that stay the same for each execution and which can be customized by the user. These functions are then called on other Nodes if in lazy execution, or on data if in eager execution (see below for a discussion on Eager Execution). Multiple arguments are passed as a list.
+### Optional Dependencies
+- Scikit-Learn
+    - If you'd like to use Sklearn transformations as Layers.
+- Keras
+    - If you'd like to use Keras models as Layers.
+- Pydot
+    - If you'd like to be able to visualize pipelines.
+    - Note: requires [GraphViz](https://graphviz.gitlab.io/download/) to run.
 
-As an example, here's the usage for the `TimeSeries` function from `megatron.transforms.common`, which takes in a `window_size` parameter and operates on one node:
+## Tutorial
 
-`out = megatron.transforms.TimeSeries(window_size=5)(X)`
+A simple example with an image and some binary labels. The goals here are:
 
-And a `Divide` function from `megatron.transforms.numeric`, which takes in no parameters, and operates on two nodes:
+- Convert the RGB image to black and white.
+- One-hot encode the labels.
+- Feed these into a Keras CNN, get predictions.
 
-`out = megatron.transforms.Divide()([X, Y])`
+Let's assume a built and compiled Keras model named `model` has already been made:
 
-## Defining Custom Transformations
-A Transformation is one of two things: stateless, or stateful.
+`model = Model(image_input, two_class_output)`
 
-- Stateless transformations, when provided the same input at any given time, will always provide the same output. They are dependent on nothing, in terms of context.
-- Stateful transformations will provide different output for the same input depending on their parameters; these transformations are "fitted" to data, much like models. An example is a whitening transformation that subtracts the mean and divides by the standard deviation. This Transformation is "fitted" to the data by calculating a mean and standard deviation, and it then uses these statistics for subsequent transformations of future data.
-
-To define a stateless transformation, simply write the function that accepts Numpy data and returns Numpy data, doing whatever arbitrary transformation you wish. Then pass this function to a `megatron.Lambda` wrapper:
-
-```
-def add_5(x):
-    return x + 5
-
-out = Lambda(add_5)(X)
-```
-
-To define a stateful transformation, you must inherit the `megatron.Transformation` class. You are responsible for writing the following methods for your new child class:
-
-- `fit(self, *nodes)`: This should calculate any necessary parameters when passed in Numpy data as `*nodes`. A `self.metadata` dictionary is provided for the storage of these parameters, and should be used.
-- `transform(self, *nodes)`: This should transform your Numpy data, given as `*nodes`. You make use of the learned parameters by accessing them in `self.metadata`.
-
-`*nodes` is of course not necessary as a parameter name; it is intended to show that you can have an arbitrary number of parameters, each corresponding to a node's data.
-
-## Using Sklearn Transformations
-A wrapper is provided for Sklearn transformations that makes it simple to insert them into the pipeline:
-
-`out = megatron.wrappers.SklearnTransformer(sklearn.StandardScaler())(X)`
-
-That's it.
-
-## Eager Execution
-Megatron supports eager execution with a very simple adjustment to the code. When you define an Input node, you can call it as a function and pass it a Numpy array as data. Doing this will result in the graph being executed eagerly; the results for each Node can be found in its `output` attribute. An example to state the comparison:
+Let's start by making the input nodes for the pipeline:
 
 ```
-# lazy
-G = megatron.Graph(cache_path='megatron/cache')
-X = megatron.Input(G, 'X', (10,))
-Y = megatron.Input(G, 'Y', (10,))
-
-Z = megatron.transforms.TimeSeries(window_size=5)(X)
-
-data = {'X': np.ones((50, 10)),
-        'Y': np.ones((50, 10))}
-
-result = G.run(Z, data)
-print(result.shape) # >>> (45, 5, 10)
-
-# eager
-data = {'X': np.random.random((50, 10)),
-        'Y': np.random.random((50, 10))}
-
-G = megatron.Graph()
-X = megatron.Input(G, 'X', (10,))(data['X'])
-Y = megatron.Input(G, 'Y', (10,))(data['Y'])
-Z = megatron.transforms.TimeSeries(window_size=5)(X)
-print(Z.output.shape) # >>> (45, 5, 10)
+images = megatron.nodes.Input('images', (48, 48, 1))
+labels = megatron.nodes.Input('labels')
 ```
 
-As you can see, the Node `Z` had its value computed on creation, and it was stored in `Z.output`. The same is true of all Nodes in the Graph. `Graph.run` is not used when eager execution is being applied.
+By default, the shape of an Input is a 1D array, so we don't need to specify the shape of 'labels'.
 
-## Caching
-Megatron will, by default, cache the results of an execution of a Node in a space-efficient compressed file. Any Nodes extending from this cached Node will begin from the cached data, rather than re-computing it. If the same pipeline is run twice with the same data, the second execution will simply load from the cache.
-Caching can be avoided by executing `Graph.run` with the keyword `cache=False`. Caching does not apply in the case of eager execution.
+Now let's apply greyscaling to the image, and one-hot encoding to the labels:
+
+```
+grey_images = megatron.layers.RGBtoGrey(method='luminosity', keep_dim=True)(images, 'grey_images')
+ohe_labels = megatron.layers.OneHot(max_val=1)(labels, 'ohe_labels')
+```
+
+4 things to note here:
+- Calling a Layer produces a Node. That means Layers can be re-used to produce as many Nodes as we want, though we're not taking advantage of that here.
+- The initialization arguments to a Layer are its "hyperparameters", or configuration parameters, such as the method used for converting RGB to greyscale.
+- The first argument when calling a Layer is the previous layers you want to call it on. If there's multiple inputs, they should be provided as a list.
+- The second argument is the name for the resulting node. If this node is to be an output of the model, it must be named; otherwise, names are not necessary, though still helpful for documentation.
+
+With our features and labels appropriately processed, we can pass them into our Keras model:
+
+```
+preds = megatron.layers.Keras(model)([grey_images, ohe_labels], 'predictor')
+```
+
+Since this is an output of the pipeline, we name it. Now, let's create the pipeline by defining its inputs and outputs, just like a Keras Model:
+
+```
+storage_db = sqlite3.connect('getting_started')
+pipeline = megatron.Pipeline([images, labels], preds, name='getting_started', version=0.1, storage=)
+```
+
+Let's break down the arguments here:
+- The first argument is either a single node or a list of nodes that are meant to be input nodes; that is, they will have data passed to them.
+- The second argument is either a single node or a list of nodes that are meant to be output nodes; that is, when we run the pipeline, they're the nodes whose data we'll get.
+- The pipeline must be named, and it can have a version number, but that is optional. These identifiers will be used for caching processed data and the pipeline itself.
+- You can store the output data of a pipeline in a SQL database, and look it up using the index of the observations. If no index is provided (we provided no index here), it's simply integers starting from 0.
+
+Now let's train the model, get the predictions, then lookup the prediction for the first observation from the storage database:
+
+```
+data = {'images': np.random.random((1000, 48, 48, 3)),
+        'labels': np.random.randint(0, 1, 1000)}
+pipeline.fit(data)
+outputs = pipeline.transform(data)
+one_output = pipeline.storage.read(lookup=['0'])
+print(outputs['predictor'].shape) # --> (1000, 2)
+print(one_output['predictor'].shape) # --> (1, 2)
+```
+
+What did we learn here?
+- We pass in data by creating a dictionary, where the keys are the names of the input nodes of the pipeline, and the values are the Numpy arrays.
+- Calling `.transform(data)` gives us a dictionary, where the keys are the names of the output nodes of the pipeline, and the values are the Numpy arrays.
+- Looking up observations by index in the storage database gives us a dictionary with the same structure as `.transform(data)`.
+
+Finally, let's save the pipeline to disk so it can be reloaded with its structure and trained parameters. Let's save it under the directory `pipelines/`, from the current working directory:
+
+```
+pipeline.save('pipelines/')
+```
+
+The pipeline has been saved at the following location: `[working_directory]/pipelines/getting_started-0.1.pkl`. The name of the pickle file is the name of the pipeline and the version number, defined in its initialization, separated by a hyphen.
+
+Let's reload that pipeline:
+
+```
+pipeline = megatron.load_pipeline('pipelines/getting_started-0.1.pkl', storage_db=storage_db)
+```
+
+We provide the filepath for the pipeline we want to reload, and one extra argument: since we can't pickle database connections, when we want to connect to the storage database, we have to make that connection variable and pass it as the second argument to load_pipeline. If you aren't using caching, you don't need to do this.
+
+To summarize: 
+- We created a Keras model and some data transformations.
+- We connected them up as a pipeline, ran some data through that pipeline, and got the results.
+- We stored the results and the fitted pipeline on disk, looked up those results from disk, and reloaded the pipeline from disk.
+- The data and pipeline were named and versioned, and the observations in the data had an index we could use for lookup.
+
+## Custom Layers
+If you have a function that takes in Numpy arrays and produces Numpy arrays, you have two possible paths to adding it as a Layer in a Pipeline:
+
+1. The function has no parameters to learn, and will always return the same output for a given input. We refer to this as a "stateless" Layer.
+2. The function learns parameters (i.e. needs to be "fit"). We refer to this as a "stateful" Layer.
+
+### Custom Stateful Layers
+To create a custom stateful layer, you will inherit the `StatefulLayer` base class, and write two methods: `partial_fit`, and `transform`. Here's an example with a Whitening Layer:
+
+```
+class Whiten(megatron.layers.StatefulLayer):
+    def partial_fit(self, X):
+        self.metadata['mean'] = X.mean(axis=0)
+        self.metadata['std'] = X.std(axis=0)
+
+    def transform(self, X):
+        return (X - self.metadata['mean']) / self.metadata['std']
+```
+
+There's a couple interesting things in this example:
+- When you calculate parameters during the fit, you store them in the provided dictionary `self.metadata`. You then retrieve them from this dictionary in your transform method.
+- You override `partial_fit` rather than `fit`. If your function isn't one that can be fit iteratively, that's fine; it will simply be fit anew on every call. `fit` will work by first clearing the metadata, then re-running `partial_fit` as you've defined it.
+
+### Custom Stateless Layers
+To create a custom stateless Layer, you can simply define your function and wrap it in `megatron.layers.Lambda`. For example:
+
+```
+def dot_product(X, Y):
+    return np.dot(X, Y)
+
+dot_xy = megatron.layers.Lambda(dot_product)([X_node, Y_node], 'dot_product_result')
+```
+
+That's it, a simple wrapper.
+
+## License
+[MIT](https://github.com/ntaylorwss/megatron/blob/master/LICENSE)

@@ -27,6 +27,8 @@ setup(name='Megatron',
       license='MIT',
       packages=find_packages(),
       install_requires=[
+        'numpy',
+        'pandas',
         'dill',
       ],
       classifiers=[
