@@ -54,11 +54,11 @@ Let's assume a built and compiled Keras model named `model` has already been mad
 Let's start by making the input nodes for the pipeline:
 
 ```
-images = megatron.nodes.Input('images', (48, 48, 1))
-labels = megatron.nodes.Input('labels')
+images = megatron.nodes.Input('image', (48, 48, 1))
+labels = megatron.nodes.Input('label')
 ```
 
-By default, the shape of an Input is a 1D array, so we don't need to specify the shape of 'labels'.
+By default, the shape of an Input is a 1D array, so we don't need to specify the shape of 'label'.
 
 Now let's apply greyscaling to the image, and one-hot encoding to the labels:
 
@@ -130,6 +130,10 @@ To summarize:
 - We connected them up as a pipeline, ran some data through that pipeline, and got the results.
 - We stored the results and the fitted pipeline on disk, looked up those results from disk, and reloaded the pipeline from disk.
 - The data and pipeline were named and versioned, and the observations in the data had an index we could use for lookup.
+
+Here's how that pipeline looks visually:
+
+![pipeline](https://raw.githubusercontent.com/ntaylorwss/megatron/master/img/keras.png)
 
 ## Custom Layers
 If you have a function that takes in Numpy arrays and produces Numpy arrays, you have two possible paths to adding it as a Layer in a Pipeline:
