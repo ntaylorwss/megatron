@@ -85,7 +85,7 @@ Since this is an output of the pipeline, we name it. Now, let's create the pipel
 
 ```
 storage_db = sqlite3.connect('getting_started')
-pipeline = megatron.Pipeline([images, labels], preds, name='getting_started', version=0.1, storage=)
+pipeline = megatron.Pipeline([images, labels], preds, name='getting_started', version=0.1, storage=storage_db)
 ```
 
 Let's break down the arguments here:
