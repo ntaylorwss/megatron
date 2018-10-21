@@ -168,5 +168,10 @@ dot_xy = megatron.layers.Lambda(dot_product)([X_node, Y_node], 'dot_product_resu
 
 That's it, a simple wrapper.
 
+## Why is it called Megatron?
+Because the layers are data _transformers_!
+
+That's... that's about it.
+
 ## License
 [MIT](https://github.com/ntaylorwss/megatron/blob/master/LICENSE)
