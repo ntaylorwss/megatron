@@ -43,6 +43,9 @@ echo "Current version number: $version"
 read -p "New version number: " new_version
 sleep 1
 
+# change version in setup.py
+sed -i "s/$version/$new_version/g" setup.py
+
 # bump version, push
 echo "Committing version change..."
 echo $new_version > VERSION
