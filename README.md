@@ -41,6 +41,8 @@ There's also a Docker image available with all dependencies and optional depende
 
 ## Tutorial
 
+![pipeline](https://raw.githubusercontent.com/ntaylorwss/megatron/master/img/keras.png)
+
 A simple example with an image and some binary labels. The goals here are:
 
 - Convert the RGB image to black and white.
@@ -130,10 +132,6 @@ To summarize:
 - We connected them up as a pipeline, ran some data through that pipeline, and got the results.
 - We stored the results and the fitted pipeline on disk, looked up those results from disk, and reloaded the pipeline from disk.
 - The data and pipeline were named and versioned, and the observations in the data had an index we could use for lookup.
-
-Here's how that pipeline looks visually:
-
-![pipeline](https://raw.githubusercontent.com/ntaylorwss/megatron/master/img/keras.png)
 
 ## Custom Layers
 If you have a function that takes in Numpy arrays and produces Numpy arrays, you have two possible paths to adding it as a Layer in a Pipeline:
