@@ -6,6 +6,7 @@
 - Add nrows argument to Pandas and CSV full dataset loaders.
 - Break OneHot layer into one for range of numbers and one for categorical.
 - Add helper decorator to vectorize a function.
+- Add support for layers that output multiple nodes.
 
 ### Bug Fixes
 - Fix syntax error preventing Input nodes from running.
