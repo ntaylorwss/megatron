@@ -24,7 +24,7 @@ echo "Docs rebuilt."
 
 # rebuild images and bump docker versions
 echo "Building docker images..."
-docker/build --no-cache
+docker/build
 echo "Docker images built."
 
 # push images to hub

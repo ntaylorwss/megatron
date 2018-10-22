@@ -60,7 +60,9 @@ images = megatron.nodes.Input('image', (48, 48, 1))
 labels = megatron.nodes.Input('label')
 ```
 
-By default, the shape of an Input is a 1D array, so we don't need to specify the shape of 'label'.
+The first argument is a name, which is a mandatory argument for Inputs.
+
+As for the second argument, by default, the shape of an Input is a 1D array, so we don't need to specify the shape of 'label', but we will for 'image', which has a particular shape. The shape does _not_ include the first dimension, which is the observations.
 
 Now let's apply greyscaling to the image, and one-hot encoding to the labels:
 
