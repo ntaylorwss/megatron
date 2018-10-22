@@ -1,5 +1,9 @@
 # Release History
 
+## 0.3.4a
+### Bug Fixes
+- Name of single unnamed node was coming up as list; fixed.
+
 ## 0.3.4
 ### Changes
 - Allow for mix of Nodes and FeatureSets when calling Layer.
