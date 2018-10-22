@@ -279,7 +279,7 @@ stores its given data (either from a feed dict or a function call) in its output
 
 <dl class="class">
 <dt id="megatron.nodes.core.TransformationNode">
-<em class="property">class </em><code class="descclassname">megatron.nodes.core.</code><code class="descname">TransformationNode</code><span class="sig-paren">(</span><em>layer</em>, <em>inbound_nodes</em>, <em>name=None</em><span class="sig-paren">)</span><a class="headerlink" href="#megatron.nodes.core.TransformationNode" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="descclassname">megatron.nodes.core.</code><code class="descname">TransformationNode</code><span class="sig-paren">(</span><em>layer</em>, <em>inbound_nodes</em>, <em>name=None</em>, <em>layer_out_index=0</em><span class="sig-paren">)</span><a class="headerlink" href="#megatron.nodes.core.TransformationNode" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#megatron.nodes.core.Node" title="megatron.nodes.core.Node"><code class="xref py py-class docutils literal notranslate"><span class="pre">megatron.nodes.core.Node</span></code></a></p>
 <p>A pipeline node holding a Transformation.</p>
 <p>It connects to a set of input Nodes (of class Node or Input) and, when run,
@@ -291,6 +291,7 @@ applies its given Transformation, storing the result in its output variable.</p>
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
 <li><strong>transformation</strong> (<em>megatron.Transformation</em>) – the transformation to be applied to the data from its input Nodes.</li>
 <li><strong>inbound_nodes</strong> (<em>list of megatron.Node / megatron.Input</em>) – the Nodes to be connected to this node as input.</li>
+<li><strong>layer_out_index</strong> (<em>int</em><em> (</em><em>default: 0</em><em>)</em>) – when a layer has multiple return values, shows which one corresponds to this node.</li>
 </ul>
 </td>
 </tr>
@@ -438,8 +439,8 @@ if strs provided, shape of each is assumed to be a single column.</td>
 </dd></dl>
 
 <dl class="method">
-<dt id="megatron.nodes.wrappers.FeatureSet.apply_layer">
-<code class="descname">apply_layer</code><span class="sig-paren">(</span><em>layer</em><span class="sig-paren">)</span><a class="headerlink" href="#megatron.nodes.wrappers.FeatureSet.apply_layer" title="Permalink to this definition">¶</a></dt>
+<dt id="megatron.nodes.wrappers.FeatureSet.fit">
+<code class="descname">fit</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#megatron.nodes.wrappers.FeatureSet.fit" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="method">
@@ -448,8 +449,18 @@ if strs provided, shape of each is assumed to be a single column.</td>
 <dd></dd></dl>
 
 <dl class="method">
+<dt id="megatron.nodes.wrappers.FeatureSet.partial_fit">
+<code class="descname">partial_fit</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#megatron.nodes.wrappers.FeatureSet.partial_fit" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
 <dt id="megatron.nodes.wrappers.FeatureSet.set">
 <code class="descname">set</code><span class="sig-paren">(</span><em>key</em>, <em>node</em><span class="sig-paren">)</span><a class="headerlink" href="#megatron.nodes.wrappers.FeatureSet.set" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="megatron.nodes.wrappers.FeatureSet.transform">
+<code class="descname">transform</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#megatron.nodes.wrappers.FeatureSet.transform" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 </dd></dl>

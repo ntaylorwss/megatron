@@ -44,6 +44,14 @@ megatron.layers.numeric module
     :undoc-members:
     :show-inheritance:
 
+megatron.layers.shaping module
+------------------------------
+
+.. automodule:: megatron.layers.shaping
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
 megatron.layers.text module
 ---------------------------
 
