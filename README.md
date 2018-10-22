@@ -68,7 +68,7 @@ Now let's apply greyscaling to the image, and one-hot encoding to the labels:
 
 ```
 grey_images = megatron.layers.RGBtoGrey(method='luminosity', keep_dim=True)(images, 'grey_images')
-ohe_labels = megatron.layers.OneHot(max_val=1)(labels, 'ohe_labels')
+ohe_labels = megatron.layers.OneHotRange(max_val=1)(labels, 'ohe_labels')
 ```
 
 4 things to note here:
