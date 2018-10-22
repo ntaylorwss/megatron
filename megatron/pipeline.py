@@ -184,7 +184,8 @@ class Pipeline:
         input_data : dict of Numpy array
             the input data to be passed to InputNodes to begin execution.
         """
-        input_data, _ = input_data
+        if isinstance_str(input_data, 'IndexedData'):
+            input_data = input_data.data
         self._fit(input_data, True)
 
     def fit(self, input_data):
@@ -195,8 +196,9 @@ class Pipeline:
         input_data : 2-tuple of dict of Numpy array, Numpy array
             the input data to be passed to InputNodes to begin execution, and the index.
         """
-        input_data, _ = input_data
-        self._fit(input_data, False)
+        if isinstance_str(input_data, 'IndexedData'):
+            input_data = input_data.data
+        self._fit(input_data.data, False)
 
     def fit_generator(self, input_generator):
         """Perform partial fit to every batch of input generator.
@@ -209,7 +211,7 @@ class Pipeline:
         for batch in input_generator:
             self.partial_fit(batch)
 
-    def transform(self, input_data, out_type='array'):
+    def transform(self, input_data, index=None, out_type='array'):
         """Execute the graph with some input data, get the output nodes' data.
 
         Parameters
@@ -225,8 +227,10 @@ class Pipeline:
             raise utils.errors.EagerRunError()
 
         # if data is created manually with Input, it's not likely to come with an index
-        if isinstance(input_data, tuple):
-            input_data, data_index = input_data
+        if isinstance_str(input_data, 'IndexedData'):
+            input_data, data_index = input_data.data, input_data.index
+        elif index:
+            data_index = index
         else:
             nrows = input_data[list(input_data)[0]].shape[0]
             data_index = pd.RangeIndex(stop=nrows)

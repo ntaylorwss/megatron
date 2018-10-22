@@ -40,3 +40,9 @@ def flatten(L):
             yield from flatten(l)
         else:
             yield l
+
+
+class IndexedData:
+    def __init__(self, data, index):
+        self.data = data
+        self.index = index

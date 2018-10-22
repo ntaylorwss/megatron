@@ -1,3 +1,5 @@
+import warnings
+
 class EagerRunError(Exception):
     def __init__(self):
         message = "Pipeline.run() should not be called when running in Eager Execution mode."
@@ -19,5 +21,5 @@ class DisconnectedError(Exception):
 
 def ExtraInputsWarning(extra_inputs):
     msg = "Some input nodes provided that aren't used in the graph: {}"
-    msg.format(', '.join([node.node_name for node in extra_inputs])
+    msg.format(', '.join([node.node_name for node in extra_inputs]))
     warnings.warn(msg)
