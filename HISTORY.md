@@ -1,5 +1,9 @@
 # Release History
 
+## 0.3.2
+### Bug Fixes
+- Version 0.3.1 was completely uninstallable because of trying to load the version file from disk. Fixed.
+
 ## 0.3.1
 
 ### Changes
