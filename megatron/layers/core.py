@@ -81,7 +81,12 @@ class Layer:
     def __call__(self, inbound_nodes, name=None):
         """Creates a TransformationNode associated with this Transformation and the given InputNodes.
 
-        When running eagerly, perform a fit and transform, and store the result of the transform in output member.
+        When running eagerly, perform a fit and transform.
+
+        There are 3 options for how the inputs are laid out:
+            - All nodes: simply use nodes as input.
+            - One FeatureSet: map the transformation to all nodes in the FeatureSet.
+            - Mix of nodes and FeatureSet: unroll FeatureSet(s) into nodes, making a flat list.
 
         Parameters
         ----------
@@ -91,10 +96,14 @@ class Layer:
             name(s) to give the newly created node(s).
         """
         inbound_nodes = utils.generic.listify(inbound_nodes)
-        if isinstance(inbound_nodes[0], FeatureSet):
+        if len(inbound_nodes) == 1 and isinstance(inbound_nodes[0], FeatureSet):
             if name:
                 raise ValueError("When transforming FeatureSet, name cannot be provided")
             return self._call_on_feature_set(inbound_nodes[0])
+        elif any(isinstance(node, FeatureSet) for node in inbound_nodes):
+            nodes = [node.nodes if isinstance(node, FeatureSet) else node for node in inbound_nodes]
+            nodes = list(utils.generic.flatten(nodes))
+            return self._call_on_nodes(nodes, name)
         else:
             return self._call_on_nodes(inbound_nodes, name)
 

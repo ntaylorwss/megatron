@@ -49,7 +49,7 @@ sed -i "s/$version/$new_version/g" setup.py
 # bump version, push
 echo "Committing version change..."
 echo $new_version > VERSION
-git add VERSION
+git add VERSION setup.py
 git commit -m "version $new_version"
 git tag -a "$new_version" -m "version $new_version"
 git push origin master
