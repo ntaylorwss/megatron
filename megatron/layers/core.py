@@ -19,27 +19,48 @@ class Layer:
     kwargs
         hyperparameters of the transformation function.
     """
-    def __init__(self, **kwargs):
+    def __init__(self, n_outputs=1, **kwargs):
         self.name = self.__class__.__name__
         self.kwargs = kwargs
+        self.n_outputs = n_outputs
 
     def _call_on_nodes(self, nodes, out_name):
-        """Create new node by applying transformation to given nodes.
+        """Create new node(s) by applying transformation to given nodes.
+
+        Number of output nodes is defined by self.n_outputs.
+        If there's multiple output nodes, they're returned as a FeatureSet.
 
         Parameters
         ----------
         nodes : megatron.Node(s)
             nodes given as input to the layer's transformation.
-        out_name : str
-            name to give the newly created node.
+        out_name : str or list of str (default: None)
+            name(s) to give the newly created node(s).
         """
-        out_node = TransformationNode(self, nodes, out_name)
-        for node in nodes:
-            node.outbound_nodes.append(out_node)
-        if all(node.output is not None for node in nodes):
-            out_node.fit()
-            out_node.transform()
-        return out_node
+        if out_name is None:
+            out_name = [None for i in range(self.n_outputs)]
+        elif len(utils.generic.listify(out_name)) != self.n_outputs:
+            raise ValueError("Number of names does not match number of outputs")
+
+        if self.n_outputs > 1:
+            out_nodes = [TransformationNode(self, nodes, out_name[i], i)
+                        for i in range(self.n_outputs)]
+            for node in nodes:
+                node.outbound_nodes += out_nodes
+            if all(node.output is not None for node in nodes):
+                for out_node in out_nodes:
+                    out_node.fit()
+                    out_node.transform()
+            out = FeatureSet(out_nodes)
+        else:
+            out_node = TransformationNode(self, nodes, out_name)
+            for node in nodes:
+                node.outbound_nodes.append(out_node)
+            if all(node.output is not None for node in nodes):
+                out_node.fit()
+                out_node.transform()
+            out = out_node
+        return out
 
     def _call_on_feature_set(self, feature_set):
         """Create one new TransformationNode for each node in given feature set.
@@ -50,6 +71,11 @@ class Layer:
             feature set to map the transformation onto.
         """
         new_nodes = [self._call_on_nodes([node], node.name) for node in feature_set.nodes]
+        if isinstance(new_nodes[0], list):
+            feature_sets = [FeatureSet([group[i] for group in new_nodes])
+                            for i in range(len(new_nodes[0]))]
+        else:
+            feature_sets = FeatureSet(new_nodes)
         return FeatureSet(new_nodes)
 
     def __call__(self, inbound_nodes, name=None):
@@ -61,8 +87,8 @@ class Layer:
         ----------
         inbound_nodes : list of megatron.InputNode / megatron.TransformationNode or megatron.FeatureSet
             the input nodes, whose data are to be passed to transform_fn when run.
-        name : str (default: None)
-            name for the newly created node. Not used for FeatureSet input, and only required for output nodes.
+        name : str or list of str (default: None)
+            name(s) to give the newly created node(s).
         """
         inbound_nodes = utils.generic.listify(inbound_nodes)
         if isinstance(inbound_nodes[0], FeatureSet):

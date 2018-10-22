@@ -1,7 +1,7 @@
 from .generator import *
 
 
-def PandasData(dataframe, exclude_cols=[]):
+def PandasData(dataframe, exclude_cols=[], nrows=None):
     """Load full Pandas dataframe in pipeline Input format.
 
     Parameters
@@ -11,10 +11,10 @@ def PandasData(dataframe, exclude_cols=[]):
     exclude_cols : list of str (default: [])
         any columns that should not be loaded as Input.
     """
-    return next(PandasGenerator(dataframe, None, None, exclude_cols))
+    return next(PandasGenerator(dataframe, nrows, None, exclude_cols))
 
 
-def CSVData(filepath, exclude_cols=[]):
+def CSVData(filepath, exclude_cols=[], nrows=None):
     """Load full dataset from CSV file in pipeline Input format.
 
     Parameters
@@ -24,7 +24,7 @@ def CSVData(filepath, exclude_cols=[]):
     exclude_cols : list of str (default: [])
         any columns that should not be loaded as Input.
     """
-    return next(CSVGenerator(filepath, None, None, exclude_cols))
+    return next(CSVGenerator(filepath, nrows, None, exclude_cols))
 
 
 def SQLData(connection, query):

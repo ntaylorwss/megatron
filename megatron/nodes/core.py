@@ -106,7 +106,7 @@ class InputNode(Node):
         megatron.utils.ShapeError
             error indicating that the shape of the data does not match the shape of the node.
         """
-        self.transform(observations)
+        self.load(observations)
         return self
 
 
@@ -122,6 +122,8 @@ class TransformationNode(Node):
         the transformation to be applied to the data from its input Nodes.
     inbound_nodes : list of megatron.Node / megatron.Input
         the Nodes to be connected to this node as input.
+    layer_out_index : int (default: 0)
+        when a layer has multiple return values, shows which one corresponds to this node.
 
     Attributes
     ----------
@@ -133,10 +135,11 @@ class TransformationNode(Node):
         indicates whether the Transformation inside the Node
         has, if necessary, been fit to data.
     """
-    def __init__(self, layer, inbound_nodes, name=None):
+    def __init__(self, layer, inbound_nodes, name=None, layer_out_index=0):
         self.is_default_name = name is None
         self.layer = layer
         self.layer_name = layer.name
+        self.layer_out_index = layer_out_index
         super().__init__(inbound_nodes, name)
 
     @property
@@ -162,5 +165,5 @@ class TransformationNode(Node):
     def transform(self):
         """Stores result of given Transformation on input Nodes in output variable."""
         inputs = self._get_outputs(self.inbound_nodes)
-        self.output = self.layer.transform(*inputs)
+        self.output = utils.generic.listify(self.layer.transform(*inputs))[self.layer_out_index]
         self.has_run = True

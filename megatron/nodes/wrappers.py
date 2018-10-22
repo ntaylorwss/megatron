@@ -29,15 +29,25 @@ class FeatureSet:
         self.names = [node.name for node in self.nodes]
         self.name_to_index = {name: i for i, name in enumerate(self.names)}
 
-    def apply_layer(self, layer):
-        new_nodes = [node.apply_layer(layer) for node in self.nodes]
-        return FeatureSet(new_nodes, self.names)
+    def partial_fit(self):
+        for node in self.nodes:
+            node.partial_fit()
+
+    def fit(self):
+        for node in self.nodes:
+            node.fit()
+
+    def transform(self):
+        for node in self.nodes:
+            node.transform()
 
     def get(self, key):
         if isinstance(key, str):
             return self.nodes[self.name_to_index[key]]
+        elif isinstance(key, int):
+            return self.nodes[key]
         else:
-            raise KeyError("Invalid key type; must be str")
+            raise KeyError("Invalid key type; must be str or int")
 
     def __getitem__(self, key):
         if isinstance(key, list):

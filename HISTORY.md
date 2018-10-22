@@ -1,6 +1,17 @@
 # Release History
 
+## 0.3.3
+
+### Changes
+- Add nrows argument to Pandas and CSV full dataset loaders.
+- Break OneHot layer into one for range of numbers and one for categorical.
+- Add helper decorator to vectorize a function.
+
+### Bug Fixes
+- Fix syntax error preventing Input nodes from running.
+
 ## 0.3.2
+
 ### Bug Fixes
 - Version 0.3.1 was completely uninstallable because of trying to load the version file from disk. Fixed.
 
