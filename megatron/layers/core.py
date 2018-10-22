@@ -37,7 +37,7 @@ class Layer:
         out_name : str or list of str (default: None)
             name(s) to give the newly created node(s).
         """
-        if out_name is None:
+        if out_name is None and self.n_outputs > 1:
             out_name = [None for i in range(self.n_outputs)]
         elif len(utils.generic.listify(out_name)) != self.n_outputs:
             raise ValueError("Number of names does not match number of outputs")
