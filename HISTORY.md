@@ -1,5 +1,9 @@
 # Release History
 
+## 0.3.5
+### Changes
+- Add wrapper for metrics.
+
 ## 0.3.4a
 ### Bug Fixes
 - Name of single unnamed node was coming up as list; fixed.

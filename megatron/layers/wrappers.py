@@ -1,7 +1,7 @@
 from .core import Layer
 
 
-class Sklearn(Layer):
+class Sklearn(StatefulLayer):
     def __init__(self, sklearn_transformation):
         super().__init__()
         self.transformation = sklearn_transformation
@@ -25,7 +25,7 @@ class Sklearn(Layer):
             return self.transformation.predict(inputs[0])
 
 
-class Keras(Layer):
+class Keras(StatefulLayer):
     def __init__(self, keras_model):
         super().__init__()
         self.model = keras_model
@@ -49,3 +49,11 @@ class Keras(Layer):
             return self.model.predict(inputs[0])
         else:
             return self.model.predict(list(inputs[:self.n_inputs]))
+
+
+class Metric(StatelessLayer):
+    def __init__(self, sklearn_metric):
+        self.metric = sklearn_metric
+
+    def transform(self, labels, preds):
+        self.metric(labels, preds)
