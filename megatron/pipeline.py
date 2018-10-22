@@ -184,7 +184,7 @@ class Pipeline:
         input_data : dict of Numpy array
             the input data to be passed to InputNodes to begin execution.
         """
-        if isinstance_str(input_data, 'IndexedData'):
+        if utils.generic.isinstance_str(input_data, 'IndexedData'):
             input_data = input_data.data
         self._fit(input_data, True)
 
@@ -196,7 +196,7 @@ class Pipeline:
         input_data : 2-tuple of dict of Numpy array, Numpy array
             the input data to be passed to InputNodes to begin execution, and the index.
         """
-        if isinstance_str(input_data, 'IndexedData'):
+        if utils.generic.isinstance_str(input_data, 'IndexedData'):
             input_data = input_data.data
         self._fit(input_data.data, False)
 

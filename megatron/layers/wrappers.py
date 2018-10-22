@@ -1,4 +1,4 @@
-from .core import Layer
+from .core import StatefulLayer, StatelessLayer
 
 
 class Sklearn(StatefulLayer):
