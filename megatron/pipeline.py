@@ -198,7 +198,7 @@ class Pipeline:
         """
         if utils.generic.isinstance_str(input_data, 'IndexedData'):
             input_data = input_data.data
-        self._fit(input_data.data, False)
+        self._fit(input_data, False)
 
     def fit_generator(self, input_generator):
         """Perform partial fit to every batch of input generator.
@@ -227,7 +227,7 @@ class Pipeline:
             raise utils.errors.EagerRunError()
 
         # if data is created manually with Input, it's not likely to come with an index
-        if isinstance_str(input_data, 'IndexedData'):
+        if utils.generic.isinstance_str(input_data, 'IndexedData'):
             input_data, data_index = input_data.data, input_data.index
         elif index:
             data_index = index
