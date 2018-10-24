@@ -224,7 +224,7 @@ class Pipeline:
                 if i == n_batches: break
         self._reload()
 
-    def transform(self, input_data, out_type='array'):
+    def transform(self, input_data):
         """Execute the graph with some input data, get the output nodes' data.
 
         Parameters
@@ -242,7 +242,7 @@ class Pipeline:
             nrows = input_data[list(input_data)[0]].shape[0]
             data_index = pd.RangeIndex(stop=nrows)
             self.storage.write(output_data, data_index)
-        return utils.pipeline.format_output(output_data, out_type)
+        return output_data
 
     def transform_generator(self, input_generator, steps, out_type='array'):
         """Execute the graph with some input data from a generator, create generator.

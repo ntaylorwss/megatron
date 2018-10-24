@@ -5,6 +5,9 @@
 - Add wrapper for metrics.
 - Add support for multiple epochs for models.
 - Fix fitting to a generator so it properly supports models.
+- Add pop method to FeatureSet.
+- Remove Pandas formatting for output data.
+- Import data loaders and generators straight from io module.
 
 ## 0.3.4a
 ### Bug Fixes

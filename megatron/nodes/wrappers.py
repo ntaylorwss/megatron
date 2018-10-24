@@ -63,3 +63,10 @@ class FeatureSet:
 
     def __setitem__(self, key, node):
         self.set(key, node)
+
+    def pop(self, key):
+        index = self.name_to_index[key]
+        self.name_to_index.pop(key)
+        node = self.nodes.pop(index)
+        self.names.pop(index)
+        return node
