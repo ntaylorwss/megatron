@@ -142,10 +142,6 @@ class TransformationNode(Node):
         self.layer_out_index = layer_out_index
         super().__init__(inbound_nodes, name)
 
-    @property
-    def metadata(self):
-        return self.layer.metadata
-
     @staticmethod
     def _get_outputs(nodes):
         # if one of the arguments to the layer is a list of nodes, dig in to grab the data
@@ -166,4 +162,20 @@ class TransformationNode(Node):
         """Stores result of given Transformation on input Nodes in output variable."""
         inputs = self._get_outputs(self.inbound_nodes)
         self.output = utils.generic.listify(self.layer.transform(*inputs))[self.layer_out_index]
+        self.has_run = True
+
+
+class KerasNode(TransformationNode):
+    def partial_fit(self):
+        inputs = self._get_outputs(self.inbound_nodes)
+        self.layer.fit(*inputs)
+        self.has_run = True
+
+    def fit(self, epochs=1):
+        inputs = self._get_outputs(self.inbound_nodes)
+        self.layer.fit(*inputs, epochs=epochs)
+        self.has_run = True
+
+    def fit_generator(self, generator, steps_per_epoch, epochs=1):
+        self.layer.fit_generator(generator, steps_per_epoch=steps_per_epoch, epochs=epochs)
         self.has_run = True

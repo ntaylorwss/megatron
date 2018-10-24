@@ -1,4 +1,6 @@
+from .. import utils
 from .core import Layer
+from ..nodes.core import KerasNode
 
 
 class Sklearn(Layer):
@@ -27,32 +29,61 @@ class Sklearn(Layer):
 
 class Keras(Layer):
     def __init__(self, keras_model):
-        super().__init__()
+        super().__init__(n_outputs=len(keras_model.outputs))
         self.model = keras_model
         self.name = 'KerasModel'
         self.n_inputs = len(self.model.inputs)
 
-    def _split_inputs(self, *inputs):
-        if self.n_inputs == 1:
-            X, Y = inputs
+    def __call__(self, inbound_nodes, name=None):
+        if name is None and self.n_outputs > 1:
+            name = [None for i in range(self.n_outputs)]
+        elif len(utils.generic.listify(name)) != self.n_outputs:
+            raise ValueError("Number of names does not match number of outputs")
+
+        if self.n_outputs > 1:
+            if any(node.output is not None for node in inbound_nodes):
+                raise Exception("Keras nodes cannot be run in eager mode")
+            out_nodes = [KerasNode(self, inbound_nodes, name[i], i) for i in range(self.n_outputs)]
+            for node in inbound_nodes:
+                node.outbound_nodes += out_nodes
+            out = FeatureSet(out_nodes)
         else:
-            X = list(inputs[:self.n_inputs])
-            Y = list(inputs[self.n_inputs:])
+            if any(node.output is not None for node in inbound_nodes):
+                raise Exception("Keras nodes cannot be run in eager mode")
+            out_node = KerasNode(self, inbound_nodes, name)
+            for node in inbound_nodes:
+                node.outbound_nodes.append(out_node)
+            out = out_node
+        return out
+
+    def _split_inputs(self, inputs):
+        if self.n_inputs > 1 and self.n_outputs > 1:
+            X = inputs[:self.n_inputs]
+            Y = inputs[self.n_inputs:]
+        elif self.n_inputs > 1:
+            X = inputs[:-1]
+            Y = inputs[-1]
+        elif self.n_outputs > 1:
+            X = inputs[0]
+            Y = inputs[1:]
+        else:
+            X, Y = inputs
         return X, Y
 
     def partial_fit(self, *inputs):
-        X, Y = self._split_inputs(*inputs)
-        self.model.fit(X, Y)
+        X, Y = self._split_inputs(list(inputs))
+        self.model.train_on_batch(X, Y)
 
     def fit(self, *inputs):
         self.partial_fit(*inputs)
 
-    def fit_generator(self, generator):
+    def fit_generator(self, generator, steps_per_epoch, epochs):
         def _split_generator(generator):
             for inputs in generator:
                 X, Y = self._split_inputs(inputs)
                 yield X, Y
-        self.model.fit_generator(_split_generator(generator))
+        self.model.fit_generator(_split_generator(generator),
+                                 steps_per_epoch=steps_per_epoch, epochs=epochs)
 
     def transform(self, *inputs):
         # don't use the labels for this

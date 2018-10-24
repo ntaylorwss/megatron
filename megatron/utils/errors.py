@@ -1,10 +1,5 @@
 import warnings
 
-class EagerRunError(Exception):
-    def __init__(self):
-        message = "Pipeline.run() should not be called when running in Eager Execution mode."
-        super().__init__(message)
-
 
 class ShapeError(Exception):
     def __init__(self, name, input_dims, expected_dims):
