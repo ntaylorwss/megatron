@@ -93,10 +93,14 @@ class Pipeline:
         else:
             self.storage = None
 
+        # clear data in case of eager execution prior to model build
+        self._reload()
+
     def _reload(self):
-        """Reset all nodes' has_run indicators to False."""
+        """Reset all nodes' has_run indicators to False, clear data."""
         for node in self.path:
             node.has_run = False
+            node.output = None
 
     def _load_inputs(self, input_data):
         """Load data into Input nodes.
@@ -115,6 +119,11 @@ class Pipeline:
             if inputs_loaded == num_inputs:
                 break
 
+    def _clear_used_data(self, path):
+        for node in path:
+            if all(out_node.has_run for out_node in node.outbound_nodes):
+                node.output = None
+
     def _fit(self, input_data, partial):
         """General fitting method for input data.
 
@@ -129,20 +138,49 @@ class Pipeline:
         self._load_inputs(input_data)
         for index, node in enumerate(self.path):
             if utils.generic.isinstance_str(node, 'TransformationNode'):
-                try:
-                    node.partial_fit() if partial else node.fit()
-                    node.transform()
-                except Exception as e:
-                    print("Error thrown at node named {}".format(node.name))
-                    raise
-            # erase data from nodes once unneeded (including output nodes)
-            for predecessor in self.path[:index]:
-                if all(out_node.has_run for out_node in predecessor.outbound_nodes):
-                    predecessor.output = None
-        # erase last node
-        self.path[-1].output = None
-        # restore has_run
+                node.partial_fit() if partial else node.fit()
+                node.transform()
+            self._clear_used_data(self.path[:index])
+        # restore has_run, clear data
         self._reload()
+
+    def _fit_generator(self, input_generator, terminal_node=None):
+        path = utils.pipeline.topsort(terminal_node) if terminal_node else self.path
+        # fit each node in the path to the entire generator before moving to the next one
+        for node in path:
+            if isinstance_str(node, 'InputNode'): continue
+            subpath = utils.pipeline.topsort(node)[:-1]
+            for batch in input_generator:
+                # transform batch to get to current node, then fit current node to batch
+                self._load_inputs(batch)
+                for parent_node in subpath:
+                    if isinstance_str(parent_node, 'InputNode'): continue
+                    parent_node.transform()
+                node.partial_fit()
+        # restore has_run, clear data
+        self._reload()
+
+    def _fit_generator_keras(self, input_generator):
+        def _generator(model_node, input_generator):
+            subpath = utils.pipeline.topsort(model_node)[:-1]
+            out_nodes = model_node.inbound_nodes
+            while True:
+                for batch in input_generator:
+                    self._load_inputs(batch)
+                    for node in subpath:
+                        node.transform()
+                    yield [node.output for node in out_nodes]
+
+        model_nodes = [node for node in self.path if isinstance_str(node, 'Keras')]
+        model_inbounds = [model_node.inbound_nodes for model_node in model_nodes]
+        for model_node in model_nodes:
+            self._fit_generator(input_generator, terminal_node=model_node)
+            full_generator = _generator(model_node, input_generator)
+            model_node.fit_generator(full_generator)
+            model_node.inbound_nodes = []
+
+        for model_node, model_inbounds in zip(model_nodes, model_inbounds):
+            model_node.inbound_nodes = model_inbounds
 
     def _transform(self, input_data):
         """Execute all non-cached nodes along the path given input data.
@@ -201,15 +239,10 @@ class Pipeline:
         self._fit(input_data, False)
 
     def fit_generator(self, input_generator):
-        """Perform partial fit to every batch of input generator.
-
-        Parameters
-        ----------
-        input_generator : generator of dict of Numpy array
-            generator producing input data to be passed to Input nodes.
-        """
-        for batch in input_generator:
-            self.partial_fit(batch)
+        if any(isinstance_str(node, 'Keras') for node in self.path):
+            self._fit_generator_keras(input_generator)
+        else:
+            self._fit_generator(input_generator)
 
     def transform(self, input_data, index=None, out_type='array'):
         """Execute the graph with some input data, get the output nodes' data.

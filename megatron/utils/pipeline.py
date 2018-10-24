@@ -21,7 +21,7 @@ def topsort(output_nodes):
     def dfs(node):
         visited[node] += 1
         for in_node in node.inbound_nodes:
-            if not in_node in visited:
+            if in_node not in visited:
                 dfs(in_node)
         if visited[node] <= 1:
             order.append(node)

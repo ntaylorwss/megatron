@@ -32,16 +32,27 @@ class Keras(StatefulLayer):
         self.name = 'KerasModel'
         self.n_inputs = len(self.model.inputs)
 
-    def partial_fit(self, *inputs):
+    def _split_inputs(self, *inputs):
         if self.n_inputs == 1:
             X, Y = inputs
         else:
             X = list(inputs[:self.n_inputs])
             Y = list(inputs[self.n_inputs:])
+        return X, Y
+
+    def partial_fit(self, *inputs):
+        X, Y = self._split_inputs(*inputs)
         self.model.fit(X, Y)
 
     def fit(self, *inputs):
         self.partial_fit(*inputs)
+
+    def fit_generator(self, generator):
+        def _split_generator(generator):
+            for inputs in generator:
+                X, Y = self._split_inputs(inputs)
+                yield X, Y
+        self.model.fit_generator(_split_generator(generator))
 
     def transform(self, *inputs):
         # don't use the labels for this
