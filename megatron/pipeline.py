@@ -197,6 +197,7 @@ class Pipeline:
         self._reload()
         self._load_inputs(input_data)
         for index, node in enumerate(self.path):
+            if isinstance_str(node, 'InputNode'): continue
             if isinstance_str(node, 'KerasNode'):
                 node.fit(epochs=epochs)
             elif isinstance_str(node, 'TransformationNode'):
@@ -206,8 +207,9 @@ class Pipeline:
         # restore has_run, clear data
         self._reload()
 
-    def fit_generator(self, input_generator, steps_per_epoch, epochs):
+    def fit_generator(self, input_generator, steps_per_epoch, epochs=1):
         n_batches = steps_per_epoch * epochs
+
         # fit each node in the path to the entire generator before moving to the next one
         for node in self.path:
             if isinstance_str(node, 'InputNode'): continue
@@ -242,7 +244,7 @@ class Pipeline:
             self.storage.write(output_data, data_index)
         return utils.pipeline.format_output(output_data, out_type)
 
-    def transform_generator(self, input_generator, out_type='array'):
+    def transform_generator(self, input_generator, steps, out_type='array'):
         """Execute the graph with some input data from a generator, create generator.
 
         Parameters
@@ -254,7 +256,8 @@ class Pipeline:
         out_type : {'array', 'dataframe'}
             data type to return as. If dataframe, colnames are node names.
         """
-        for batch in input_generator:
+        for i, batch in enumerate(input_generator):
+            if i == steps: StopIteration()
             yield self.transform(batch, out_type)
 
     def save(self, save_dir):

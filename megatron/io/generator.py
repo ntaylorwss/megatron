@@ -33,7 +33,6 @@ class PandasGenerator:
     def __next__(self):
         if self.n == self.n_batches:
             self.n = 0
-            raise StopIteration()
 
         if self.batch_size:
             start = self.n * self.batch_size
@@ -74,7 +73,6 @@ class CSVGenerator:
             out = next(self.cursor).drop(self.exclude_cols, axis=1)
         except StopIteration:
             self.cursor = pd.read_csv(self.filepath, index_col=index_col, chunksize=self.batch_size)
-            raise
         return dict(zip(out.columns, out.values.T))
 
 
@@ -106,7 +104,11 @@ class SQLGenerator:
         return self
 
     def __next__(self):
-        out = self.cursor.fetchmany(self.batch_size)
+        try:
+            out = self.cursor.fetchmany(self.batch_size)
+        except StopIteration:
+            self.cursor = self.connection.execute(self.query)
+            out = self.cursor.fetchmany(self.batch_size)
         coldata = np.array(out).T
 
         if self.index_col:

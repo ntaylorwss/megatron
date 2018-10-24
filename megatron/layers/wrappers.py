@@ -14,7 +14,11 @@ class Sklearn(Layer):
         return self.transformation.__dict__
 
     def partial_fit(self, *inputs):
-        self.transformation.partial_fit(*inputs)
+        if hasattr(self.transformation, 'partial_fit'):
+            self.transformation.partial_fit(*inputs)
+        else:
+            msg = "Layer {} does not support partial_fit"
+            raise NotImplementedError(msg.format(self.transformation.__class__.__name__))
 
     def fit(self, *inputs):
         self.transformation.fit(*inputs)

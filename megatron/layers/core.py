@@ -178,9 +178,17 @@ class StatefulLayer(Layer):
         inputs : numpy.ndarray(s)
             the input data to be fit to; could be one array or a list of arrays.
         """
-        raise NotImplementedError
+        msg = "Layer {} does not support partial_fit() or it has not been defined yet"
+        raise NotImplementedError(msg.format(self.__class__.__name__))
 
     def fit(self, *inputs):
+        """Overwrites metadata based on given batch of data or full dataset.
+
+        Parameters
+        ----------
+        inputs : numpy.ndarray(s)
+            the input data to be fit to; could be one array or a list of arrays.
+        """
         self.metadata = {}
         self.partial_fit(*inputs)
 

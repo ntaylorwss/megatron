@@ -3,6 +3,8 @@
 ## 0.3.5
 ### Changes
 - Add wrapper for metrics.
+- Add support for multiple epochs for models.
+- Fix fitting to a generator so it properly supports models.
 
 ## 0.3.4a
 ### Bug Fixes
