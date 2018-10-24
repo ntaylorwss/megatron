@@ -229,6 +229,28 @@ stores its given data (either from a feed dict or a function call) in its output
 </dd></dl>
 
 <dl class="class">
+<dt id="megatron.nodes.core.KerasNode">
+<em class="property">class </em><code class="descclassname">megatron.nodes.core.</code><code class="descname">KerasNode</code><span class="sig-paren">(</span><em>layer</em>, <em>inbound_nodes</em>, <em>name=None</em>, <em>layer_out_index=0</em><span class="sig-paren">)</span><a class="headerlink" href="#megatron.nodes.core.KerasNode" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#megatron.nodes.core.TransformationNode" title="megatron.nodes.core.TransformationNode"><code class="xref py py-class docutils literal notranslate"><span class="pre">megatron.nodes.core.TransformationNode</span></code></a></p>
+<dl class="method">
+<dt id="megatron.nodes.core.KerasNode.fit">
+<code class="descname">fit</code><span class="sig-paren">(</span><em>epochs=1</em><span class="sig-paren">)</span><a class="headerlink" href="#megatron.nodes.core.KerasNode.fit" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculates metadata based on provided data.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="megatron.nodes.core.KerasNode.fit_generator">
+<code class="descname">fit_generator</code><span class="sig-paren">(</span><em>generator</em>, <em>steps_per_epoch</em>, <em>epochs=1</em><span class="sig-paren">)</span><a class="headerlink" href="#megatron.nodes.core.KerasNode.fit_generator" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="megatron.nodes.core.KerasNode.partial_fit">
+<code class="descname">partial_fit</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#megatron.nodes.core.KerasNode.partial_fit" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
 <dt id="megatron.nodes.core.Node">
 <em class="property">class </em><code class="descclassname">megatron.nodes.core.</code><code class="descname">Node</code><span class="sig-paren">(</span><em>inbound_nodes</em>, <em>name</em><span class="sig-paren">)</span><a class="headerlink" href="#megatron.nodes.core.Node" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
@@ -321,11 +343,6 @@ has, if necessary, been fit to data.</p>
 <code class="descname">fit</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#megatron.nodes.core.TransformationNode.fit" title="Permalink to this definition">¶</a></dt>
 <dd><p>Calculates metadata based on provided data.</p>
 </dd></dl>
-
-<dl class="attribute">
-<dt id="megatron.nodes.core.TransformationNode.metadata">
-<code class="descname">metadata</code><a class="headerlink" href="#megatron.nodes.core.TransformationNode.metadata" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
 
 <dl class="method">
 <dt id="megatron.nodes.core.TransformationNode.partial_fit">
@@ -451,6 +468,11 @@ if strs provided, shape of each is assumed to be a single column.</td>
 <dl class="method">
 <dt id="megatron.nodes.wrappers.FeatureSet.partial_fit">
 <code class="descname">partial_fit</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#megatron.nodes.wrappers.FeatureSet.partial_fit" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="megatron.nodes.wrappers.FeatureSet.pop">
+<code class="descname">pop</code><span class="sig-paren">(</span><em>key</em><span class="sig-paren">)</span><a class="headerlink" href="#megatron.nodes.wrappers.FeatureSet.pop" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="method">

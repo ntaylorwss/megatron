@@ -1000,6 +1000,11 @@ writing a Transformation subclass is required rather than using a Lambda wrapper
 </dd></dl>
 
 <dl class="method">
+<dt id="megatron.layers.wrappers.Keras.fit_generator">
+<code class="descname">fit_generator</code><span class="sig-paren">(</span><em>generator</em>, <em>steps_per_epoch</em>, <em>epochs</em><span class="sig-paren">)</span><a class="headerlink" href="#megatron.layers.wrappers.Keras.fit_generator" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
 <dt id="megatron.layers.wrappers.Keras.partial_fit">
 <code class="descname">partial_fit</code><span class="sig-paren">(</span><em>*inputs</em><span class="sig-paren">)</span><a class="headerlink" href="#megatron.layers.wrappers.Keras.partial_fit" title="Permalink to this definition">¶</a></dt>
 <dd><p>Updates metadata based on given batch of data or full dataset.</p>
@@ -1011,6 +1016,26 @@ writing a Transformation subclass is required rather than using a Lambda wrapper
 <dl class="method">
 <dt id="megatron.layers.wrappers.Keras.transform">
 <code class="descname">transform</code><span class="sig-paren">(</span><em>*inputs</em><span class="sig-paren">)</span><a class="headerlink" href="#megatron.layers.wrappers.Keras.transform" title="Permalink to this definition">¶</a></dt>
+<dd><p>Apply transformation to given input data.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>inputs</strong> (<em>np.ndarray</em><em>(</em><em>s</em><em>)</em>) – input data to be transformed; could be one array or a list of arrays.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="megatron.layers.wrappers.Metric">
+<em class="property">class </em><code class="descclassname">megatron.layers.wrappers.</code><code class="descname">Metric</code><span class="sig-paren">(</span><em>sklearn_metric</em><span class="sig-paren">)</span><a class="headerlink" href="#megatron.layers.wrappers.Metric" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#megatron.layers.core.Layer" title="megatron.layers.core.Layer"><code class="xref py py-class docutils literal notranslate"><span class="pre">megatron.layers.core.Layer</span></code></a></p>
+<dl class="method">
+<dt id="megatron.layers.wrappers.Metric.transform">
+<code class="descname">transform</code><span class="sig-paren">(</span><em>labels</em>, <em>preds</em><span class="sig-paren">)</span><a class="headerlink" href="#megatron.layers.wrappers.Metric.transform" title="Permalink to this definition">¶</a></dt>
 <dd><p>Apply transformation to given input data.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />

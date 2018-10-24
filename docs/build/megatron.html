@@ -187,7 +187,7 @@
 </li>
 <li class="toctree-l1"><a class="reference internal" href="megatron.utils.html">megatron.utils package</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="megatron.utils.html#submodules">Submodules</a></li>
-<li class="toctree-l2"><a class="reference internal" href="megatron.utils.html#megatron-utils-errors-module">megatron.utils.errors module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="megatron.utils.html#module-megatron.utils.errors">megatron.utils.errors module</a></li>
 <li class="toctree-l2"><a class="reference internal" href="megatron.utils.html#module-megatron.utils.generic">megatron.utils.generic module</a></li>
 <li class="toctree-l2"><a class="reference internal" href="megatron.utils.html#module-megatron.utils.hash">megatron.utils.hash module</a></li>
 <li class="toctree-l2"><a class="reference internal" href="megatron.utils.html#module-megatron.utils.helpers">megatron.utils.helpers module</a></li>
@@ -269,7 +269,7 @@ data being passed to an InputNode node as a function call.</p>
 
 <dl class="method">
 <dt id="megatron.pipeline.Pipeline.fit">
-<code class="descname">fit</code><span class="sig-paren">(</span><em>input_data</em><span class="sig-paren">)</span><a class="headerlink" href="#megatron.pipeline.Pipeline.fit" title="Permalink to this definition">¶</a></dt>
+<code class="descname">fit</code><span class="sig-paren">(</span><em>input_data</em>, <em>epochs=1</em><span class="sig-paren">)</span><a class="headerlink" href="#megatron.pipeline.Pipeline.fit" title="Permalink to this definition">¶</a></dt>
 <dd><p>Fit to input data and overwrite the metadata.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -283,17 +283,8 @@ data being passed to an InputNode node as a function call.</p>
 
 <dl class="method">
 <dt id="megatron.pipeline.Pipeline.fit_generator">
-<code class="descname">fit_generator</code><span class="sig-paren">(</span><em>input_generator</em><span class="sig-paren">)</span><a class="headerlink" href="#megatron.pipeline.Pipeline.fit_generator" title="Permalink to this definition">¶</a></dt>
-<dd><p>Perform partial fit to every batch of input generator.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>input_generator</strong> (<em>generator of dict of Numpy array</em>) – generator producing input data to be passed to Input nodes.</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
+<code class="descname">fit_generator</code><span class="sig-paren">(</span><em>input_generator</em>, <em>steps_per_epoch</em>, <em>epochs=1</em><span class="sig-paren">)</span><a class="headerlink" href="#megatron.pipeline.Pipeline.fit_generator" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
 
 <dl class="method">
 <dt id="megatron.pipeline.Pipeline.partial_fit">
@@ -325,7 +316,7 @@ data being passed to an InputNode node as a function call.</p>
 
 <dl class="method">
 <dt id="megatron.pipeline.Pipeline.transform">
-<code class="descname">transform</code><span class="sig-paren">(</span><em>input_data</em>, <em>out_type='array'</em><span class="sig-paren">)</span><a class="headerlink" href="#megatron.pipeline.Pipeline.transform" title="Permalink to this definition">¶</a></dt>
+<code class="descname">transform</code><span class="sig-paren">(</span><em>input_data</em><span class="sig-paren">)</span><a class="headerlink" href="#megatron.pipeline.Pipeline.transform" title="Permalink to this definition">¶</a></dt>
 <dd><p>Execute the graph with some input data, get the output nodes’ data.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -344,7 +335,7 @@ data being passed to an InputNode node as a function call.</p>
 
 <dl class="method">
 <dt id="megatron.pipeline.Pipeline.transform_generator">
-<code class="descname">transform_generator</code><span class="sig-paren">(</span><em>input_generator</em>, <em>out_type='array'</em><span class="sig-paren">)</span><a class="headerlink" href="#megatron.pipeline.Pipeline.transform_generator" title="Permalink to this definition">¶</a></dt>
+<code class="descname">transform_generator</code><span class="sig-paren">(</span><em>input_generator</em>, <em>steps</em>, <em>out_type='array'</em><span class="sig-paren">)</span><a class="headerlink" href="#megatron.pipeline.Pipeline.transform_generator" title="Permalink to this definition">¶</a></dt>
 <dd><p>Execute the graph with some input data from a generator, create generator.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
