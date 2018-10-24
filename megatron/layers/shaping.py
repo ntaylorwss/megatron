@@ -47,7 +47,7 @@ class OneHotRange(StatefulLayer):
             self.metadata['max_val'] = X.max()
 
     def transform(self, X):
-        return (np.arange(self.metadata['min_val'], self.metadata['max_val']) == X[..., None]) * 1
+        return (np.arange(self.metadata['min_val'], self.metadata['max_val']+1) == X[..., None]) * 1
 
 
 class OneHotLabels(StatefulLayer):

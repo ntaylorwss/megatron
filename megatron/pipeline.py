@@ -144,23 +144,24 @@ class Pipeline:
         # restore has_run, clear data
         self._reload()
 
-    def _fit_generator(self, input_generator, terminal_node=None):
+    def _fit_generator(self, input_generator, steps_per_epoch, epochs, terminal_node=None):
         path = utils.pipeline.topsort(terminal_node) if terminal_node else self.path
+        n_batches = steps_per_epoch * epochs
         # fit each node in the path to the entire generator before moving to the next one
         for node in path:
-            if isinstance_str(node, 'InputNode'): continue
+            if utils.generic.isinstance_str(node, 'InputNode'): continue
             subpath = utils.pipeline.topsort(node)[:-1]
-            for batch in input_generator:
+            for i, batch in enumerate(input_generator):
                 # transform batch to get to current node, then fit current node to batch
                 self._load_inputs(batch)
                 for parent_node in subpath:
-                    if isinstance_str(parent_node, 'InputNode'): continue
+                    if utils.generic.isinstance_str(parent_node, 'InputNode'): continue
                     parent_node.transform()
                 node.partial_fit()
-        # restore has_run, clear data
+                if i == n_batches: break
         self._reload()
 
-    def _fit_generator_keras(self, input_generator):
+    def _fit_generator_keras(self, input_generator, steps_per_epoch, epochs):
         def _generator(model_node, input_generator):
             subpath = utils.pipeline.topsort(model_node)[:-1]
             out_nodes = model_node.inbound_nodes
@@ -171,12 +172,13 @@ class Pipeline:
                         node.transform()
                     yield [node.output for node in out_nodes]
 
-        model_nodes = [node for node in self.path if isinstance_str(node, 'Keras')]
+        model_nodes = [node for node in self.path if utils.generic.isinstance_str(node, 'Keras')]
         model_inbounds = [model_node.inbound_nodes for model_node in model_nodes]
         for model_node in model_nodes:
             self._fit_generator(input_generator, terminal_node=model_node)
             full_generator = _generator(model_node, input_generator)
-            model_node.fit_generator(full_generator)
+            model_node.fit_generator(full_generator,
+                                     steps_per_epoch=steps_per_epoch, epochs=epochs)
             model_node.inbound_nodes = []
 
         for model_node, model_inbounds in zip(model_nodes, model_inbounds):
@@ -222,8 +224,6 @@ class Pipeline:
         input_data : dict of Numpy array
             the input data to be passed to InputNodes to begin execution.
         """
-        if utils.generic.isinstance_str(input_data, 'IndexedData'):
-            input_data = input_data.data
         self._fit(input_data, True)
 
     def fit(self, input_data):
@@ -234,17 +234,15 @@ class Pipeline:
         input_data : 2-tuple of dict of Numpy array, Numpy array
             the input data to be passed to InputNodes to begin execution, and the index.
         """
-        if utils.generic.isinstance_str(input_data, 'IndexedData'):
-            input_data = input_data.data
         self._fit(input_data, False)
 
-    def fit_generator(self, input_generator):
-        if any(isinstance_str(node, 'Keras') for node in self.path):
-            self._fit_generator_keras(input_generator)
+    def fit_generator(self, input_generator, steps_per_epoch, epochs=1):
+        if any(utils.generic.isinstance_str(node, 'Keras') for node in self.path):
+            self._fit_generator_keras(input_generator, steps_per_epoch, epochs)
         else:
-            self._fit_generator(input_generator)
+            self._fit_generator(input_generator, steps_per_epoch, epochs)
 
-    def transform(self, input_data, index=None, out_type='array'):
+    def transform(self, input_data, out_type='array'):
         """Execute the graph with some input data, get the output nodes' data.
 
         Parameters
@@ -259,18 +257,11 @@ class Pipeline:
         if self.eager:
             raise utils.errors.EagerRunError()
 
-        # if data is created manually with Input, it's not likely to come with an index
-        if utils.generic.isinstance_str(input_data, 'IndexedData'):
-            input_data, data_index = input_data.data, input_data.index
-        elif index:
-            data_index = index
-        else:
-            nrows = input_data[list(input_data)[0]].shape[0]
-            data_index = pd.RangeIndex(stop=nrows)
-
         self._transform(input_data)
         output_data = {node.name: node.output for node in self.outputs}
         if self.storage:
+            nrows = input_data[list(input_data)[0]].shape[0]
+            data_index = pd.RangeIndex(stop=nrows)
             self.storage.write(output_data, data_index)
         return utils.pipeline.format_output(output_data, out_type)
 

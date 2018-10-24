@@ -1,6 +1,7 @@
 from collections import defaultdict
 import numpy as np
 import pandas as pd
+from .generic import listify
 
 
 def topsort(output_nodes):
@@ -16,6 +17,7 @@ def topsort(output_nodes):
     list of Transout_typeionNode
         the path from input to output that arrives at the output_node.
     """
+    output_nodes = listify(output_nodes)
     visited = defaultdict(int)
     order = []
     def dfs(node):
