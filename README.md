@@ -142,11 +142,11 @@ If you have a function that takes in Numpy arrays and produces Numpy arrays, you
 2. The function learns parameters (i.e. needs to be "fit"). We refer to this as a "stateful" Layer.
 
 ### Custom Stateful Layers
-To create a custom stateful layer, you will inherit the `StatefulLayer` base class, and write two methods: `partial_fit`, and `transform`. Here's an example with a Whitening Layer:
+To create a custom stateful layer, you will inherit the `StatefulLayer` base class, and write two methods: `fit` (or `partial_fit`), and `transform`. Here's an example with a Whitening Layer:
 
 ```
 class Whiten(megatron.layers.StatefulLayer):
-    def partial_fit(self, X):
+    def fit(self, X):
         self.metadata['mean'] = X.mean(axis=0)
         self.metadata['std'] = X.std(axis=0)
 
@@ -154,9 +154,10 @@ class Whiten(megatron.layers.StatefulLayer):
         return (X - self.metadata['mean']) / self.metadata['std']
 ```
 
-There's a couple interesting things in this example:
+There's a couple things to know here:
 - When you calculate parameters during the fit, you store them in the provided dictionary `self.metadata`. You then retrieve them from this dictionary in your transform method.
-- You override `partial_fit` rather than `fit`. If your function isn't one that can be fit iteratively, that's fine; it will simply be fit anew on every call. `fit` will work by first clearing the metadata, then re-running `partial_fit` as you've defined it.
+- If your Layer is one that can be fit iteratively, you can override `partial_fit` rather than `fit`. If your transformation cannot be fit iteratively, you override `fit`; note that Layers without a `partial_fit` cannot be used with data generators, and will throw an error in that situation.
+    - For an eaxmple of how to write a `partial_fit` method, see [megatron.layers.shaping.OneHotRange](https://github.com/ntaylorwss/megatron/blob/master/megatron/layers/shaping.py#L41).
 
 ### Custom Stateless Layers
 To create a custom stateless Layer, you can simply define your function and wrap it in `megatron.layers.Lambda`. For example:
