@@ -10,3 +10,4 @@ data/
 creds/
 TODO
 *.db
+sync

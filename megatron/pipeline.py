@@ -233,7 +233,7 @@ class Pipeline:
                 self._fit_generator_node(node, input_generator, steps_per_epoch, epochs)
         self._reload()
 
-    def transform(self, input_data, index=None):
+    def transform(self, input_data, index_field=None):
         """Execute the graph with some input data, get the output nodes' data.
 
         Parameters
@@ -245,16 +245,18 @@ class Pipeline:
         out_type : {'array', 'dataframe'}
             data type to return as. If dataframe, colnames are node names.
         """
+        if index_field:
+            index = input_data.pop(index_field)
+        else:
+            nrows = input_data[list(input_data)[0]].shape[0]
+            index = pd.RangeIndex(stop=nrows)
         self._transform(input_data)
         output_data = {node.name: node.output for node in self.outputs}
         if self.storage:
-            nrows = input_data[list(input_data)[0]].shape[0]
-            if index is None:
-                index = pd.RangeIndex(stop=nrows)
             self.storage.write(output_data, index)
         return output_data
 
-    def transform_generator(self, input_generator, steps, out_type='array'):
+    def transform_generator(self, input_generator, steps, index=None):
         """Execute the graph with some input data from a generator, create generator.
 
         Parameters
@@ -268,7 +270,7 @@ class Pipeline:
         """
         for i, batch in enumerate(input_generator):
             if i == steps: StopIteration()
-            yield self.transform(batch, out_type)
+            yield self.transform(batch, out_type, index)
 
     def save(self, save_dir):
         """Store just the nodes without their data (i.e. pre-execution) in a given file.
