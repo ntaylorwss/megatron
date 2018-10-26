@@ -125,16 +125,30 @@ class Pipeline:
             if all(out_node.has_run for out_node in node.outbound_nodes):
                 node.output = None
 
-    def _fit(self, input_data, partial, epochs):
-        """General fitting method for input data.
+    def _fit_generator_node(self, node, input_generator, steps_per_epoch, epochs):
+        subpath = utils.pipeline.topsort(node)[:-1]
+        for i, batch in enumerate(input_generator):
+            self._load_inputs(batch)
+            for parent_node in subpath:
+                if utils.generic.isinstance_str(parent_node, 'InputNode'): continue
+                parent_node.transform()
+            node.partial_fit()
+            if i == (steps_per_epoch * epochs): break
 
-        Parameters
-        ----------
-        input_data : dict of np.ndarray
-            dict mapping input names to input data arrays.
-        partial : bool
-            whether this is a partial or full fit.
-        """
+    def _fit_generator_keras(self, node, input_generator, steps_per_epoch, epochs):
+        def _generator(node, input_generator):
+            subpath = utils.pipeline.topsort(node)[:-1]
+            out_nodes = node.inbound_nodes
+            while True:
+                for batch in input_generator:
+                    self._load_inputs(batch)
+                    for node in subpath:
+                        if not utils.generic.isinstance_str(node, 'InputNode'):
+                            node.transform()
+                    yield [node.output for node in out_nodes]
+
+        node.fit_generator(_generator(node, input_generator),
+                           steps_per_epoch=steps_per_epoch, epochs=epochs)
 
     def _transform(self, input_data):
         """Execute all non-cached nodes along the path given input data.
@@ -208,23 +222,18 @@ class Pipeline:
         self._reload()
 
     def fit_generator(self, input_generator, steps_per_epoch, epochs=1):
-        n_batches = steps_per_epoch * epochs
-
-        # fit each node in the path to the entire generator before moving to the next one
+        if sum([isinstance_str(node, 'KerasNode') for node in self.path]) > 1:
+            raise ValueError("Multiple Keras nodes cannot be present when fitting to generator")
         for node in self.path:
-            if isinstance_str(node, 'InputNode'): continue
-            subpath = utils.pipeline.topsort(node)[:-1]
-            for i, batch in enumerate(input_generator):
-                # transform batch to get to current node, then fit current node to batch
-                self._load_inputs(batch)
-                for parent_node in subpath:
-                    if isinstance_str(parent_node, 'InputNode'): continue
-                    parent_node.transform()
-                node.partial_fit()
-                if i == n_batches: break
+            if utils.generic.isinstance_str(node, 'InputNode'):
+                continue
+            elif utils.generic.isinstance_str(node, 'KerasNode'):
+                self._fit_generator_keras(node, input_generator, steps_per_epoch, epochs)
+            else:
+                self._fit_generator_node(node, input_generator, steps_per_epoch, epochs)
         self._reload()
 
-    def transform(self, input_data):
+    def transform(self, input_data, index=None):
         """Execute the graph with some input data, get the output nodes' data.
 
         Parameters
@@ -240,8 +249,9 @@ class Pipeline:
         output_data = {node.name: node.output for node in self.outputs}
         if self.storage:
             nrows = input_data[list(input_data)[0]].shape[0]
-            data_index = pd.RangeIndex(stop=nrows)
-            self.storage.write(output_data, data_index)
+            if index is None:
+                index = pd.RangeIndex(stop=nrows)
+            self.storage.write(output_data, index)
         return output_data
 
     def transform_generator(self, input_generator, steps, out_type='array'):

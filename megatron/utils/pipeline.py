@@ -30,3 +30,9 @@ def topsort(output_nodes):
     for output_node in output_nodes:
         dfs(output_node)
     return order
+
+
+class IndexedData:
+    def __init__(self, data, index=None):
+        self.data = data
+        self.index = index
