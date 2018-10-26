@@ -247,6 +247,8 @@ class Pipeline:
         """
         if index_field:
             index = input_data.pop(index_field)
+            if len(index.shape) > 1:
+                raise ValueError("Index field cannot be multi-dimensional array; must be 1D")
         else:
             nrows = input_data[list(input_data)[0]].shape[0]
             index = pd.RangeIndex(stop=nrows)
