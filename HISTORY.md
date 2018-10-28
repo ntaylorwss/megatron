@@ -1,5 +1,10 @@
 # Release History
 
+## 0.3.6
+### Changes
+- Multiple Keras models no longer possible, but fit_generator is used when fitting to a generator which makes the pipeline load in parallel with GPU training.
+- Data index is a string indicating the key name from the passed in data dictionary when using transform.
+
 ## 0.3.5
 ### Changes
 - Add wrapper for metrics.
