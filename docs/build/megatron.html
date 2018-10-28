@@ -316,7 +316,7 @@ data being passed to an InputNode node as a function call.</p>
 
 <dl class="method">
 <dt id="megatron.pipeline.Pipeline.transform">
-<code class="descname">transform</code><span class="sig-paren">(</span><em>input_data</em><span class="sig-paren">)</span><a class="headerlink" href="#megatron.pipeline.Pipeline.transform" title="Permalink to this definition">¶</a></dt>
+<code class="descname">transform</code><span class="sig-paren">(</span><em>input_data</em>, <em>index_field=None</em><span class="sig-paren">)</span><a class="headerlink" href="#megatron.pipeline.Pipeline.transform" title="Permalink to this definition">¶</a></dt>
 <dd><p>Execute the graph with some input data, get the output nodes’ data.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -335,7 +335,7 @@ data being passed to an InputNode node as a function call.</p>
 
 <dl class="method">
 <dt id="megatron.pipeline.Pipeline.transform_generator">
-<code class="descname">transform_generator</code><span class="sig-paren">(</span><em>input_generator</em>, <em>steps</em>, <em>out_type='array'</em><span class="sig-paren">)</span><a class="headerlink" href="#megatron.pipeline.Pipeline.transform_generator" title="Permalink to this definition">¶</a></dt>
+<code class="descname">transform_generator</code><span class="sig-paren">(</span><em>input_generator</em>, <em>steps</em>, <em>index=None</em><span class="sig-paren">)</span><a class="headerlink" href="#megatron.pipeline.Pipeline.transform_generator" title="Permalink to this definition">¶</a></dt>
 <dd><p>Execute the graph with some input data from a generator, create generator.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
