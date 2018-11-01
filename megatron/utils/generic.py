@@ -35,11 +35,15 @@ def isinstance_str(obj, classname):
 
 
 def flatten(L):
-    for l in L:
-        if isinstance(l, collections.Iterable) and not isinstance(l, (str, bytes)):
-            yield from flatten(l)
-        else:
-            yield l
+    def _flatten(L):
+        for l in L:
+            if isinstance(l, (list, set, tuple)):
+                yield from flatten(l)
+            elif isinstance(l, dict):
+                yield from flatten(list(l.values()))
+            else:
+                yield l
+    return list(_flatten(L))
 
 
 class IndexedData:

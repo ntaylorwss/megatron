@@ -50,7 +50,7 @@ class Keras(Layer):
             out_nodes = [KerasNode(self, inbound_nodes, name[i], i) for i in range(self.n_outputs)]
             for node in inbound_nodes:
                 node.outbound_nodes += out_nodes
-            out = FeatureSet(out_nodes)
+            out = {node.name: node for node in out_nodes}
         else:
             if any(node.output is not None for node in inbound_nodes):
                 raise Exception("Keras nodes cannot be run in eager mode")

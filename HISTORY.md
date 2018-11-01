@@ -1,5 +1,16 @@
 # Release History
 
+## 0.4.0
+### Changes
+- Nodes no longer have names, except InputNodes.
+- Since nodes don't have names, retrieving columns from cache comes by integer index.
+- Input moved from nodes to layers.
+- Layertools module added.
+- FeatureSet has been removed. Mapping and applying a layer to a set of nodes has been added in layertools module.
+- Data readers give dictionaries rather than FeatureSets.
+- keep_data flag added to transform to indicate whether to wipe non-output nodes' data or not.
+- transform_generator will always keep data.
+
 ## 0.3.6
 ### Changes
 - Multiple Keras models no longer possible, but fit_generator is used when fitting to a generator which makes the pipeline load in parallel with GPU training.

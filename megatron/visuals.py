@@ -50,7 +50,7 @@ def pipeline_to_dot(pipeline, rankdir='TB'):
     # add nodes
     for node in pipeline.path:
         node_id = str(id(node))
-        if node.name:
+        if isinstance(node, InputNode):
             label = '{} ({})'.format(node.name, node.layer_name)
         else:
             label = node.layer_name

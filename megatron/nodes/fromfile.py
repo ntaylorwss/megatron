@@ -1,7 +1,6 @@
 import numpy as np
 import pandas as pd
 from .core import InputNode
-from .wrappers import FeatureSet
 
 
 def from_dataframe(df, exclude_cols=[], eager=False, nrows=None):
@@ -23,7 +22,7 @@ def from_dataframe(df, exclude_cols=[], eager=False, nrows=None):
     nodes = [InputNode(col) for col in cols]
     if eager:
         nodes = [node(df[col].values[:nrows]) for node, col in zip(nodes, cols)]
-    return FeatureSet(nodes)
+    return {node.name: node for node in nodes}
 
 
 def from_csv(filepath, exclude_cols=[], eager=False, nrows=None):
@@ -50,7 +49,7 @@ def from_csv(filepath, exclude_cols=[], eager=False, nrows=None):
         with open(filepath) as f:
             cols = pd.read_csv(f, nrows=2).columns
             nodes = [InputNode(col) for col in cols if not col in exclude_cols]
-    return FeatureSet(nodes)
+    return {node.name: node for node in nodes}
 
 
 def from_sql(connection, query, eager=False, nrows=None):
@@ -78,4 +77,4 @@ def from_sql(connection, query, eager=False, nrows=None):
         data = np.array(cursor.execute(query).fetchall()).T
         nodes = [node(datacol) for node, datacol in zip(nodes, data)]
 
-    return FeatureSet(nodes)
+    return {node.name: node for node in nodes}

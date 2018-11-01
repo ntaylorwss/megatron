@@ -1,4 +1,4 @@
-from .core import StatefulLayer, Lambda
+from .core import Input, StatefulLayer, Lambda
 from . import image
 from . import missing
 from . import numeric

@@ -8,15 +8,11 @@ class Node:
     ----------
     inbound_nodes : list of megatron.Node
         nodes who are to be connected as inputs to this node.
-    name : str
-        name to give the node.
 
     Attributes
     ----------
     inbound_nodes : list of megatron.Node
         nodes who are to be connected as inputs to this node.
-    name : str
-        name to give the node.
     outbound_nodes : list of megatron.Node
         nodes to whom this node is connected as an input.
     output : np.ndarray
@@ -24,9 +20,8 @@ class Node:
     has_run : bool
         indicates whether the node has executed a transformation.
     """
-    def __init__(self, inbound_nodes, name):
+    def __init__(self, inbound_nodes):
         self.inbound_nodes = inbound_nodes
-        self.name = name
         self.outbound_nodes = []
         self.output = None
         self.has_run = False
@@ -57,8 +52,9 @@ class InputNode(Node):
     def __init__(self, name, shape=()):
         self.is_default_name = False
         self.layer_name = 'Input'
+        self.name = name
         self.shape = shape
-        super().__init__([], name)
+        super().__init__([])
 
     def load(self, observations):
         """Validate and store the data passed in.
@@ -135,12 +131,11 @@ class TransformationNode(Node):
         indicates whether the Transformation inside the Node
         has, if necessary, been fit to data.
     """
-    def __init__(self, layer, inbound_nodes, name=None, layer_out_index=0):
-        self.is_default_name = name is None
+    def __init__(self, layer, inbound_nodes, layer_out_index=0):
         self.layer = layer
         self.layer_name = layer.name
         self.layer_out_index = layer_out_index
-        super().__init__(inbound_nodes, name)
+        super().__init__(inbound_nodes)
 
     @staticmethod
     def _get_outputs(nodes):

@@ -22,9 +22,8 @@ class DataStore:
             self.table_name = '{}_{}'.format(table_name, version)
         else:
             self.table_name = table_name
-        self.output_names = []
-        self.dtypes = {}
-        self.original_shapes = {}
+        self.dtypes = []
+        self.original_shapes = []
 
     def _check_schema(self, output_data):
         """If existing SQL colnames and data colnames are off, throw error that table is in use.
@@ -58,16 +57,16 @@ class DataStore:
         """
         # identify and pickle any multi-dimensional features
         output_df = pd.DataFrame()
-        for k in output_data:
-            if len(output_data[k].shape) > 1:
+        for i, out_data in enumerate(output_data):
+            self.original_shapes[i] = out_data.shape[1:]
+            if len(out_data.shape) > 1:
                 self.dtypes[k] = 'TEXT'
-                self.original_shapes[k] = output_data[k].shape[1:]
-                flat_data = output_data[k].reshape((output_data[k].shape[0], -1))
+                flat_data = out_data.reshape((out_data.shape[0], -1))
                 flat_data = np.apply_along_axis(lambda x: pickle.dumps(x), axis=1, arr=flat_data)
-                output_df[k] = flat_data
+                output_df['output{}'.format(i)] = flat_data
             else:
-                self.dtypes[k] = 'REAL'
-                output_df[k] = output_data[k]
+                self.dtypes[i] = 'REAL'
+                output_df['output{}'.format(i)] = out_data
 
         # create table if it doesn't yet exist; if it does, check the schema matches the new data
         exists_query = 'SELECT name FROM sqlite_master WHERE type="table" AND name="{}";'
@@ -91,10 +90,7 @@ class DataStore:
         self.db.execute("CREATE UNIQUE INDEX IF NOT EXISTS ind ON {} (ind)".format(self.table_name))
         self.db.commit()
 
-        # save output field names for future reference
-        self.output_names = list(output_df.keys())
-
-    def read(self, output_names=None, lookup=None):
+    def read(self, cols=None, lookup=None):
         """Retrieve all processed features from cache, or lookup a single observation.
 
         For features that are multi-dimensional, use pickle to read string.
@@ -106,11 +102,12 @@ class DataStore:
         lookup: dict of ndarray
             input data to lookup output for, in dictionary form.
         """
-        if output_names:
-            output_names = ', '.join(utils.generic.listify(output_names))
+        if cols:
+            cols = ['output{}'.format(c) for c in utils.generic.listify(cols)]
+            cols = ', '.join(cols)
+            query = "SELECT {}, ind FROM {} ".format(cols, self.table_name)
         else:
-            output_names = ', '.join(self.output_names)
-        query = "SELECT {}, ind FROM {} ".format(output_names, self.table_name)
+            query = "SELECT * FROM {} ".format(self.table_name)
 
         if lookup:
             lookup = utils.generic.listify(lookup)
