@@ -138,13 +138,13 @@ class TransformationNode(Node):
         super().__init__(inbound_nodes)
 
     def partial_fit(self):
-        inputs = self._get_outputs(self.inbound_nodes)
+        inputs = [node.output for node in self.inbound_nodes]
         self.layer.partial_fit(*inputs)
         self.has_run = True
 
     def fit(self):
         """Calculates metadata based on provided data."""
-        inputs = self._get_outputs(self.inbound_nodes)
+        inputs = [node.output for node in self.inbound_nodes]
         self.layer.fit(*inputs)
         self.has_run = True
 
@@ -157,12 +157,12 @@ class TransformationNode(Node):
 
 class KerasNode(TransformationNode):
     def partial_fit(self):
-        inputs = self._get_outputs(self.inbound_nodes)
+        inputs = [node.output for node in self.inbound_nodes]
         self.layer.fit(*inputs)
         self.has_run = True
 
     def fit(self, epochs=1):
-        inputs = self._get_outputs(self.inbound_nodes)
+        inputs = [node.output for node in self.inbound_nodes]
         self.layer.fit(*inputs, epochs=epochs)
         self.has_run = True
 

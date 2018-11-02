@@ -47,10 +47,11 @@ class Pipeline:
     def __init__(self, inputs, outputs, name,
                  version=None, storage=None):
         self.eager = False
-        self.inputs = inputs
-        self.outputs = outputs
+        self.inputs = utils.flatten(utils.listify(inputs))
+        self.outputs = utils.flatten(utils.listify(outputs))
         self.path = utils.pipeline.topsort(self.outputs)
         self.nodes = self._split_path(self.path)
+        self.nodes['metric'] = self._get_metric_nodes(self.path)
 
         # ensure input data matches with input nodes
         missing_inputs = (set(self.path).intersection(self.inputs) - set(self.inputs))
@@ -78,12 +79,18 @@ class Pipeline:
         nodes = {}
         names_and_types = [('transformation', TransformationNode),
                            ('input', InputNode),
-                           ('keras', KerasNode),
-                           ('metric', MetricNode)]
+                           ('keras', KerasNode)]
         for node_name, node_type in names_and_types:
             nodes[node_name] = [node for node in self.path if isinstance(node, node_type)]
         return nodes
 
+    def _get_metric_nodes(self, path):
+        metrics = set()
+        for node in path:
+            node_metrics = [out_node for out_node in node.outbound_nodes
+                            if isinstance(out_node, MetricNode)]
+            metrics.update(node_metrics)
+        return list(metrics)
 
     def _reload(self):
         """Reset all nodes' has_run indicators to False, clear data."""
@@ -225,9 +232,14 @@ class Pipeline:
         self._load_inputs(input_data)
         for node in self.nodes['transformation']:
             node.transform()
-        for node in self.nodes['metrics']:
+        for node in self.nodes['metric']:
             node.evaluate()
-        return {node.name: node.output for node in self.nodes['metrics']}
+        return {node.name: node.output for node in self.nodes['metric']}
+
+    def evaluate_generator(self, input_generator, steps):
+        for i, batch in enumerate(input_generator):
+            if i == steps: StopIteration()
+            yield self.evaluate(batch)
 
     def save(self, save_dir):
         """Store just the nodes without their data (i.e. pre-execution) in a given file.

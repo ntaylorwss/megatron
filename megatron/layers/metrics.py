@@ -16,3 +16,17 @@ class Metric:
 
     def evaluate(self, *inputs):
         raise NotImplementedError
+
+
+class SklearnMetric(Metric):
+    def __init__(self, sklearn_metric, **kwargs):
+        self.metric = sklearn.metric
+        self.kwargs = kwargs
+
+    def evaluate(self, *inputs):
+        self.metric(*inputs, **self.kwargs)
+
+
+class Accuracy(Metric):
+    def evaluate(self, y_true, y_pred):
+        return (y_true == y_pred).mean()

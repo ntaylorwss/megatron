@@ -10,6 +10,7 @@
 - Data readers give dictionaries rather than FeatureSets.
 - keep_data flag added to transform to indicate whether to wipe non-output nodes' data or not.
 - transform_generator will always keep data.
+- Metrics are now their own kind of node, not part of the transformation pipeline; they're run when evaluate() is called.
 
 ## 0.3.6
 ### Changes
