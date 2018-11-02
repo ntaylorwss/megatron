@@ -6,6 +6,7 @@ import dill as pickle
 from collections import defaultdict
 from . import utils
 from . import io
+from .nodes.core import InputNode, TransformationNode, KerasNode, MetricNode
 
 
 class Pipeline:
@@ -46,12 +47,13 @@ class Pipeline:
     def __init__(self, inputs, outputs, name,
                  version=None, storage=None):
         self.eager = False
-        self.inputs = utils.flatten(utils.listify(inputs))
-        self.outputs = utils.flatten(utils.listify(outputs))
+        self.inputs = inputs
+        self.outputs = outputs
         self.path = utils.pipeline.topsort(self.outputs)
+        self.nodes = self._split_path(self.path)
 
         # ensure input data matches with input nodes
-        missing_inputs = set(self.path).intersection(self.inputs) - set(self.inputs)
+        missing_inputs = (set(self.path).intersection(self.inputs) - set(self.inputs))
         if len(missing_inputs) > 0:
             raise utils.errors.DisconnectedError(missing_inputs)
         extra_inputs = set(self.path).intersection(self.inputs) - set(self.path)
@@ -71,13 +73,25 @@ class Pipeline:
         # clear data in case of eager execution prior to model build
         self._reload()
 
+    def _split_path(self, path):
+        # split nodes up by type
+        nodes = {}
+        names_and_types = [('transformation', TransformationNode),
+                           ('input', InputNode),
+                           ('keras', KerasNode),
+                           ('metric', MetricNode)]
+        for node_name, node_type in names_and_types:
+            nodes[node_name] = [node for node in self.path if isinstance(node, node_type)]
+        return nodes
+
+
     def _reload(self):
         """Reset all nodes' has_run indicators to False, clear data."""
         for node in self.path:
             node.has_run = False
             node.output = None
 
-    def _load_inputs(self, input_data):
+    def _load_inputs(self, input_data, nodes=None):
         """Load data into Input nodes.
 
         Parameters
@@ -85,77 +99,33 @@ class Pipeline:
         input_data : dict of np.ndarray
             dict mapping input names to input data arrays.
         """
-        inputs_loaded = 0
-        num_inputs = sum(1 for node in self.path if utils.isinstance_str(node, 'InputNode'))
-        for node in self.path:
-            if utils.isinstance_str(node, 'InputNode'):
-                node.load(input_data[node.name])
-                inputs_loaded += 1
-            if inputs_loaded == num_inputs:
-                break
-
-    def _clear_used_data(self, path, clear_outputs):
-        for node in path:
-            cond = all(out_node.has_run for out_node in node.outbound_nodes)
-            if not clear_outputs:
-                cond = cond and node not in self.outputs
-            if cond:
-                node.output = None
+        if nodes is None:
+            nodes = self.inputs
+        for node in nodes:
+            node.load(input_data[node.name])
 
     def _fit_generator_node(self, node, input_generator, steps_per_epoch, epochs):
-        subpath = utils.pipeline.topsort(node)[:-1]
+        path_nodes = self._split_path(utils.pipeline.topsort(node)[:-1])
         for i, batch in enumerate(input_generator):
-            self._load_inputs(batch)
-            for parent_node in subpath:
-                if utils.isinstance_str(parent_node, 'InputNode'): continue
+            self._load_inputs(batch, path_nodes['input'])
+            for parent_node in path_nodes['transformation']:
                 parent_node.transform()
             node.partial_fit()
             if i == (steps_per_epoch * epochs): break
 
     def _fit_generator_keras(self, node, input_generator, steps_per_epoch, epochs):
         def _generator(node, input_generator):
-            subpath = utils.pipeline.topsort(node)[:-1]
+            path_nodes = self._split_path(utils.pipeline.topsort(node)[:-1])
             out_nodes = node.inbound_nodes
             while True:
                 for batch in input_generator:
-                    self._load_inputs(batch)
-                    for node in subpath:
-                        if not utils.isinstance_str(node, 'InputNode'):
-                            node.transform()
+                    self._load_inputs(batch, path_nodes['input'])
+                    for node in path_nodes['transformation']:
+                        node.transform()
                     yield [node.output for node in out_nodes]
 
         node.fit_generator(_generator(node, input_generator),
                            steps_per_epoch=steps_per_epoch, epochs=epochs)
-
-    def _transform(self, input_data, keep_data):
-        """Execute all non-cached nodes along the path given input data.
-
-        Can cache the result for a path if requested.
-
-        Parameters
-        ----------
-        input_data : dict of Numpy array
-            the input data to be passed to InputNode TransformationNodes to begin execution.
-
-        Returns
-        -------
-        np.ndarray
-            the data for the target node of the path given the input data.
-        """
-        self._reload()
-        self._load_inputs(input_data)
-
-        # run transformation nodes to end of path
-        for index, node in enumerate(self.path):
-            if utils.isinstance_str(node, 'TransformationNode'):
-                try:
-                    node.transform()
-                except Exception as e:
-                    print("Error thrown at node number {}".format(index))
-                    raise
-            # erase data from nodes once unneeded, if requested
-            if not keep_data:
-                self._clear_used_data(self.path[:index], False)
 
     def partial_fit(self, input_data):
         """Fit to input data in an incremental way if possible.
@@ -167,11 +137,9 @@ class Pipeline:
         """
         self._reload()
         self._load_inputs(input_data)
-        for index, node in enumerate(self.path):
-            if utils.isinstance_str(node, 'TransformationNode'):
-                node.partial_fit()
-                node.transform()
-            self._clear_used_data(self.path[:index], True)
+        for node in self.nodes['transformation']:
+            node.partial_fit()
+            node.transform()
         # restore has_run, clear data
         self._reload()
 
@@ -185,24 +153,17 @@ class Pipeline:
         """
         self._reload()
         self._load_inputs(input_data)
-        for index, node in enumerate(self.path):
-            if utils.isinstance_str(node, 'InputNode'): continue
-            if utils.isinstance_str(node, 'KerasNode'):
-                node.fit(epochs=epochs)
-            elif utils.isinstance_str(node, 'TransformationNode'):
-                node.fit()
+        for node in self.nodes['transformation']:
+            node.fit(epochs=epochs) if node in self.nodes['keras'] else node.fit()
             node.transform()
-            self._clear_used_data(self.path[:index], True)
         # restore has_run, clear data
         self._reload()
 
     def fit_generator(self, input_generator, steps_per_epoch, epochs=1):
-        if sum([utils.isinstance_str(node, 'KerasNode') for node in self.path]) > 1:
+        if len(self.nodes['keras']) > 1:
             raise ValueError("Multiple Keras nodes cannot be present when fitting to generator")
-        for node in self.path:
-            if utils.isinstance_str(node, 'InputNode'):
-                continue
-            elif utils.isinstance_str(node, 'KerasNode'):
+        for node in self.nodes['transformation']:
+            if node in self.nodes['keras']:
                 self._fit_generator_keras(node, input_generator, steps_per_epoch, epochs)
             else:
                 self._fit_generator_node(node, input_generator, steps_per_epoch, epochs)
@@ -225,7 +186,14 @@ class Pipeline:
         else:
             nrows = input_data[list(input_data)[0]].shape[0]
             index = pd.RangeIndex(stop=nrows)
-        self._transform(input_data, keep_data)
+
+        self._reload()
+        self._load_inputs(input_data)
+
+        # run transformation nodes to end of path
+        for node in self.nodes['transformation']:
+            node.transform()
+
         output_data = [node.output for node in self.outputs]
         if self.storage:
             self.storage.write(output_data, index)
@@ -244,6 +212,22 @@ class Pipeline:
         for i, batch in enumerate(input_generator):
             if i == steps: StopIteration()
             yield self.transform(batch, out_type, index, keep_data=True)
+
+    def evaluate(self, input_data):
+        """Execute the metric nodes in the graph, performing a transform to acquire the data.
+
+        Parameters
+        ----------
+        input_data : dict of Numpy array
+            the input data to be passed to InputNodes to begin execution.
+        """
+        self._reload()
+        self._load_inputs(input_data)
+        for node in self.nodes['transformation']:
+            node.transform()
+        for node in self.nodes['metrics']:
+            node.evaluate()
+        return {node.name: node.output for node in self.nodes['metrics']}
 
     def save(self, save_dir):
         """Store just the nodes without their data (i.e. pre-execution) in a given file.
