@@ -5,6 +5,10 @@ import numpy as np
 
 def vectorize(layer):
     class _vectorized_layer(layer):
+        def __init__(self, *args, **kwargs):
+            self.__class__.__name__ = layer.__name__
+            super().__init__(*args, **kwargs)
+
         def transform(self, *inputs):
             return np.vectorize(super().transform)(*inputs)
     return _vectorized_layer
@@ -12,6 +16,10 @@ def vectorize(layer):
 
 def map(layer):
     class _mapped_layer(layer):
+        def __init__(self, *args, **kwargs):
+            self.__class__.__name__ = layer.__name__
+            super().__init__(*args, **kwargs)
+
         def __call__(self, nodes):
             if isinstance(nodes, dict):
                 return {key: super(layer, self).__call__(node) for key, node in nodes.items()}
@@ -30,6 +38,10 @@ def maybe(p):
             raise ValueError("Maybe decorator only works on layers who accept a single input node")
 
         class _maybe_layer_class(layer):
+            def __init__(self, *args, **kwargs):
+                self.__class__.__name__ = layer.__name__
+                super().__init__(*args, **kwargs)
+
             def transform(self, X):
                 if random.random() <= p:
                     return super().transform(X)

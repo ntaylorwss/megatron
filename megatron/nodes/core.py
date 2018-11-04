@@ -24,6 +24,7 @@ class Node:
         self.output = None
         self.outbounds_run = 0
 
+
 class InputNode(Node):
     """A pipeline node holding input data as a Numpy array.
 
@@ -47,8 +48,6 @@ class InputNode(Node):
         is None until node is run; when run, the Numpy array passed in is stored here.
     """
     def __init__(self, name, shape=()):
-        self.is_default_name = False
-        self.layer_name = 'Input'
         self.name = name
         self.shape = shape
         super().__init__([])
@@ -129,7 +128,6 @@ class TransformationNode(Node):
     """
     def __init__(self, layer, inbound_nodes, layer_out_index=0):
         self.layer = layer
-        self.layer_name = layer.name
         self.layer_out_index = layer_out_index
         super().__init__(inbound_nodes)
 

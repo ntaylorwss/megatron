@@ -17,13 +17,10 @@ class Layer:
 
     Attributes
     ----------
-    name : str
-        name for the layer, which is the class name.
     kwargs
         hyperparameters of the transformation function.
     """
     def __init__(self, n_outputs=1, **kwargs):
-        self.name = self.__class__.__name__
         self.kwargs = kwargs
         self.n_outputs = n_outputs
 
@@ -109,15 +106,13 @@ class StatefulLayer(Layer):
 
     Attributes
     ----------
-    name : str (optional)
-        name of the layer, which is the class name.
     kwargs : dict
         the hyperparameters of the transformation function.
     metadata : dict
         stores any necessary metadata, which is defined by child class.
     """
-    def __init__(self, **kwargs):
-        super().__init__(**kwargs)
+    def __init__(self, n_outputs=1, **kwargs):
+        super().__init__(n_outputs=n_outputs, **kwargs)
         self.metadata = {}
 
     def partial_fit(self, *inputs):
@@ -167,9 +162,9 @@ class Lambda(StatelessLayer):
     kwargs
         keyword arguments to whatever custom function is passed in as transform_fn.
     """
-    def __init__(self, transform_fn, **kwargs):
+    def __init__(self, transform_fn, n_outputs=1, **kwargs):
         self.transform_fn = transform_fn
-        super().__init__(**kwargs)
+        super().__init__(n_outputs=n_outputs, **kwargs)
 
     def transform(self, *inputs):
         """Applies transform_fn to given input data.

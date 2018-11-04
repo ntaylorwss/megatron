@@ -5,6 +5,7 @@ import os
 from .utils.generic import listify
 from IPython.display import SVG
 from .nodes import InputNode
+from .layers import Lambda
 
 # check for pydot
 try:
@@ -22,6 +23,15 @@ def _check_pydot():
         pydot.Dot.create(pydot.Dot())
     except OSError:
         raise OSError('PipelineViz must be installed with its executables included in the $PATH.')
+
+
+def name_node(node):
+    if isinstance(node, InputNode):
+        return node.name
+    elif isinstance(node.layer, Lambda):
+        return 'Lambda: {}'.format(node.layer.transform_fn.__name__)
+    else:
+        return node.layer.__class__.__name__
 
 
 def pipeline_to_dot(pipeline, rankdir='TB'):
@@ -50,10 +60,7 @@ def pipeline_to_dot(pipeline, rankdir='TB'):
     # add nodes
     for node in pipeline.path:
         node_id = str(id(node))
-        if isinstance(node, InputNode):
-            label = '{} ({})'.format(node.name, node.layer_name)
-        else:
-            label = node.layer_name
+        label = name_node(node)
         # make input nodes green, output nodes blue
         if isinstance(node, InputNode):
             color = '#b7e3ff'

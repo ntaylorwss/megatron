@@ -7,7 +7,7 @@ class Sklearn(Layer):
     def __init__(self, sklearn_transformation):
         super().__init__()
         self.transformation = sklearn_transformation
-        self.name = self.transformation.__class__.__name__
+        self.__class__.__name__ = self.transformation.__class__.__name__
 
     @property
     def metadata(self):
@@ -35,7 +35,6 @@ class Keras(Layer):
     def __init__(self, keras_model):
         super().__init__(n_outputs=len(keras_model.outputs))
         self.model = keras_model
-        self.name = 'KerasModel'
         self.n_inputs = len(self.model.inputs)
 
     def __call__(self, inbound_nodes, name=None):
