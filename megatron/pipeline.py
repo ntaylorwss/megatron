@@ -71,9 +71,6 @@ class Pipeline:
         else:
             self.storage = None
 
-        # clear data in case of eager execution prior to model build
-        self._reload()
-
     def _split_path(self, path):
         # split nodes up by type
         nodes = {}
@@ -91,12 +88,6 @@ class Pipeline:
                             if isinstance(out_node, MetricNode)]
             metrics.update(node_metrics)
         return list(metrics)
-
-    def _reload(self):
-        """Reset all nodes' has_run indicators to False, clear data."""
-        for node in self.path:
-            node.has_run = False
-            node.output = None
 
     def _load_inputs(self, input_data, nodes=None):
         """Load data into Input nodes.
@@ -142,13 +133,11 @@ class Pipeline:
         input_data : dict of Numpy array
             the input data to be passed to InputNodes to begin execution.
         """
-        self._reload()
         self._load_inputs(input_data)
         for node in self.nodes['transformation']:
             node.partial_fit()
             node.transform()
-        # restore has_run, clear data
-        self._reload()
+            node.clean_inbounds()
 
     def fit(self, input_data, epochs=1):
         """Fit to input data and overwrite the metadata.
@@ -158,13 +147,11 @@ class Pipeline:
         input_data : 2-tuple of dict of Numpy array, Numpy array
             the input data to be passed to InputNodes to begin execution, and the index.
         """
-        self._reload()
         self._load_inputs(input_data)
         for node in self.nodes['transformation']:
             node.fit(epochs=epochs) if node in self.nodes['keras'] else node.fit()
             node.transform()
-        # restore has_run, clear data
-        self._reload()
+            node.clean_inbounds()
 
     def fit_generator(self, input_generator, steps_per_epoch, epochs=1):
         if len(self.nodes['keras']) > 1:
@@ -174,7 +161,6 @@ class Pipeline:
                 self._fit_generator_keras(node, input_generator, steps_per_epoch, epochs)
             else:
                 self._fit_generator_node(node, input_generator, steps_per_epoch, epochs)
-        self._reload()
 
     def transform(self, input_data, index_field=None, keep_data=False):
         """Execute the graph with some input data, get the output nodes' data.
@@ -194,12 +180,13 @@ class Pipeline:
             nrows = input_data[list(input_data)[0]].shape[0]
             index = pd.RangeIndex(stop=nrows)
 
-        self._reload()
         self._load_inputs(input_data)
 
         # run transformation nodes to end of path
         for node in self.nodes['transformation']:
             node.transform()
+            if not keep_data:
+                node.clean_inbounds()
 
         output_data = [node.output for node in self.outputs]
         if self.storage:
@@ -228,10 +215,10 @@ class Pipeline:
         input_data : dict of Numpy array
             the input data to be passed to InputNodes to begin execution.
         """
-        self._reload()
         self._load_inputs(input_data)
         for node in self.nodes['transformation']:
             node.transform()
+            node.clean_inbounds()
         for node in self.nodes['metric']:
             node.evaluate()
         return {node.name: node.output for node in self.nodes['metric']}

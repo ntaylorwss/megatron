@@ -17,15 +17,12 @@ class Node:
         nodes to whom this node is connected as an input.
     output : np.ndarray
         holds the data output by the node's having been run on its inputs.
-    has_run : bool
-        indicates whether the node has executed a transformation.
     """
     def __init__(self, inbound_nodes):
         self.inbound_nodes = inbound_nodes
         self.outbound_nodes = []
         self.output = None
-        self.has_run = False
-
+        self.outbounds_run = 0
 
 class InputNode(Node):
     """A pipeline node holding input data as a Numpy array.
@@ -71,7 +68,6 @@ class InputNode(Node):
         """
         self.validate_input(observations)
         self.output = observations
-        self.has_run = True
 
     def validate_input(self, observations):
         """Ensure shape of data passed in aligns with shape of the node.
@@ -137,38 +133,39 @@ class TransformationNode(Node):
         self.layer_out_index = layer_out_index
         super().__init__(inbound_nodes)
 
+    def clean_inbounds(self):
+        for in_node in self.inbound_nodes:
+            in_node.outbounds_run += 1
+            if in_node.outbound_nodes and (in_node.outbounds_run == len(in_node.outbound_nodes)):
+                in_node.output = None
+                in_node.outbounds_run = 0
+
     def partial_fit(self):
         inputs = [node.output for node in self.inbound_nodes]
         self.layer.partial_fit(*inputs)
-        self.has_run = True
 
     def fit(self):
         """Calculates metadata based on provided data."""
         inputs = [node.output for node in self.inbound_nodes]
         self.layer.fit(*inputs)
-        self.has_run = True
 
     def transform(self):
         """Stores result of given Transformation on input Nodes in output variable."""
         inputs = [node.output for node in self.inbound_nodes]
         self.output = utils.generic.listify(self.layer.transform(*inputs))[self.layer_out_index]
-        self.has_run = True
 
 
 class KerasNode(TransformationNode):
     def partial_fit(self):
         inputs = [node.output for node in self.inbound_nodes]
         self.layer.fit(*inputs)
-        self.has_run = True
 
     def fit(self, epochs=1):
         inputs = [node.output for node in self.inbound_nodes]
         self.layer.fit(*inputs, epochs=epochs)
-        self.has_run = True
 
     def fit_generator(self, generator, steps_per_epoch, epochs=1):
         self.layer.fit_generator(generator, steps_per_epoch=steps_per_epoch, epochs=epochs)
-        self.has_run = True
 
 
 class MetricNode(Node):
@@ -180,4 +177,3 @@ class MetricNode(Node):
     def evaluate(self):
         inputs = [node.output for node in self.inbound_nodes]
         self.output = self.metric.evaluate(*inputs)
-        self.has_run = True
