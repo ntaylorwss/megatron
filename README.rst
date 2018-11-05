@@ -40,16 +40,16 @@ Optional Dependencies
 ~~~~~~~~~~~~~~~~~~~~~
 * Scikit-Learn
 
-    * If you'd like to use Sklearn transformations as Layers.
+  * If you'd like to use Sklearn transformations as Layers.
 
 * Keras
 
-    * If you'd like to use Keras models as Layers.
+  * If you'd like to use Keras models as Layers.
 
 * Pydot
 
-    * If you'd like to be able to visualize pipelines.
-    * Note: requires `GraphViz`_ to run.
+  * If you'd like to be able to visualize pipelines.
+  * Note: requires `GraphViz`_ to run.
 
 Tutorial
 --------
@@ -169,10 +169,11 @@ To create a custom stateful layer, you will inherit the StatefulLayer base class
            return (X - self.metadata['mean']) / self.metadata['std']
 
 There's a couple things to know here:
+
 * When you calculate parameters during the fit, you store them in the provided dictionary self.metadata. You then retrieve them from this dictionary in your transform method.
 * If your Layer is one that can be fit iteratively, you can override partial_fit rather than fit. If your transformation cannot be fit iteratively, you override fit; note that Layers without a partial_fit cannot be used with data generators, and will throw an error in that situation.
 
-    * For an example of how to write a partial_fit method, see `megatron.layers.shaping.OneHotRange`_.).
+  * For an example of how to write a partial_fit method, see `megatron.layers.shaping.OneHotRange`_.).
 
 ### Custom Stateless Layers
 To create a custom stateless Layer, you can simply define your function and wrap it in megatron.layers.Lambda. For example::
@@ -194,6 +195,7 @@ That's... that's about it.
 ## License
 `MIT`_.
 
+.. _documentation: https://megatron.readthedocs.io/en/latest/
 .. _Keras Functional API: https://keras.io/getting-started/functional-api-guide/
 .. _GraphViz: https://graphviz.gitlab.io/download/
 .. _megatron.layers.OneHotRange: https://github.com/ntaylorwss/megatron/blob/master/megatron/layers/shaping.py#L41
