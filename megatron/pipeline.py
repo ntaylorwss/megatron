@@ -10,37 +10,38 @@ from .nodes.core import InputNode, TransformationNode, KerasNode, MetricNode
 
 
 class Pipeline:
-    """A pipeline with nodes as Transformations and InputNodes, edges as I/O relationships.
-
-    Pipelines internally implement intelligent caching for maximal data re-use.
-    Pipelines can also be saved with metadata intact for future use.
+    """Holds the core computation graph that maps out Layers and manipulates data.
 
     Parameters
     ----------
     inputs : list of megatron.Node(s)
-        input nodes of the pipeline, where raw data is fed in.
+        input nodes of the Pipeline, where raw data is fed in.
     outputs : list of megatron.Node(s)
-        output nodes of the pipeline, the processed features.
+        output nodes of the Pipeline, the processed features.
     name : str
-        unique identifying name of the pipeline.
+        unique identifying name of the Pipeline.
+    version : str
+        version tag for Pipeline's cache table in the database.
     storage_db : Connection (defeault: 'sqlite')
         database connection to be used for input and output data storage.
 
     Attributes
     ----------
     inputs : list of megatron.Node(s)
-        input nodes of the pipeline, where raw data is fed in.
+        input nodes of the Pipeline, where raw data is fed in.
     outputs : list of megatron.Node(s)
-        output nodes of the pipeline, the processed features.
+        output nodes of the Pipeline, the processed features.
     path : list of megatron.Nodes
-        full topological sort of pipeline from inputs to outputs.
+        full topological sort of Pipeline from inputs to outputs.
+    nodes : dict of list of megatron.Node(s)
+        separation of Nodes by type.
     eager : bool
         when True, TransformationNode outputs are to be calculated on creation. This is indicated by
         data being passed to an InputNode node as a function call.
-    nodes : list of TransformationNode / InputNode
-        all InputNode and TransformationNode nodes belonging to the Pipeline.
     name : str
-        unique identifying name of the pipeline.
+        unique identifying name of the Pipeline.
+    version : str
+        version tag for Pipeline's cache table in the database.
     storage: Connection (defeault: None)
         storage database for input and output data.
     """
@@ -82,6 +83,7 @@ class Pipeline:
         return nodes
 
     def _get_metric_nodes(self, path):
+        # get a list of the MetricNodes in the pipeline
         metrics = set()
         for node in path:
             node_metrics = [out_node for out_node in node.outbound_nodes
@@ -90,19 +92,14 @@ class Pipeline:
         return list(metrics)
 
     def _load_inputs(self, input_data, nodes=None):
-        """Load data into Input nodes.
-
-        Parameters
-        ----------
-        input_data : dict of np.ndarray
-            dict mapping input names to input data arrays.
-        """
+        # load data into its corresponding InputNodes
         if nodes is None:
             nodes = self.inputs
         for node in nodes:
             node.load(input_data[node.name])
 
     def _fit_generator_node(self, node, input_generator, steps_per_epoch, epochs):
+        # fit a single node that is not a Keras model to a generator
         path_nodes = self._split_path(utils.pipeline.topsort(node)[:-1])
         for i, batch in enumerate(input_generator):
             self._load_inputs(batch, path_nodes['input'])
@@ -112,6 +109,7 @@ class Pipeline:
             if i == (steps_per_epoch * epochs): break
 
     def _fit_generator_keras(self, node, input_generator, steps_per_epoch, epochs):
+        # fit a single node that is a Keras model to a generator
         def _generator(node, input_generator):
             path_nodes = self._split_path(utils.pipeline.topsort(node)[:-1])
             out_nodes = node.inbound_nodes
@@ -146,6 +144,8 @@ class Pipeline:
         ----------
         input_data : 2-tuple of dict of Numpy array, Numpy array
             the input data to be passed to InputNodes to begin execution, and the index.
+        epochs : int (default: 1)
+            number of passes to perform over the data.
         """
         self._load_inputs(input_data)
         for node in self.nodes['transformation']:
@@ -154,6 +154,17 @@ class Pipeline:
             node.clean_inbounds()
 
     def fit_generator(self, input_generator, steps_per_epoch, epochs=1):
+        """Fit to generator of input data batches. Execute partial_fit to each batch.
+
+        Parameters
+        ----------
+        input_generator : generator of 2-tuple of dict of Numpy array and Numpy array
+            generator that produces features and labels for each batch of data.
+        steps_per_epoch : int
+            number of batches that are considered one full epoch.
+        epochs : int (default: 1)
+            number of passes to perform over the data.
+        """
         if len(self.nodes['keras']) > 1:
             raise ValueError("Multiple Keras nodes cannot be present when fitting to generator")
         for node in self.nodes['transformation']:
@@ -169,8 +180,11 @@ class Pipeline:
         ----------
         input_data : dict of Numpy array
             the input data to be passed to InputNodes to begin execution.
-        cache_result : bool
-            whether to store the resulting Numpy array in the cache.
+        index_field : str
+            name of key from input_data to be used as index for storage and lookup.
+        keep_data : bool
+            whether to keep data in non-output nodes after execution.
+            activating this flag can be useful for debugging.
         """
         if index_field:
             index = input_data.pop(index_field)
@@ -200,15 +214,15 @@ class Pipeline:
         ----------
         input_generator : dict of Numpy array
             generator producing input data to be passed to Input nodes.
-        cache_result : bool
-            whether to store the resulting Numpy array in the cache.
+        steps : int
+            number of batches to pull from input_generator before terminating.
         """
         for i, batch in enumerate(input_generator):
             if i == steps: StopIteration()
             yield self.transform(batch, out_type, index, keep_data=True)
 
     def evaluate(self, input_data):
-        """Execute the metric nodes in the graph, performing a transform to acquire the data.
+        """Execute the metric Nodes in the Pipeline and get their results.
 
         Parameters
         ----------
@@ -224,12 +238,15 @@ class Pipeline:
         return {node.name: node.output for node in self.nodes['metric']}
 
     def evaluate_generator(self, input_generator, steps):
+        """Execute the metric Nodes in the Pipeline for each batch in a generator."""
         for i, batch in enumerate(input_generator):
             if i == steps: StopIteration()
             yield self.evaluate(batch)
 
     def save(self, save_dir):
-        """Store just the nodes without their data (i.e. pre-execution) in a given file.
+        """Store the Pipeline and its learned metadata without the outputs on disk.
+
+        The filename will be {name of the pipeline}{version}.pkl.
 
         Parameters
         ----------
@@ -266,7 +283,7 @@ def load_pipeline(filepath, storage_db=None):
     filepath : str
         the file from which to load a Pipeline.
     storage_db : Connection (default: sqlite3.connect('megatron_default.db'))
-        database connection object to query for cached data from the pipeline.
+        database connection object to query for cached data from the Pipeline.
     """
     with open(filepath, 'rb') as f:
         stored = pickle.load(f)

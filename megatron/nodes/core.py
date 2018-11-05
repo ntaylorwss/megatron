@@ -17,6 +17,9 @@ class Node:
         nodes to whom this node is connected as an input.
     output : np.ndarray
         holds the data output by the node's having been run on its inputs.
+    outbounds_run : int
+        number of outbound nodes that have been executed.
+        this is a helper for efficiently removing unneeded data.
     """
     def __init__(self, inbound_nodes):
         self.inbound_nodes = inbound_nodes
@@ -28,7 +31,7 @@ class Node:
 class InputNode(Node):
     """A pipeline node holding input data as a Numpy array.
 
-    It is always an initial node in a Pipeline (has no input nodes) and, when run,
+    It is always an initial node in a Pipeline (has no inbound nodes) and, when run,
     stores its given data (either from a feed dict or a function call) in its output.
 
     Parameters
@@ -44,8 +47,6 @@ class InputNode(Node):
         a name to associate with the data; the keys of the Pipeline feed dict will be these names.
     shape : tuple of int
         the shape, not including the observation dimension (1st), of the Numpy arrays to be input.
-    output : np.ndarray
-        is None until node is run; when run, the Numpy array passed in is stored here.
     """
     def __init__(self, name, shape=()):
         self.name = name
@@ -109,12 +110,12 @@ class TransformationNode(Node):
 
     Parameters
     ----------
-    transformation : megatron.Transformation
-        the transformation to be applied to the data from its input Nodes.
+    layer : megatron.Layer
+        the Layer to be applied to the data from its inbound Nodes.
     inbound_nodes : list of megatron.Node / megatron.Input
         the Nodes to be connected to this node as input.
     layer_out_index : int (default: 0)
-        when a layer has multiple return values, shows which one corresponds to this node.
+        when a Layer has multiple return values, shows which one corresponds to this node.
 
     Attributes
     ----------
@@ -132,6 +133,7 @@ class TransformationNode(Node):
         super().__init__(inbound_nodes)
 
     def clean_inbounds(self):
+        """If any inbound nodes are now unneeded, this clears their data from memory."""
         for in_node in self.inbound_nodes:
             in_node.outbounds_run += 1
             if in_node.outbound_nodes and (in_node.outbounds_run == len(in_node.outbound_nodes)):
@@ -139,21 +141,23 @@ class TransformationNode(Node):
                 in_node.outbounds_run = 0
 
     def partial_fit(self):
+        """Apply partial fit method from Layer to inbound Nodes' data."""
         inputs = [node.output for node in self.inbound_nodes]
         self.layer.partial_fit(*inputs)
 
     def fit(self):
-        """Calculates metadata based on provided data."""
+        """Apply fit method from Layer to inbound Nodes' data."""
         inputs = [node.output for node in self.inbound_nodes]
         self.layer.fit(*inputs)
 
     def transform(self):
-        """Stores result of given Transformation on input Nodes in output variable."""
+        """Apply and store result of transform method from Layer on inbound Nodes' data."""
         inputs = [node.output for node in self.inbound_nodes]
         self.output = utils.generic.listify(self.layer.transform(*inputs))[self.layer_out_index]
 
 
 class KerasNode(TransformationNode):
+    """A particular TransformationNode that holds a Keras Layer."""
     def partial_fit(self):
         inputs = [node.output for node in self.inbound_nodes]
         self.layer.fit(*inputs)
@@ -163,15 +167,50 @@ class KerasNode(TransformationNode):
         self.layer.fit(*inputs, epochs=epochs)
 
     def fit_generator(self, generator, steps_per_epoch, epochs=1):
+        """Execute Keras model's fit_generator method.
+
+        Parameters
+        ----------
+        generator : generator
+            data generator to be fit to. Should yield tuples of (observations, labels).
+        steps_per_epoch : int
+            number of batches that are considered one full epoch.
+        epochs : int
+            number of epochs to run for.
+        """
         self.layer.fit_generator(generator, steps_per_epoch=steps_per_epoch, epochs=epochs)
 
 
 class MetricNode(Node):
+    """A particular Node that holds an evaluation metric.
+
+    These are not run like other nodes. They do not factor into fit and transform.
+    They are only used when the Pipeline's evaluate() method is invoked.
+
+    Parameters
+    ----------
+    metric : function
+        the metric function to be applied to the inbound data.
+    inbound_nodes : list of megatron.Node
+        the nodes whose data are passed to the metric function.
+    name : str
+        the name of the node. This is used to refer to the result in the output dict.
+
+    Attributes
+    ----------
+    metric : function
+        the metric function to be applied to the inbound data.
+    inbound_nodes : list of megatron.Node
+        the nodes whose data are passed to the metric function.
+    name : str
+        the name of the node. This is used to refer to the result in the output dict.
+    """
     def __init__(self, metric, inbound_nodes, name):
         self.metric = metric
-        self.name = name
         self.inbound_nodes = inbound_nodes
+        self.name = name
 
     def evaluate(self):
+        """Apply metric function to inbound data and store result."""
         inputs = [node.output for node in self.inbound_nodes]
         self.output = self.metric.evaluate(*inputs)

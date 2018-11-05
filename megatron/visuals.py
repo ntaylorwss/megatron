@@ -26,6 +26,7 @@ def _check_pydot():
 
 
 def name_node(node):
+    """Get name for a node based on its type."""
     if isinstance(node, InputNode):
         return node.name
     elif isinstance(node.layer, Lambda):
@@ -44,13 +45,11 @@ def pipeline_to_dot(pipeline, rankdir='TB'):
     rankdir : str ['TB' or 'LR']
         Direction of pipeline to plot (top to bottom or left to right).
 
-
     Returns
     -------
     pydot.Dot
         Dot representation of the Pipeline.
     """
-
     _check_pydot()
     dot = pydot.Dot()
     dot.set('rankdir', rankdir)

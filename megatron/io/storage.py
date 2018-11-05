@@ -13,6 +13,8 @@ class DataStore:
     ----------
     table_name : str
         name of pipeline's cache table in the database.
+    version : str
+        version tag for pipeline's cache table in the database.
     db_conn : Connection
         database connection to query.
     """
@@ -97,10 +99,11 @@ class DataStore:
 
         Parameters
         ----------
-        output_names : list of str
-            names of output columns to retrieve. If none, get all outputs.
-        lookup: dict of ndarray
-            input data to lookup output for, in dictionary form.
+        cols : list of str (default: None)
+            names of output columns to retrieve. If None, get all columns.
+        lookup: list of any or any (default: None)
+            index value to lookup output for, in dictionary form. If None, get all rows.
+            should be the same data type as the index.
         """
         if cols:
             cols = ['output{}'.format(c) for c in utils.generic.listify(cols)]

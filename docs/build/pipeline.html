@@ -1,0 +1,437 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Pipelines &mdash; Megatron 0.1.0 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Layers" href="layers.html" />
+    <link rel="prev" title="This is Megatron." href="index.html" /> 
+
+  
+  <script src="_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="index.html" class="icon icon-home"> Megatron
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="index.html">Home</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Pipelines</a></li>
+<li class="toctree-l1"><a class="reference internal" href="layers.html">Layers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="wrappers.html">Layer Wrappers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="metrics.html">Metrics</a></li>
+<li class="toctree-l1"><a class="reference internal" href="io.html">Reading and Writing Data (IO)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="nodes.html">Nodes</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">Megatron</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html">Docs</a> &raquo;</li>
+        
+      <li>Pipelines</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="_sources/pipeline.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="pipelines">
+<h1>Pipelines<a class="headerlink" href="#pipelines" title="Permalink to this headline">¶</a></h1>
+<blockquote>
+<div>Pipelines are the core of Megatron. Pipelines contain all your transformations and are what you ultimately use to generate outputs.</div></blockquote>
+<span class="target" id="module-megatron.pipeline"></span><dl class="class">
+<dt id="megatron.pipeline.Pipeline">
+<em class="property">class </em><code class="descclassname">megatron.pipeline.</code><code class="descname">Pipeline</code><span class="sig-paren">(</span><em>inputs</em>, <em>outputs</em>, <em>name</em>, <em>version=None</em>, <em>storage=None</em><span class="sig-paren">)</span><a class="headerlink" href="#megatron.pipeline.Pipeline" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Holds the core computation graph that maps out Layers and manipulates data.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>inputs</strong> (<em>list of megatron.Node</em><em>(</em><em>s</em><em>)</em>) – input nodes of the Pipeline, where raw data is fed in.</li>
+<li><strong>outputs</strong> (<em>list of megatron.Node</em><em>(</em><em>s</em><em>)</em>) – output nodes of the Pipeline, the processed features.</li>
+<li><strong>name</strong> (<em>str</em>) – unique identifying name of the Pipeline.</li>
+<li><strong>version</strong> (<em>str</em>) – version tag for Pipeline’s cache table in the database.</li>
+<li><strong>storage_db</strong> (<em>Connection</em><em> (</em><em>defeault: 'sqlite'</em><em>)</em>) – database connection to be used for input and output data storage.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<dl class="attribute">
+<dt id="megatron.pipeline.Pipeline.inputs">
+<code class="descname">inputs</code><a class="headerlink" href="#megatron.pipeline.Pipeline.inputs" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>list of megatron.Node(s)</em> – input nodes of the Pipeline, where raw data is fed in.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="megatron.pipeline.Pipeline.outputs">
+<code class="descname">outputs</code><a class="headerlink" href="#megatron.pipeline.Pipeline.outputs" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>list of megatron.Node(s)</em> – output nodes of the Pipeline, the processed features.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="megatron.pipeline.Pipeline.path">
+<code class="descname">path</code><a class="headerlink" href="#megatron.pipeline.Pipeline.path" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>list of megatron.Nodes</em> – full topological sort of Pipeline from inputs to outputs.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="megatron.pipeline.Pipeline.nodes">
+<code class="descname">nodes</code><a class="headerlink" href="#megatron.pipeline.Pipeline.nodes" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>dict of list of megatron.Node(s)</em> – separation of Nodes by type.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="megatron.pipeline.Pipeline.eager">
+<code class="descname">eager</code><a class="headerlink" href="#megatron.pipeline.Pipeline.eager" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>bool</em> – when True, TransformationNode outputs are to be calculated on creation. This is indicated by
+data being passed to an InputNode node as a function call.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="megatron.pipeline.Pipeline.name">
+<code class="descname">name</code><a class="headerlink" href="#megatron.pipeline.Pipeline.name" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>str</em> – unique identifying name of the Pipeline.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="megatron.pipeline.Pipeline.version">
+<code class="descname">version</code><a class="headerlink" href="#megatron.pipeline.Pipeline.version" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>str</em> – version tag for Pipeline’s cache table in the database.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="megatron.pipeline.Pipeline.storage">
+<code class="descname">storage</code><a class="headerlink" href="#megatron.pipeline.Pipeline.storage" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>Connection (defeault: None)</em> – storage database for input and output data.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="megatron.pipeline.Pipeline.evaluate">
+<code class="descname">evaluate</code><span class="sig-paren">(</span><em>input_data</em><span class="sig-paren">)</span><a class="headerlink" href="#megatron.pipeline.Pipeline.evaluate" title="Permalink to this definition">¶</a></dt>
+<dd><p>Execute the metric Nodes in the Pipeline and get their results.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>input_data</strong> (<em>dict of Numpy array</em>) – the input data to be passed to InputNodes to begin execution.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="megatron.pipeline.Pipeline.evaluate_generator">
+<code class="descname">evaluate_generator</code><span class="sig-paren">(</span><em>input_generator</em>, <em>steps</em><span class="sig-paren">)</span><a class="headerlink" href="#megatron.pipeline.Pipeline.evaluate_generator" title="Permalink to this definition">¶</a></dt>
+<dd><p>Execute the metric Nodes in the Pipeline for each batch in a generator.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="megatron.pipeline.Pipeline.fit">
+<code class="descname">fit</code><span class="sig-paren">(</span><em>input_data</em>, <em>epochs=1</em><span class="sig-paren">)</span><a class="headerlink" href="#megatron.pipeline.Pipeline.fit" title="Permalink to this definition">¶</a></dt>
+<dd><p>Fit to input data and overwrite the metadata.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>input_data</strong> (<em>2-tuple of dict of Numpy array</em><em>, </em><em>Numpy array</em>) – the input data to be passed to InputNodes to begin execution, and the index.</li>
+<li><strong>epochs</strong> (<em>int</em><em> (</em><em>default: 1</em><em>)</em>) – number of passes to perform over the data.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="megatron.pipeline.Pipeline.fit_generator">
+<code class="descname">fit_generator</code><span class="sig-paren">(</span><em>input_generator</em>, <em>steps_per_epoch</em>, <em>epochs=1</em><span class="sig-paren">)</span><a class="headerlink" href="#megatron.pipeline.Pipeline.fit_generator" title="Permalink to this definition">¶</a></dt>
+<dd><p>Fit to generator of input data batches. Execute partial_fit to each batch.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>input_generator</strong> (<em>generator of 2-tuple of dict of Numpy array and Numpy array</em>) – generator that produces features and labels for each batch of data.</li>
+<li><strong>steps_per_epoch</strong> (<em>int</em>) – number of batches that are considered one full epoch.</li>
+<li><strong>epochs</strong> (<em>int</em><em> (</em><em>default: 1</em><em>)</em>) – number of passes to perform over the data.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="megatron.pipeline.Pipeline.partial_fit">
+<code class="descname">partial_fit</code><span class="sig-paren">(</span><em>input_data</em><span class="sig-paren">)</span><a class="headerlink" href="#megatron.pipeline.Pipeline.partial_fit" title="Permalink to this definition">¶</a></dt>
+<dd><p>Fit to input data in an incremental way if possible.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>input_data</strong> (<em>dict of Numpy array</em>) – the input data to be passed to InputNodes to begin execution.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="megatron.pipeline.Pipeline.save">
+<code class="descname">save</code><span class="sig-paren">(</span><em>save_dir</em><span class="sig-paren">)</span><a class="headerlink" href="#megatron.pipeline.Pipeline.save" title="Permalink to this definition">¶</a></dt>
+<dd><p>Store the Pipeline and its learned metadata without the outputs on disk.</p>
+<p>The filename will be {name of the pipeline}{version}.pkl.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>save_dir</strong> (<em>str</em>) – the desired location of the stored nodes, without the filename.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="megatron.pipeline.Pipeline.transform">
+<code class="descname">transform</code><span class="sig-paren">(</span><em>input_data</em>, <em>index_field=None</em>, <em>keep_data=False</em><span class="sig-paren">)</span><a class="headerlink" href="#megatron.pipeline.Pipeline.transform" title="Permalink to this definition">¶</a></dt>
+<dd><p>Execute the graph with some input data, get the output nodes’ data.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>input_data</strong> (<em>dict of Numpy array</em>) – the input data to be passed to InputNodes to begin execution.</li>
+<li><strong>index_field</strong> (<em>str</em>) – name of key from input_data to be used as index for storage and lookup.</li>
+<li><strong>keep_data</strong> (<em>bool</em>) – whether to keep data in non-output nodes after execution.
+activating this flag can be useful for debugging.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="megatron.pipeline.Pipeline.transform_generator">
+<code class="descname">transform_generator</code><span class="sig-paren">(</span><em>input_generator</em>, <em>steps</em>, <em>index=None</em><span class="sig-paren">)</span><a class="headerlink" href="#megatron.pipeline.Pipeline.transform_generator" title="Permalink to this definition">¶</a></dt>
+<dd><p>Execute the graph with some input data from a generator, create generator.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>input_generator</strong> (<em>dict of Numpy array</em>) – generator producing input data to be passed to Input nodes.</li>
+<li><strong>steps</strong> (<em>int</em>) – number of batches to pull from input_generator before terminating.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="function">
+<dt id="megatron.pipeline.load_pipeline">
+<code class="descclassname">megatron.pipeline.</code><code class="descname">load_pipeline</code><span class="sig-paren">(</span><em>filepath</em>, <em>storage_db=None</em><span class="sig-paren">)</span><a class="headerlink" href="#megatron.pipeline.load_pipeline" title="Permalink to this definition">¶</a></dt>
+<dd><p>Load a set of nodes from a given file, stored previously with Pipeline.save().</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>filepath</strong> (<em>str</em>) – the file from which to load a Pipeline.</li>
+<li><strong>storage_db</strong> (<em>Connection</em><em> (</em><em>default: sqlite3.connect</em><em>(</em><em>'megatron_default.db'</em><em>)</em><em>)</em>) – database connection object to query for cached data from the Pipeline.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="layers.html" class="btn btn-neutral float-right" title="Layers" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="index.html" class="btn btn-neutral" title="This is Megatron." accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2018, Nash Taylor.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'./',
+            VERSION:'0.1.0',
+            LANGUAGE:'None',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true,
+            SOURCELINK_SUFFIX: '.txt'
+        };
+    </script>
+      <script type="text/javascript" src="_static/jquery.js"></script>
+      <script type="text/javascript" src="_static/underscore.js"></script>
+      <script type="text/javascript" src="_static/doctools.js"></script>
+
+  
+
+  <script type="text/javascript" src="_static/js/theme.js"></script>
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

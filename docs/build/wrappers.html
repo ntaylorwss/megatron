@@ -1,0 +1,325 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Layer Wrappers &mdash; Megatron 0.1.0 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Metrics" href="metrics.html" />
+    <link rel="prev" title="Layers" href="layers.html" /> 
+
+  
+  <script src="_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="index.html" class="icon icon-home"> Megatron
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="index.html">Home</a></li>
+<li class="toctree-l1"><a class="reference internal" href="pipeline.html">Pipelines</a></li>
+<li class="toctree-l1"><a class="reference internal" href="layers.html">Layers</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Layer Wrappers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="metrics.html">Metrics</a></li>
+<li class="toctree-l1"><a class="reference internal" href="io.html">Reading and Writing Data (IO)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="nodes.html">Nodes</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">Megatron</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html">Docs</a> &raquo;</li>
+        
+      <li>Layer Wrappers</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="_sources/wrappers.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="layer-wrappers">
+<h1>Layer Wrappers<a class="headerlink" href="#layer-wrappers" title="Permalink to this headline">¶</a></h1>
+<blockquote>
+<div><p>Wrappers allow you to use transformations from other modules as Layers in a Megatron Pipeline. Currently supported are:</p>
+<ul class="simple">
+<li>Keras models</li>
+<li>Sklearn transformations (including preprocessors, unsupervised models, supervised models)</li>
+</ul>
+</div></blockquote>
+<span class="target" id="module-megatron.layers.wrappers"></span><dl class="class">
+<dt id="megatron.layers.wrappers.Keras">
+<em class="property">class </em><code class="descclassname">megatron.layers.wrappers.</code><code class="descname">Keras</code><span class="sig-paren">(</span><em>keras_model</em><span class="sig-paren">)</span><a class="headerlink" href="#megatron.layers.wrappers.Keras" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">megatron.layers.core.Layer</span></code></p>
+<dl class="method">
+<dt id="megatron.layers.wrappers.Keras.fit">
+<code class="descname">fit</code><span class="sig-paren">(</span><em>*inputs</em><span class="sig-paren">)</span><a class="headerlink" href="#megatron.layers.wrappers.Keras.fit" title="Permalink to this definition">¶</a></dt>
+<dd><p>Overwrite metadata based on given data.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>inputs</strong> (<em>numpy.ndarray</em><em>(</em><em>s</em><em>)</em>) – the input data to be fit to; could be one array or a list of arrays.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="megatron.layers.wrappers.Keras.partial_fit">
+<code class="descname">partial_fit</code><span class="sig-paren">(</span><em>*inputs</em><span class="sig-paren">)</span><a class="headerlink" href="#megatron.layers.wrappers.Keras.partial_fit" title="Permalink to this definition">¶</a></dt>
+<dd><p>Update metadata based on given data in an iterative fashion.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>inputs</strong> (<em>numpy.ndarray</em><em>(</em><em>s</em><em>)</em>) – the input data to be fit to; could be one array or a list of arrays.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="megatron.layers.wrappers.Keras.transform">
+<code class="descname">transform</code><span class="sig-paren">(</span><em>*inputs</em><span class="sig-paren">)</span><a class="headerlink" href="#megatron.layers.wrappers.Keras.transform" title="Permalink to this definition">¶</a></dt>
+<dd><p>Apply transformation to given input data.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>inputs</strong> (<em>np.ndarray</em><em>(</em><em>s</em><em>)</em>) – input data to be transformed; could be one array or a list of arrays.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="megatron.layers.wrappers.Sklearn">
+<em class="property">class </em><code class="descclassname">megatron.layers.wrappers.</code><code class="descname">Sklearn</code><span class="sig-paren">(</span><em>sklearn_transformation</em><span class="sig-paren">)</span><a class="headerlink" href="#megatron.layers.wrappers.Sklearn" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">megatron.layers.core.Layer</span></code></p>
+<dl class="method">
+<dt id="megatron.layers.wrappers.Sklearn.fit">
+<code class="descname">fit</code><span class="sig-paren">(</span><em>*inputs</em><span class="sig-paren">)</span><a class="headerlink" href="#megatron.layers.wrappers.Sklearn.fit" title="Permalink to this definition">¶</a></dt>
+<dd><p>Overwrite metadata based on given data.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>inputs</strong> (<em>numpy.ndarray</em><em>(</em><em>s</em><em>)</em>) – the input data to be fit to; could be one array or a list of arrays.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="megatron.layers.wrappers.Sklearn.partial_fit">
+<code class="descname">partial_fit</code><span class="sig-paren">(</span><em>*inputs</em><span class="sig-paren">)</span><a class="headerlink" href="#megatron.layers.wrappers.Sklearn.partial_fit" title="Permalink to this definition">¶</a></dt>
+<dd><p>Update metadata based on given data in an iterative fashion.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>inputs</strong> (<em>numpy.ndarray</em><em>(</em><em>s</em><em>)</em>) – the input data to be fit to; could be one array or a list of arrays.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="megatron.layers.wrappers.Sklearn.transform">
+<code class="descname">transform</code><span class="sig-paren">(</span><em>*inputs</em><span class="sig-paren">)</span><a class="headerlink" href="#megatron.layers.wrappers.Sklearn.transform" title="Permalink to this definition">¶</a></dt>
+<dd><p>Apply transformation to given input data.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>inputs</strong> (<em>np.ndarray</em><em>(</em><em>s</em><em>)</em>) – input data to be transformed; could be one array or a list of arrays.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="metrics.html" class="btn btn-neutral float-right" title="Metrics" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="layers.html" class="btn btn-neutral" title="Layers" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2018, Nash Taylor.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'./',
+            VERSION:'0.1.0',
+            LANGUAGE:'None',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true,
+            SOURCELINK_SUFFIX: '.txt'
+        };
+    </script>
+      <script type="text/javascript" src="_static/jquery.js"></script>
+      <script type="text/javascript" src="_static/underscore.js"></script>
+      <script type="text/javascript" src="_static/doctools.js"></script>
+
+  
+
+  <script type="text/javascript" src="_static/js/theme.js"></script>
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

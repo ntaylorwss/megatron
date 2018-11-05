@@ -4,6 +4,7 @@ from .. import utils
 
 
 class Input(InputNode):
+    """Wrapper for Input nodes to make them appear as a Layer, for consistency."""
     pass
 
 
@@ -12,26 +13,30 @@ class Layer:
 
     Parameters
     ----------
+    n_outputs (default: 1)
+        number of distinct data, and thus nodes, output by the layer's transform.
     **kwargs
         hyperparameters of the transformation function.
 
     Attributes
     ----------
+    n_outputs
+        number of distinct data, and thus nodes, output by the layer's transform.
     kwargs
         hyperparameters of the transformation function.
     """
     def __init__(self, n_outputs=1, **kwargs):
-        self.kwargs = kwargs
         self.n_outputs = n_outputs
+        self.kwargs = kwargs
 
     def __call__(self, nodes):
-        """Creates a TransformationNode associated with this Transformation and the given InputNodes.
+        """Creates a TransformationNode associated with this Layer and the given InputNode(s).
 
-        When running eagerly, perform a fit and transform.
+        When running eagerly, will perform a fit and transform.
 
         Parameters
         ----------
-        inbound_nodes : list of megatron.InputNode / megatron.TransformationNode
+        nodes : list of megatron.InputNode / megatron.TransformationNode
             the input nodes, whose data are to be passed to transform_fn when run.
         """
         nodes = utils.generic.listify(nodes)
@@ -57,9 +62,8 @@ class Layer:
         return out
 
     def partial_fit(self, *inputs):
-        """Updates metadata based on given batch of data or full dataset.
+        """Update metadata based on given data in an iterative fashion.
 
-        Contains the main logic of fitting.
         Parameters
         ----------
         inputs : numpy.ndarray(s)
@@ -68,7 +72,7 @@ class Layer:
         pass
 
     def fit(self, *inputs):
-        """Overwrites metadata based on given batch of data or full dataset.
+        """Overwrite metadata based on given data.
 
         Parameters
         ----------
@@ -101,11 +105,15 @@ class StatefulLayer(Layer):
 
     Parameters
     ----------
+    n_outputs (default: 1)
+        number of distinct data, and thus nodes, output by the layer's transform.
     **kwargs : dict
         the hyperparameters of the transformation function.
 
     Attributes
     ----------
+    n_outputs (default: 1)
+        number of distinct data, and thus nodes, output by the layer's transform.
     kwargs : dict
         the hyperparameters of the transformation function.
     metadata : dict
@@ -116,7 +124,7 @@ class StatefulLayer(Layer):
         self.metadata = {}
 
     def partial_fit(self, *inputs):
-        """Updates metadata based on given batch of data or full dataset.
+        """Update metadata based on given batch of data or full dataset.
 
         Contains the main logic of fitting. This is what should be overwritten by all child classes.
 
@@ -129,7 +137,7 @@ class StatefulLayer(Layer):
         raise NotImplementedError(msg.format(self.__class__.__name__))
 
     def fit(self, *inputs):
-        """Overwrites metadata based on given batch of data or full dataset.
+        """Overwrite metadata based on given batch of data or full dataset.
 
         Parameters
         ----------
@@ -151,6 +159,8 @@ class Lambda(StatelessLayer):
     transform_fn : function
         the function to be applied, which accepts one or more
         Numpy arrays as positional arguments.
+    n_outputs (default: 1)
+        number of distinct data, and thus nodes, output by the layer's transform.
     **kwargs
         keyword arguments to whatever custom function is passed in as transform_fn.
 
@@ -159,6 +169,8 @@ class Lambda(StatelessLayer):
     transform_fn : function
         the function to be applied, which accepts one or more
         Numpy arrays as positional arguments.
+    n_outputs (default: 1)
+        number of distinct data, and thus nodes, output by the layer's transform.
     kwargs
         keyword arguments to whatever custom function is passed in as transform_fn.
     """
@@ -167,7 +179,7 @@ class Lambda(StatelessLayer):
         super().__init__(n_outputs=n_outputs, **kwargs)
 
     def transform(self, *inputs):
-        """Applies transform_fn to given input data.
+        """Apply associated function to given input data.
 
         Parameters
         ----------

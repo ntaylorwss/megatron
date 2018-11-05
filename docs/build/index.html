@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Welcome to Megatron’s documentation! &mdash; Megatron 0.1.0 documentation</title>
+  <title>This is Megatron &mdash; Megatron 0.1.0 documentation</title>
   
 
   
@@ -27,7 +27,8 @@
   <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
   <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <link rel="index" title="Index" href="genindex.html" />
-    <link rel="search" title="Search" href="search.html" /> 
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Pipelines" href="pipeline.html" /> 
 
   
   <script src="_static/js/modernizr.min.js"></script>
@@ -76,12 +77,16 @@
               
             
             
-              <!-- Local TOC -->
-              <div class="local-toc"><ul>
-<li><a class="reference internal" href="#">Welcome to Megatron’s documentation!</a></li>
-<li><a class="reference internal" href="#indices-and-tables">Indices and tables</a></li>
+              <ul class="current">
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Home</a></li>
+<li class="toctree-l1"><a class="reference internal" href="pipeline.html">Pipelines</a></li>
+<li class="toctree-l1"><a class="reference internal" href="layers.html">Layers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="wrappers.html">Layer Wrappers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="metrics.html">Metrics</a></li>
+<li class="toctree-l1"><a class="reference internal" href="io.html">Reading and Writing Data (IO)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="nodes.html">Nodes</a></li>
 </ul>
-</div>
+
             
           
         </div>
@@ -125,7 +130,7 @@
     
       <li><a href="#">Docs</a> &raquo;</li>
         
-      <li>Welcome to Megatron’s documentation!</li>
+      <li>This is Megatron</li>
     
     
       <li class="wy-breadcrumbs-aside">
@@ -144,18 +149,204 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
             
-  <div class="section" id="welcome-to-megatron-s-documentation">
-<h1>Welcome to Megatron’s documentation!<a class="headerlink" href="#welcome-to-megatron-s-documentation" title="Permalink to this headline">¶</a></h1>
+  <div class="section" id="this-is-megatron">
+<h1>This is Megatron<a class="headerlink" href="#this-is-megatron" title="Permalink to this headline">¶</a></h1>
 <div class="toctree-wrapper compound">
 </div>
-</div>
-<div class="section" id="indices-and-tables">
-<h1>Indices and tables<a class="headerlink" href="#indices-and-tables" title="Permalink to this headline">¶</a></h1>
+<p>Megatron is a Python module for building data pipelines that encapsulate the entire machine learning process, from raw data to predictions.</p>
+<p>The advantages of using Megatron:</p>
 <ul class="simple">
-<li><a class="reference internal" href="genindex.html"><span class="std std-ref">Index</span></a></li>
-<li><a class="reference internal" href="py-modindex.html"><span class="std std-ref">Module Index</span></a></li>
-<li><a class="reference internal" href="search.html"><span class="std std-ref">Search Page</span></a></li>
+<li>A wide array of data transformations can be applied, including:<ul>
+<li>Built-in preprocessing transformations such as one-hot encoding, whitening, time-series windowing, etc.</li>
+<li>Any custom transformations you want, provided they take in Numpy arrays and output Numpy arrays.</li>
+<li>Sklearn preprocessors, unsupervised models (e.g. PCA), and supervised models. Basically, anything from sklearn.</li>
+<li>Keras models.</li>
 </ul>
+</li>
+<li>To any Keras users, the API will be familiar: Megatron’s API is heavily inspired by the <a class="reference external" href="https://keras.io/getting-started/functional-api-guide/">Keras Functional API</a>, where each data transformation (whether a simple one-hot encoding or an entire neural network) is applied as a Layer.</li>
+<li>Since all datasets should be versioned, Megatron allows you to name and version your pipelines and associated output data.</li>
+<li>Pipeline outputs can be cached and looked up easily for each pipeline and version.</li>
+<li>The pipeline can be elegantly visualized as a graph, showing connections between layers similar to a Keras visualization.</li>
+<li>Data and input layer shapes can be loaded from structured data sources including:<ul>
+<li>Pandas dataframes.</li>
+<li>CSVs.</li>
+<li>SQL database connections and queries.</li>
+</ul>
+</li>
+<li>Pipelines can either take in and produce full datasets, or take in and produce batch generators, for maximum flexibility.</li>
+<li>Pipelines support eager execution for immediate examination of data and simpler debugging.</li>
+</ul>
+<div class="section" id="installation">
+<h2>Installation<a class="headerlink" href="#installation" title="Permalink to this headline">¶</a></h2>
+<p>To install megatron, just grab it from pip:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">pip</span> <span class="n">install</span> <span class="n">megatron</span>
+</pre></div>
+</div>
+<p>There’s also a Docker image available with all dependencies and optional dependencies installed:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">docker</span> <span class="n">pull</span> <span class="n">ntaylor22</span><span class="o">/</span><span class="n">megatron</span>
+</pre></div>
+</div>
+<div class="section" id="optional-dependencies">
+<h3>Optional Dependencies<a class="headerlink" href="#optional-dependencies" title="Permalink to this headline">¶</a></h3>
+<ul class="simple">
+<li>Scikit-Learn<ul>
+<li>If you’d like to use Sklearn transformations as Layers.</li>
+</ul>
+</li>
+<li>Keras<ul>
+<li>If you’d like to use Keras models as Layers.</li>
+</ul>
+</li>
+<li>Pydot<ul>
+<li>If you’d like to be able to visualize pipelines.</li>
+<li>Note: requires <a class="reference external" href="https://graphviz.gitlab.io/download/">GraphViz</a> to run.</li>
+</ul>
+</li>
+</ul>
+</div>
+</div>
+<div class="section" id="tutorial">
+<h2>Tutorial<a class="headerlink" href="#tutorial" title="Permalink to this headline">¶</a></h2>
+<p>Let’s build the following pipeline:</p>
+<img alt="https://raw.githubusercontent.com/ntaylorwss/megatron/master/img/keras.png" src="https://raw.githubusercontent.com/ntaylorwss/megatron/master/img/keras.png" />
+<p>A simple example with an image and some binary labels. The goals here are:</p>
+<ul class="simple">
+<li>Convert the RGB image to black and white.</li>
+<li>One-hot encode the labels.</li>
+<li>Feed these into a Keras CNN, get predictions.</li>
+</ul>
+<p>Let’s assume a built and compiled Keras model named “model” has already been made:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">model</span> <span class="o">=</span> <span class="n">Model</span><span class="p">(</span><span class="n">image_input</span><span class="p">,</span> <span class="n">two_class_output</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Let’s start by making the input nodes for the pipeline:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">images</span> <span class="o">=</span> <span class="n">megatron</span><span class="o">.</span><span class="n">nodes</span><span class="o">.</span><span class="n">Input</span><span class="p">(</span><span class="s1">&#39;image&#39;</span><span class="p">,</span> <span class="p">(</span><span class="mi">48</span><span class="p">,</span> <span class="mi">48</span><span class="p">,</span> <span class="mi">1</span><span class="p">))</span>
+<span class="n">labels</span> <span class="o">=</span> <span class="n">megatron</span><span class="o">.</span><span class="n">nodes</span><span class="o">.</span><span class="n">Input</span><span class="p">(</span><span class="s1">&#39;label&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>The first argument is a name, which is a mandatory argument for Inputs.</p>
+<p>As for the second argument, by default, the shape of an Input is a 1D array, so we don’t need to specify the shape of ‘label’, but we will for ‘image’, which has a particular shape. The shape does _not_ include the first dimension, which is the observations.</p>
+<p>Now let’s apply greyscaling to the image, and one-hot encoding to the labels:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">grey_images</span> <span class="o">=</span> <span class="n">megatron</span><span class="o">.</span><span class="n">layers</span><span class="o">.</span><span class="n">RGBtoGrey</span><span class="p">(</span><span class="n">method</span><span class="o">=</span><span class="s1">&#39;luminosity&#39;</span><span class="p">,</span> <span class="n">keep_dim</span><span class="o">=</span><span class="kc">True</span><span class="p">)(</span><span class="n">images</span><span class="p">,</span> <span class="s1">&#39;grey_images&#39;</span><span class="p">)</span>
+<span class="n">ohe_labels</span> <span class="o">=</span> <span class="n">megatron</span><span class="o">.</span><span class="n">layers</span><span class="o">.</span><span class="n">OneHotRange</span><span class="p">(</span><span class="n">max_val</span><span class="o">=</span><span class="mi">1</span><span class="p">)(</span><span class="n">labels</span><span class="p">,</span> <span class="s1">&#39;ohe_labels&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>4 things to note here:</p>
+<ul class="simple">
+<li>Calling a Layer produces a Node. That means Layers can be re-used to produce as many Nodes as we want, though we’re not taking advantage of that here.</li>
+<li>The initialization arguments to a Layer are its “hyperparameters”, or configuration parameters, such as the method used for converting RGB to greyscale.</li>
+<li>The first argument when calling a Layer is the previous layers you want to call it on. If there’s multiple inputs, they should be provided as a list.</li>
+<li>The second argument is the name for the resulting node. If this node is to be an output of the model, it must be named; otherwise, names are not necessary, though still helpful for documentation.</li>
+</ul>
+<p>With our features and labels appropriately processed, we can pass them into our Keras model:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">preds</span> <span class="o">=</span> <span class="n">megatron</span><span class="o">.</span><span class="n">layers</span><span class="o">.</span><span class="n">Keras</span><span class="p">(</span><span class="n">model</span><span class="p">)([</span><span class="n">grey_images</span><span class="p">,</span> <span class="n">ohe_labels</span><span class="p">],</span> <span class="s1">&#39;predictor&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Since this is an output of the pipeline, we name it. Lastly, let’s attach a metric to the Keras model so we know how well it did:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">acc</span> <span class="o">=</span> <span class="n">megatron</span><span class="o">.</span><span class="n">metrics</span><span class="o">.</span><span class="n">Accuracy</span><span class="p">()([</span><span class="n">ohe_labels</span><span class="p">,</span> <span class="n">preds</span><span class="p">],</span> <span class="s1">&#39;model_acc&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Note that metrics do not behave like other layers; they are not executed when we fit or transform. They come into play if we evaluate a Pipeline, at which point all the pipeline’s metrics will be calculated and given back to us. We’ll see that in a second.</p>
+<p>To be able to identify the different metrics, it’s required that we name them, as the second argument to the call.</p>
+<p>Finally, let’s create the pipeline by defining its inputs and outputs, just like a Keras Model:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">storage_db</span> <span class="o">=</span> <span class="n">sqlite3</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="s1">&#39;getting_started&#39;</span><span class="p">)</span>
+<span class="n">pipeline</span> <span class="o">=</span> <span class="n">megatron</span><span class="o">.</span><span class="n">Pipeline</span><span class="p">([</span><span class="n">images</span><span class="p">,</span> <span class="n">labels</span><span class="p">],</span> <span class="n">preds</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s1">&#39;getting_started&#39;</span><span class="p">,</span> <span class="n">version</span><span class="o">=</span><span class="mf">0.1</span><span class="p">,</span> <span class="n">storage</span><span class="o">=</span><span class="n">storage_db</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Let’s break down the arguments here:</p>
+<ul class="simple">
+<li>The first argument is either a single node or a list of nodes that are meant to be input nodes; that is, they will have data passed to them.</li>
+<li>The second argument is either a single node or a list of nodes that are meant to be output nodes; that is, when we run the pipeline, they’re the nodes whose data we’ll get.</li>
+<li>The pipeline must be named, and it can have a version number, but that is optional. These identifiers will be used for caching processed data and the pipeline itself.</li>
+<li>You can store the output data of a pipeline in a SQL database, and look it up using the index of the observations. If no index is provided (we provided no index here), it’s simply integers starting from 0.</li>
+</ul>
+<p>Now let’s train the model, get the predictions, then lookup the prediction for the first observation from the storage database:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">data</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;images&#39;</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">random</span><span class="p">((</span><span class="mi">1000</span><span class="p">,</span> <span class="mi">48</span><span class="p">,</span> <span class="mi">48</span><span class="p">,</span> <span class="mi">3</span><span class="p">)),</span>
+        <span class="s1">&#39;labels&#39;</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">randint</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1000</span><span class="p">)}</span>
+<span class="n">pipeline</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+<span class="n">outputs</span> <span class="o">=</span> <span class="n">pipeline</span><span class="o">.</span><span class="n">transform</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+<span class="n">one_output</span> <span class="o">=</span> <span class="n">pipeline</span><span class="o">.</span><span class="n">storage</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="n">lookup</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;0&#39;</span><span class="p">])</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">outputs</span><span class="p">[</span><span class="s1">&#39;predictor&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span> <span class="c1"># --&gt; (1000, 2)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">one_output</span><span class="p">[</span><span class="s1">&#39;predictor&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span> <span class="c1"># --&gt; (1, 2)</span>
+
+<span class="n">metrics</span> <span class="o">=</span> <span class="n">pipeline</span><span class="o">.</span><span class="n">evaluate</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">metrics</span><span class="p">[</span><span class="s1">&#39;model_acc&#39;</span><span class="p">])</span> <span class="c1"># --&gt; 0.51</span>
+</pre></div>
+</div>
+<p>What did we learn here?</p>
+<ul class="simple">
+<li>We pass in data by creating a dictionary, where the keys are the names of the input nodes of the pipeline, and the values are the Numpy arrays.</li>
+<li>Calling .transform(data) gives us a dictionary, where the keys are the names of the output nodes of the pipeline, and the values are the Numpy arrays.</li>
+<li>Looking up observations by index in the storage database gives us a dictionary with the same structure as .transform(data).</li>
+<li>Metrics are calculated by calling .evaluate(data) on the pipeline.</li>
+</ul>
+<p>Finally, let’s save the pipeline to disk so it can be reloaded with its structure and trained parameters. Let’s save it under the directory “pipelines/”, from the current working directory:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">pipeline</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="s1">&#39;pipelines/&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>The pipeline has been saved at the following location: [working_directory]/pipelines/getting_started-0.1.pkl. The name of the pickle file is the name of the pipeline and the version number, defined in its initialization, separated by a hyphen.</p>
+<p>Let’s reload that pipeline:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">pipeline</span> <span class="o">=</span> <span class="n">megatron</span><span class="o">.</span><span class="n">load_pipeline</span><span class="p">(</span><span class="s1">&#39;pipelines/getting_started-0.1.pkl&#39;</span><span class="p">,</span> <span class="n">storage_db</span><span class="o">=</span><span class="n">storage_db</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>We provide the filepath for the pipeline we want to reload, and one extra argument: since we can’t pickle database connections, when we want to connect to the storage database, we have to make that connection variable and pass it as the second argument to load_pipeline. If you aren’t using caching, you don’t need to do this.</p>
+<p>To summarize:</p>
+<ul class="simple">
+<li>We created a Keras model and some data transformations.</li>
+<li>We connected them up as a pipeline, ran some data through that pipeline, and got the results.</li>
+<li>We stored the results and the fitted pipeline on disk, looked up those results from disk, and reloaded the pipeline from disk.</li>
+<li>The data and pipeline were named and versioned, and the observations in the data had an index we could use for lookup.</li>
+</ul>
+</div>
+<div class="section" id="custom-layers">
+<h2>Custom Layers<a class="headerlink" href="#custom-layers" title="Permalink to this headline">¶</a></h2>
+<p>If you have a function that takes in Numpy arrays and produces Numpy arrays, you have two possible paths to adding it as a Layer in a Pipeline:</p>
+<ol class="arabic simple">
+<li>The function has no parameters to learn, and will always return the same output for a given input. We refer to this as a “stateless” Layer.</li>
+<li>The function learns parameters (i.e. needs to be “fit”). We refer to this as a “stateful” Layer.</li>
+</ol>
+<div class="section" id="custom-stateful-layers">
+<h3>Custom Stateful Layers<a class="headerlink" href="#custom-stateful-layers" title="Permalink to this headline">¶</a></h3>
+<p>To create a custom stateful layer, you will inherit the StatefulLayer base class, and write two methods: fit (or partial_fit), and transform. Here’s an example with a Whitening Layer:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">Whiten</span><span class="p">(</span><span class="n">megatron</span><span class="o">.</span><span class="n">layers</span><span class="o">.</span><span class="n">StatefulLayer</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">fit</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">metadata</span><span class="p">[</span><span class="s1">&#39;mean&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">X</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">metadata</span><span class="p">[</span><span class="s1">&#39;std&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">X</span><span class="o">.</span><span class="n">std</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">transform</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X</span><span class="p">):</span>
+        <span class="k">return</span> <span class="p">(</span><span class="n">X</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">metadata</span><span class="p">[</span><span class="s1">&#39;mean&#39;</span><span class="p">])</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">metadata</span><span class="p">[</span><span class="s1">&#39;std&#39;</span><span class="p">]</span>
+</pre></div>
+</div>
+<p>There’s a couple things to know here:</p>
+<ul class="simple">
+<li>When you calculate parameters during the fit, you store them in the provided dictionary self.metadata. You then retrieve them from this dictionary in your transform method.</li>
+<li>If your Layer is one that can be fit iteratively, you can override partial_fit rather than fit. If your transformation cannot be fit iteratively, you override fit; note that Layers without a partial_fit cannot be used with data generators, and will throw an error in that situation.<ul>
+<li>For an example of how to write a partial_fit method, see <a class="reference external" href="https://github.com/ntaylorwss/megatron/blob/master/megatron/layers/shaping.py#L41">megatron.layers.shaping.OneHotRange</a>.).</li>
+</ul>
+</li>
+</ul>
+</div>
+<div class="section" id="custom-stateless-layers">
+<h3>Custom Stateless Layers<a class="headerlink" href="#custom-stateless-layers" title="Permalink to this headline">¶</a></h3>
+<p>To create a custom stateless Layer, you can simply define your function and wrap it in megatron.layers.Lambda. For example:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">dot_product</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">Y</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">Y</span><span class="p">)</span>
+
+<span class="n">dot_xy</span> <span class="o">=</span> <span class="n">megatron</span><span class="o">.</span><span class="n">layers</span><span class="o">.</span><span class="n">Lambda</span><span class="p">(</span><span class="n">dot_product</span><span class="p">)([</span><span class="n">X_node</span><span class="p">,</span> <span class="n">Y_node</span><span class="p">],</span> <span class="s1">&#39;dot_product_result&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>That’s it, a simple wrapper.</p>
+</div>
+</div>
+<div class="section" id="why-is-it-called-megatron">
+<h2>Why is it called Megatron?<a class="headerlink" href="#why-is-it-called-megatron" title="Permalink to this headline">¶</a></h2>
+<p>Because the layers are data transformers!</p>
+<p>That’s… that’s about it.</p>
+</div>
+<div class="section" id="license">
+<h2>License<a class="headerlink" href="#license" title="Permalink to this headline">¶</a></h2>
+<p><a class="reference external" href="https://github.com/ntaylorwss/megatron/blob/master/LICENSE">MIT</a>.</p>
+</div>
 </div>
 
 
@@ -163,6 +354,13 @@
            
           </div>
           <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="pipeline.html" class="btn btn-neutral float-right" title="Pipelines" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+    </div>
   
 
   <hr/>

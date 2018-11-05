@@ -94,11 +94,3 @@ class Keras(Layer):
             return self.model.predict(inputs[0])
         else:
             return self.model.predict(list(inputs[:self.n_inputs]))
-
-
-class Metric(Layer):
-    def __init__(self, sklearn_metric):
-        self.metric = sklearn_metric
-
-    def transform(self, labels, preds):
-        self.metric(labels, preds)
