@@ -92,16 +92,16 @@ class DataStore:
         self.db.execute("CREATE UNIQUE INDEX IF NOT EXISTS ind ON {} (ind)".format(self.table_name))
         self.db.commit()
 
-    def read(self, cols=None, lookup=None):
+    def read(self, cols=None, rows=None):
         """Retrieve all processed features from cache, or lookup a single observation.
 
         For features that are multi-dimensional, use pickle to read string.
 
         Parameters
         ----------
-        cols : list of str (default: None)
-            names of output columns to retrieve. If None, get all columns.
-        lookup: list of any or any (default: None)
+        cols : list of int (default: None)
+            indices of output columns to retrieve. If None, get all columns.
+        rows: list of any or any (default: None)
             index value to lookup output for, in dictionary form. If None, get all rows.
             should be the same data type as the index.
         """
@@ -112,9 +112,9 @@ class DataStore:
         else:
             query = "SELECT * FROM {} ".format(self.table_name)
 
-        if lookup:
-            lookup = utils.generic.listify(lookup)
-            query += "WHERE ind IN ({})".format(','.join(lookup))
+        if rows:
+            rows = utils.generic.listify(rows)
+            query += "WHERE ind IN ({})".format(','.join(rows))
 
         out = pd.read_sql_query(query, self.db, index_col='ind')
         out = dict(zip(out.columns, out.values.T))

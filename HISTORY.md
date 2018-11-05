@@ -1,5 +1,12 @@
 # Release History
 
+## 0.4.1
+### Changes
+- Generalized SklearnMetric wrapper to simple Metric wrapper, which can take any function.
+- Remove any attempt to create built-in metrics; they exist elsewhere and should be imported from elsewhere.
+- Pipeline transform always returns a list of results, even if there's only one output node.
+- Renamed parameters of storage.read.
+
 ## 0.4.0
 ### Changes
 - Nodes no longer have names, except InputNodes.

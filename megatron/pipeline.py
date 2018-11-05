@@ -205,7 +205,7 @@ class Pipeline:
         output_data = [node.output for node in self.outputs]
         if self.storage:
             self.storage.write(output_data, index)
-        return output_data[0] if len(output_data) == 1 else output_data
+        return output_data
 
     def transform_generator(self, input_generator, steps, index=None):
         """Execute the graph with some input data from a generator, create generator.

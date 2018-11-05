@@ -3,8 +3,17 @@ from ..nodes.core import MetricNode
 
 
 class Metric:
-    """Base class of metrics."""
-    def __init__(self, **kwargs):
+    """Layer type that holds an evaluation metric; only incorporated for Pipeline evaluation.
+
+    Parameters
+    ----------
+    metric_fn : function
+        the metric function to be wrapped.
+    **kwargs
+        any keyword arguments to be passed to the metric when being called.
+    """
+    def __init__(self, metric_fn, **kwargs):
+        self.metric = metric_fn
         self.kwargs = kwargs
 
     def __call__(self, nodes, name):
@@ -26,28 +35,4 @@ class Metric:
 
     def evaluate(self, *inputs):
         """Run metric function on given input data."""
-        raise NotImplementedError
-
-
-class SklearnMetric(Metric):
-    """Wrapper for Sklearn metric function.
-
-    Parameters
-    ----------
-    sklearn_metric : sklearn.Metric
-        the metric function to be wrapped.
-    **kwargs
-        any keyword arguments to be passed to the metric when being called.
-    """
-    def __init__(self, sklearn_metric, **kwargs):
-        self.metric = sklearn.metric
-        self.kwargs = kwargs
-
-    def evaluate(self, *inputs):
         self.metric(*inputs, **self.kwargs)
-
-
-class Accuracy(Metric):
-    """Calculates classification accuracy for discrete labels and predictions."""
-    def evaluate(self, y_true, y_pred):
-        return (y_true == y_pred).mean()

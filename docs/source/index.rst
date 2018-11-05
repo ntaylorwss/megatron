@@ -89,8 +89,8 @@ As for the second argument, by default, the shape of an Input is a 1D array, so 
 
 Now let's apply greyscaling to the image, and one-hot encoding to the labels::
 
-   grey_images = megatron.layers.RGBtoGrey(method='luminosity', keep_dim=True)(images, 'grey_images')
-   ohe_labels = megatron.layers.OneHotRange(max_val=1)(labels, 'ohe_labels')
+   grey_images = megatron.layers.RGBtoGrey(method='luminosity', keep_dim=True)(images)
+   ohe_labels = megatron.layers.OneHotRange(max_val=1)(labels)
 
 4 things to note here:
 
@@ -101,11 +101,11 @@ Now let's apply greyscaling to the image, and one-hot encoding to the labels::
 
 With our features and labels appropriately processed, we can pass them into our Keras model::
 
-   preds = megatron.layers.Keras(model)([grey_images, ohe_labels], 'predictor')
+   preds = megatron.layers.Keras(model)([grey_images, ohe_labels])
 
 Since this is an output of the pipeline, we name it. Lastly, let's attach a metric to the Keras model so we know how well it did::
 
-   acc = megatron.metrics.Accuracy()([ohe_labels, preds], 'model_acc')
+   acc = megatron.metrics.Accuracy()([ohe_labels, preds])
 
 Note that metrics do not behave like other layers; they are not executed when we fit or transform. They come into play if we evaluate a Pipeline, at which point all the pipeline's metrics will be calculated and given back to us. We'll see that in a second.
 
@@ -129,9 +129,9 @@ Now let's train the model, get the predictions, then lookup the prediction for t
            'labels': np.random.randint(0, 1, 1000)}
    pipeline.fit(data)
    outputs = pipeline.transform(data)
-   one_output = pipeline.storage.read(lookup=['0'])
-   print(outputs['predictor'].shape) # --> (1000, 2)
-   print(one_output['predictor'].shape) # --> (1, 2)
+   one_output = pipeline.storage.read(rows=['0'])
+   print(outputs[0].shape) # --> (1000, 2)
+   print(one_output[0].shape) # --> (1, 2)
 
    metrics = pipeline.evaluate(data)
    print(metrics['model_acc']) # --> 0.51
