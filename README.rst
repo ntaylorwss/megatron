@@ -100,7 +100,8 @@ Because the layers are data transformers!
 
 That's... that's about it.
 
-## License
+License
+-------
 `MIT`_.
 
 .. _documentation: https://megatron.readthedocs.io/en/latest/
