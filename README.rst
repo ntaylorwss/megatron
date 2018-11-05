@@ -7,10 +7,10 @@ The advantages of using Megatron:
 
 * A wide array of data transformations can be applied, including:
 
-    * Built-in preprocessing transformations such as one-hot encoding, whitening, time-series windowing, etc.
-    * Any custom transformations you want, provided they take in Numpy arrays and output Numpy arrays.
-    * Sklearn preprocessors, unsupervised models (e.g. PCA), and supervised models. Basically, anything from sklearn.
-    * Keras models.
+  * Built-in preprocessing transformations such as one-hot encoding, whitening, time-series windowing, etc.
+  * Any custom transformations you want, provided they take in Numpy arrays and output Numpy arrays.
+  * Sklearn preprocessors, unsupervised models (e.g. PCA), and supervised models. Basically, anything from sklearn.
+  * Keras models.
 
 * To any Keras users, the API will be familiar: Megatron's API is heavily inspired by the `Keras Functional API`_, where each data transformation (whether a simple one-hot encoding or an entire neural network) is applied as a Layer.
 * Since all datasets should be versioned, Megatron allows you to name and version your pipelines and associated output data.
@@ -18,9 +18,9 @@ The advantages of using Megatron:
 * The pipeline can be elegantly visualized as a graph, showing connections between layers similar to a Keras visualization.
 * Data and input layer shapes can be loaded from structured data sources including:
 
-    * Pandas dataframes.
-    * CSVs.
-    * SQL database connections and queries.
+  * Pandas dataframes.
+  * CSVs.
+  * SQL database connections and queries.
 
 * Pipelines can either take in and produce full datasets, or take in and produce batch generators, for maximum flexibility.
 * Pipelines support eager execution for immediate examination of data and simpler debugging.
