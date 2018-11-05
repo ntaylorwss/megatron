@@ -12,16 +12,6 @@ then
     exit
 fi
 
-# update sphinx docs
-echo "Rebuilding docs..."
-docker/start
-docker exec megatron bash -c "sphinx-apidoc -f -o docs/source megatron && sphinx-build -b html docs/source docs/build"
-docker/stop
-git add docs
-git commit -m "Documentation update in preparation for version bump"
-git push origin master
-echo "Docs rebuilt."
-
 # rebuild images and bump docker versions
 echo "Building docker images..."
 docker/build
