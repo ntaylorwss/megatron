@@ -27,7 +27,6 @@ The advantages of using Megatron:
 
 Installation
 ------------
-
 To install megatron, just grab it from pip::
 
    pip install megatron
@@ -53,7 +52,6 @@ Optional Dependencies
 
 Tutorial
 --------
-
 See the `documentation`_ for a full up-to-date tutorial where you can build this simple pipeline:
 
 .. image:: https://raw.githubusercontent.com/ntaylorwss/megatron/master/img/keras.png
@@ -150,7 +148,6 @@ To summarize:
 
 Custom Layers
 -------------
-
 If you have a function that takes in Numpy arrays and produces Numpy arrays, you have two possible paths to adding it as a Layer in a Pipeline:
 
 1. The function has no parameters to learn, and will always return the same output for a given input. We refer to this as a "stateless" Layer.
@@ -175,7 +172,8 @@ There's a couple things to know here:
 
   * For an example of how to write a partial_fit method, see `megatron.layers.shaping.OneHotRange`_.).
 
-### Custom Stateless Layers
+Custom Stateless Layers
+~~~~~~~~~~~~~~~~~~~~~~~
 To create a custom stateless Layer, you can simply define your function and wrap it in megatron.layers.Lambda. For example::
 
    def dot_product(X, Y):
