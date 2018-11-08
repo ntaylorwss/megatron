@@ -54,6 +54,17 @@ class Pipeline:
         self.nodes = self._split_path(self.path)
         self.nodes['metric'] = self._get_metric_nodes(self.path)
 
+        # identify output nodes
+        for node in self.outputs:
+            node.is_output = True
+
+        # remove edges that aren't in path
+        for node in self.path:
+            node.inbound_nodes = [in_node for in_node in node.inbound_nodes
+                                  if in_node in self.path]
+            node.outbound_nodes = [out_node for out_node in node.outbound_nodes
+                                   if out_node in self.path]
+
         # ensure input data matches with input nodes
         missing_inputs = (set(self.path).intersection(self.inputs) - set(self.inputs))
         if len(missing_inputs) > 0:
@@ -72,6 +83,11 @@ class Pipeline:
         else:
             self.storage = None
 
+    def _reset_run(self, nodes=None):
+        nodes = nodes if nodes else self.path
+        for node in nodes:
+            node.outbounds_run = 0
+
     def _split_path(self, path):
         # split nodes up by type
         nodes = {}
@@ -79,7 +95,7 @@ class Pipeline:
                            ('input', InputNode),
                            ('keras', KerasNode)]
         for node_name, node_type in names_and_types:
-            nodes[node_name] = [node for node in self.path if isinstance(node, node_type)]
+            nodes[node_name] = [node for node in path if isinstance(node, node_type)]
         return nodes
 
     def _get_metric_nodes(self, path):
@@ -104,7 +120,7 @@ class Pipeline:
         for i, batch in enumerate(input_generator):
             self._load_inputs(batch, path_nodes['input'])
             for parent_node in path_nodes['transformation']:
-                parent_node.transform()
+                parent_node.transform(prune=False)
             node.partial_fit()
             if i == (steps_per_epoch * epochs): break
 
@@ -135,7 +151,7 @@ class Pipeline:
         for node in self.nodes['transformation']:
             node.partial_fit()
             node.transform()
-            node.clean_inbounds()
+        self._reset_run()
 
     def fit(self, input_data, epochs=1):
         """Fit to input data and overwrite the metadata.
@@ -151,7 +167,7 @@ class Pipeline:
         for node in self.nodes['transformation']:
             node.fit(epochs=epochs) if node in self.nodes['keras'] else node.fit()
             node.transform()
-            node.clean_inbounds()
+        self._reset_run()
 
     def fit_generator(self, input_generator, steps_per_epoch, epochs=1):
         """Fit to generator of input data batches. Execute partial_fit to each batch.
@@ -173,7 +189,7 @@ class Pipeline:
             else:
                 self._fit_generator_node(node, input_generator, steps_per_epoch, epochs)
 
-    def transform(self, input_data, index_field=None, keep_data=False):
+    def transform(self, input_data, index_field=None, prune=True):
         """Execute the graph with some input data, get the output nodes' data.
 
         Parameters
@@ -198,9 +214,9 @@ class Pipeline:
 
         # run transformation nodes to end of path
         for node in self.nodes['transformation']:
-            node.transform()
-            if not keep_data:
-                node.clean_inbounds()
+            node.transform(prune=prune)
+        if prune:
+           self._reset_run()
 
         output_data = [node.output for node in self.outputs]
         if self.storage:
@@ -219,9 +235,10 @@ class Pipeline:
         """
         for i, batch in enumerate(input_generator):
             if i == steps: StopIteration()
-            yield self.transform(batch, out_type, index, keep_data=True)
+            yield self.transform(batch, index, prune=False)
+        self._reset_run()
 
-    def evaluate(self, input_data):
+    def evaluate(self, input_data, prune=True):
         """Execute the metric Nodes in the Pipeline and get their results.
 
         Parameters
@@ -231,10 +248,10 @@ class Pipeline:
         """
         self._load_inputs(input_data)
         for node in self.nodes['transformation']:
-            node.transform()
-            node.clean_inbounds()
+            node.transform(prune=prune)
         for node in self.nodes['metric']:
             node.evaluate()
+        self._reset_run()
         return {node.name: node.output for node in self.nodes['metric']}
 
     def evaluate_generator(self, input_generator, steps):

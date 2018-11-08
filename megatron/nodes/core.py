@@ -26,6 +26,7 @@ class Node:
         self.outbound_nodes = []
         self.output = None
         self.outbounds_run = 0
+        self.is_output = False
 
 
 class InputNode(Node):
@@ -131,14 +132,12 @@ class TransformationNode(Node):
         self.layer = layer
         self.layer_out_index = layer_out_index
         super().__init__(inbound_nodes)
+        self.num_path_outbounds = None
 
-    def clean_inbounds(self):
-        """If any inbound nodes are now unneeded, this clears their data from memory."""
+    def _clear_inbounds(self):
         for in_node in self.inbound_nodes:
-            in_node.outbounds_run += 1
-            if in_node.outbound_nodes and (in_node.outbounds_run == len(in_node.outbound_nodes)):
+            if (not in_node.is_output) and in_node.outbounds_run == len(in_node.outbound_nodes):
                 in_node.output = None
-                in_node.outbounds_run = 0
 
     def partial_fit(self):
         """Apply partial fit method from Layer to inbound Nodes' data."""
@@ -150,10 +149,14 @@ class TransformationNode(Node):
         inputs = [node.output for node in self.inbound_nodes]
         self.layer.fit(*inputs)
 
-    def transform(self):
+    def transform(self, prune=True):
         """Apply and store result of transform method from Layer on inbound Nodes' data."""
         inputs = [node.output for node in self.inbound_nodes]
         self.output = utils.generic.listify(self.layer.transform(*inputs))[self.layer_out_index]
+        if prune:
+            for in_node in self.inbound_nodes:
+                in_node.outbounds_run += 1
+            self._clear_inbounds()
 
 
 class KerasNode(TransformationNode):
@@ -161,10 +164,12 @@ class KerasNode(TransformationNode):
     def partial_fit(self):
         inputs = [node.output for node in self.inbound_nodes]
         self.layer.fit(*inputs)
+        self._clear_inbounds()
 
     def fit(self, epochs=1):
         inputs = [node.output for node in self.inbound_nodes]
         self.layer.fit(*inputs, epochs=epochs)
+        self._clear_inbounds()
 
     def fit_generator(self, generator, steps_per_epoch, epochs=1):
         """Execute Keras model's fit_generator method.

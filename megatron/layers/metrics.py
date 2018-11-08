@@ -35,4 +35,4 @@ class Metric:
 
     def evaluate(self, *inputs):
         """Run metric function on given input data."""
-        self.metric(*inputs, **self.kwargs)
+        return self.metric(*inputs, **self.kwargs)

@@ -24,8 +24,6 @@ class DataStore:
             self.table_name = '{}_{}'.format(table_name, version)
         else:
             self.table_name = table_name
-        self.dtypes = []
-        self.original_shapes = []
 
     def _check_schema(self, output_data):
         """If existing SQL colnames and data colnames are off, throw error that table is in use.
@@ -57,17 +55,20 @@ class DataStore:
         data_index : np.array
             index of observations.
         """
-        # identify and pickle any multi-dimensional features
+        self.dtypes = []
+        self.original_shapes = []
         output_df = pd.DataFrame()
+
+        # identify and pickle any multi-dimensional features
         for i, out_data in enumerate(output_data):
-            self.original_shapes[i] = out_data.shape[1:]
+            self.original_shapes.append(out_data.shape[1:])
             if len(out_data.shape) > 1:
-                self.dtypes[k] = 'TEXT'
+                self.dtypes.append('TEXT')
                 flat_data = out_data.reshape((out_data.shape[0], -1))
                 flat_data = np.apply_along_axis(lambda x: pickle.dumps(x), axis=1, arr=flat_data)
                 output_df['output{}'.format(i)] = flat_data
             else:
-                self.dtypes[i] = 'REAL'
+                self.dtypes.append('REAL')
                 output_df['output{}'.format(i)] = out_data
 
         # create table if it doesn't yet exist; if it does, check the schema matches the new data
@@ -76,8 +77,8 @@ class DataStore:
         if self.db.execute(exists_query).fetchone():
             self._check_schema(output_df)
         else:
-            cols = ', '.join(['"{}" {}'.format(name, self.dtypes[name])
-                               for name in output_df.columns])
+            cols = ', '.join(['"output{}" {}'.format(i, dtype)
+                              for i, dtype in enumerate(self.dtypes)])
             make_query = 'CREATE TABLE {} ("ind" VARCHAR, {});'
             self.db.execute(make_query.format(self.table_name, cols))
             self.db.commit()
@@ -116,10 +117,9 @@ class DataStore:
             rows = utils.generic.listify(rows)
             query += "WHERE ind IN ({})".format(','.join(rows))
 
-        out = pd.read_sql_query(query, self.db, index_col='ind')
-        out = dict(zip(out.columns, out.values.T))
-        for k in out:
-            if self.dtypes[k] == 'TEXT':
-                out[k] = np.array([np.loads(v) for v in out[k]])
-                out[k] = out[k].reshape([-1] + list(self.original_shapes[k]))
+        out = list(pd.read_sql_query(query, self.db, index_col='ind').values.T)
+        for i in range(len(out)):
+            if self.dtypes[i] == 'TEXT':
+                out[i] = np.array([pickle.loads(v) for v in out[i]])
+                out[i] = out[i].reshape([-1] + list(self.original_shapes[i]))
         return out

@@ -28,7 +28,7 @@ def CSVData(filepath, exclude_cols=[], nrows=None):
     nrows : int (default: None)
         number of rows to load. If None, load all rows.
     """
-    return next(CSVGenerator(filepath, nrows, None, exclude_cols))
+    return next(CSVGenerator(filepath, nrows, exclude_cols))
 
 
 def SQLData(connection, query):

@@ -1,5 +1,14 @@
 # Release History
 
+## 0.4.2
+### Changes
+- Merge metrics module into layers.
+
+### Bug Fixes
+- Remove extra argument in CSVData.
+- Fix storage read method.
+- Re-work unused data pruning logic.
+
 ## 0.4.1
 ### Changes
 - Generalized SklearnMetric wrapper to simple Metric wrapper, which can take any function.
