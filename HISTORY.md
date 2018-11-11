@@ -3,11 +3,14 @@
 ## 0.4.2
 ### Changes
 - Merge metrics module into layers.
+- Add ability to overwrite storage for a pipeline name/version.
+- When executing eagerly, creating a pipeline destroys stored data and metadata.
 
 ### Bug Fixes
 - Remove extra argument in CSVData.
 - Fix storage read method.
 - Re-work unused data pruning logic.
+- Fix pipeline saving by re-structuring usage of dynamic classes in wrappers.
 
 ## 0.4.1
 ### Changes
