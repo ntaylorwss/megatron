@@ -14,7 +14,7 @@ Megatron is distributed under the MIT license.
 '''
 
 setup(name='Megatron',
-      version='0.4.2',
+      version='0.4.3',
       description='A computation graph library for feature engineering with Numpy data',
       long_description=long_description,
       author='Nash Taylor',
