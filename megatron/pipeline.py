@@ -1,4 +1,5 @@
 import os
+import inspect
 import sqlite3
 import numpy as np
 import pandas as pd
@@ -7,6 +8,7 @@ from collections import defaultdict
 from . import utils
 from . import io
 from .nodes.core import InputNode, TransformationNode, KerasNode, MetricNode
+from .layertools import wrappers
 
 
 class Pipeline:
@@ -46,13 +48,19 @@ class Pipeline:
         storage database for input and output data.
     """
     def __init__(self, inputs, outputs, name,
-                 version=None, storage=None):
+                 version=None, storage=None, overwrite=False):
         self.eager = False
         self.inputs = utils.flatten(utils.listify(inputs))
         self.outputs = utils.flatten(utils.listify(outputs))
         self.path = utils.pipeline.topsort(self.outputs)
         self.nodes = self._split_path(self.path)
         self.nodes['metric'] = self._get_metric_nodes(self.path)
+
+        # wipe output data and learned metadata in case of eager execution
+        for node in self.path:
+            node.output = None
+            if hasattr(node, 'metadata'):
+                node.metadata = {}
 
         # identify output nodes
         for node in self.outputs:
@@ -79,7 +87,7 @@ class Pipeline:
         if self.version:
             version = str(self.version).replace('.', '_')
         if storage:
-            self.storage = io.storage.DataStore(self.name, version, storage)
+            self.storage = io.storage.DataStore(self.name, version, storage, overwrite)
         else:
             self.storage = None
 
@@ -277,6 +285,7 @@ class Pipeline:
             node.output = None
         if not os.path.exists(save_dir):
             os.mkdir(save_dir)
+        # write to disk
         with open('{}/{}{}.pkl'.format(save_dir, self.name, self.version), 'wb') as f:
             # keep same cache_dir too for new pipeline when loaded
             pipeline_info = {'inputs': self.inputs, 'path': self.path,

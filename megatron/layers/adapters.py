@@ -37,7 +37,7 @@ class Keras(Layer):
         self.model = keras_model
         self.n_inputs = len(self.model.inputs)
 
-    def __call__(self, inbound_nodes, name=None):
+    def _call(self, inbound_nodes, name=None):
         if name is None and self.n_outputs > 1:
             name = [None for i in range(self.n_outputs)]
         elif len(utils.generic.listify(name)) != self.n_outputs:

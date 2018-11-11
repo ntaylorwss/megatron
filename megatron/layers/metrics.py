@@ -16,7 +16,7 @@ class Metric:
         self.metric = metric_fn
         self.kwargs = kwargs
 
-    def __call__(self, nodes, name):
+    def _call(self, nodes, name):
         """Produce a MetricNode acting on the given inbound nodes.
 
         Parameters
@@ -32,6 +32,9 @@ class Metric:
         if all(node.output is not None for node in nodes):
             out_node.evaluate()
         return out_node
+
+    def __call__(self, nodes, name):
+        return self._call(nodes, name)
 
     def evaluate(self, *inputs):
         """Run metric function on given input data."""

@@ -1,6 +1,7 @@
 import inspect
 import functools
 import collections
+import types
 
 
 def initializer(func):
@@ -44,9 +45,3 @@ def flatten(L):
             else:
                 yield l
     return list(_flatten(L))
-
-
-class IndexedData:
-    def __init__(self, data, index):
-        self.data = data
-        self.index = index

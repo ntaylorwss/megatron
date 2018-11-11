@@ -29,7 +29,7 @@ class Layer:
         self.n_outputs = n_outputs
         self.kwargs = kwargs
 
-    def __call__(self, nodes):
+    def _call(self, nodes):
         """Creates a TransformationNode associated with this Layer and the given InputNode(s).
 
         When running eagerly, will perform a fit and transform.
@@ -60,6 +60,9 @@ class Layer:
                 out_node.transform()
             out = out_node
         return out
+
+    def __call__(self, nodes):
+        return self._call(nodes)
 
     def partial_fit(self, *inputs):
         """Update metadata based on given data in an iterative fashion.

@@ -18,12 +18,14 @@ class DataStore:
     db_conn : Connection
         database connection to query.
     """
-    def __init__(self, table_name, version, db_conn):
+    def __init__(self, table_name, version, db_conn, overwrite):
         self.db = db_conn
         if version:
             self.table_name = '{}_{}'.format(table_name, version)
         else:
             self.table_name = table_name
+        if overwite:
+            self.db.execute("DROP TABLE IF EXISTS {}".format(self.table_name))
 
     def _check_schema(self, output_data):
         """If existing SQL colnames and data colnames are off, throw error that table is in use.

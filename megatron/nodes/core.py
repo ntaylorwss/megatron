@@ -27,6 +27,7 @@ class Node:
         self.output = None
         self.outbounds_run = 0
         self.is_output = False
+        self.is_eager = False
 
 
 class InputNode(Node):
@@ -100,6 +101,7 @@ class InputNode(Node):
             error indicating that the shape of the data does not match the shape of the node.
         """
         self.load(observations)
+        self.is_eager = True
         return self
 
 
@@ -129,9 +131,9 @@ class TransformationNode(Node):
         has, if necessary, been fit to data.
     """
     def __init__(self, layer, inbound_nodes, layer_out_index=0):
+        super().__init__(inbound_nodes)
         self.layer = layer
         self.layer_out_index = layer_out_index
-        super().__init__(inbound_nodes)
         self.num_path_outbounds = None
 
     def _clear_inbounds(self):
@@ -153,7 +155,9 @@ class TransformationNode(Node):
         """Apply and store result of transform method from Layer on inbound Nodes' data."""
         inputs = [node.output for node in self.inbound_nodes]
         self.output = utils.generic.listify(self.layer.transform(*inputs))[self.layer_out_index]
-        if prune:
+        if any(in_node.is_eager for in_node in self.inbound_nodes):
+            self.is_eager = True
+        elif prune:
             for in_node in self.inbound_nodes:
                 in_node.outbounds_run += 1
             self._clear_inbounds()
