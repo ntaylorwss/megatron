@@ -37,7 +37,6 @@ def vectorize(layer):
     layer : megatron.Layer
         Layer object to be wrapped.
     """
-
     layer.transform = np.vectorize(layer.transform)
     return layer
 
