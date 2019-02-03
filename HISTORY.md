@@ -1,5 +1,12 @@
 # Release History
 
+## 0.4.3
+### Changes
+- Add Normalization layer.
+- Convert TimeSeries layer to Stateful so it can work across batches without loss of data.
+- Add traversal method to Nodes to be able to navigate between them.
+- Add 'anon' to label of Lambda layers that are anonymous functions.
+
 ## 0.4.2
 ### Changes
 - Merge metrics module into layers.
