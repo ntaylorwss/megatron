@@ -266,7 +266,7 @@ class Pipeline:
         """Execute the metric Nodes in the Pipeline for each batch in a generator."""
         for i, batch in enumerate(input_generator):
             if i == steps: StopIteration()
-            yield self.evaluate(batch)
+            yield self.evaluate(batch, prune=False)
 
     def save(self, save_dir):
         """Store the Pipeline and its learned metadata without the outputs on disk.

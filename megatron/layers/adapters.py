@@ -46,14 +46,14 @@ class Keras(Layer):
         if self.n_outputs > 1:
             if any(node.output is not None for node in inbound_nodes):
                 raise Exception("Keras nodes cannot be run in eager mode")
-            out_nodes = [KerasNode(self, inbound_nodes, name[i], i) for i in range(self.n_outputs)]
+            out_nodes = [KerasNode(self, inbound_nodes, i) for i in range(self.n_outputs)]
             for node in inbound_nodes:
                 node.outbound_nodes += out_nodes
             out = {node.name: node for node in out_nodes}
         else:
             if any(node.output is not None for node in inbound_nodes):
                 raise Exception("Keras nodes cannot be run in eager mode")
-            out_node = KerasNode(self, inbound_nodes, name)
+            out_node = KerasNode(self, inbound_nodes)
             for node in inbound_nodes:
                 node.outbound_nodes.append(out_node)
             out = out_node
@@ -91,6 +91,7 @@ class Keras(Layer):
     def transform(self, *inputs):
         # don't use the labels for this
         if self.n_inputs == 1:
-            return self.model.predict(inputs[0])
+            preds = self.model.predict(inputs[0])
         else:
-            return self.model.predict(list(inputs[:self.n_inputs]))
+            preds = self.model.predict(list(inputs[:self.n_inputs]))
+        return preds

@@ -1,18 +1,17 @@
 import random
 import numpy as np
 import copy
-from ..utils.generic import copy_func
 
 
-class _mapped_func:
-    def __init__(self, func):
-        self.func = func
+class _mapped_call:
+    def __init__(self, call):
+        self.call = call
 
     def __call__(self, nodes):
         if isinstance(nodes, dict):
-            return {key: self.func(node) for key, node in nodes.items()}
+            return {key: self.call(node) for key, node in nodes.items()}
         elif isinstance(nodes, list):
-            return [self.func(node) for node in nodes]
+            return [self.call(node) for node in nodes]
         else:
             raise ValueError("Layer can only be mapped when provided multiple nodes")
 
@@ -25,8 +24,16 @@ def map(layer):
     layer : megatron.Layer
         Layer object to be wrapped.
     """
-    layer._call = _mapped_func(layer._call)
+    layer._call = _mapped_call(layer._call)
     return layer
+
+
+class _vectorized_func:
+    def __init__(self, func):
+        self.func = func
+
+    def __call__(self, X):
+        return np.array([self.func(row) for row in X])
 
 
 def vectorize(layer):
@@ -37,7 +44,7 @@ def vectorize(layer):
     layer : megatron.Layer
         Layer object to be wrapped.
     """
-    layer.transform = np.vectorize(layer.transform)
+    layer.transform = _vectorized_func(layer.transform)
     return layer
 
 

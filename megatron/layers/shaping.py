@@ -87,7 +87,7 @@ class SplitDict(StatelessLayer):
         return out
 
 
-class TimeSeries(StatelessLayer):
+class TimeSeries(StatefulLayer):
     """Adds a time dimension to a dataset by rolling a window over the data.
 
     Parameters
@@ -102,17 +102,34 @@ class TimeSeries(StatelessLayer):
     def __init__(self, window_size, time_axis=1, reverse=False):
         super().__init__(window_size=window_size, time_axis=time_axis, reverse=reverse)
 
+    def partial_fit(self, X):
+        self.metadata['shape'] = list(X.shape[1:])
+        self.metadata['previous'] = np.zeros([self.kwargs['window_size']-1] + self.metadata['shape'])
+
     def transform(self, X):
-        steps = [np.roll(X, i, axis=0) for i in range(self.kwargs['window_size'])]
-        out = np.moveaxis(np.stack(steps), 0, self.kwargs['time_axis'])[self.kwargs['window_size']:]
-        return np.flip(out, axis=-1) if self.kwargs['reverse'] else out
+        internal = [np.roll(X, i, axis=0) for i in range(self.kwargs['window_size'])]
+        internal = np.moveaxis(np.stack(internal), 0, self.kwargs['time_axis'])
+        internal = internal[self.kwargs['window_size']:]
+        begin = np.concatenate([X[:self.kwargs['window_size']], self.metadata['previous']])
+        begin = [np.roll(begin, i, axis=0) for i in range(self.kwargs['window_size'])]
+        begin = np.moveaxis(np.stack(begin), 0, self.kwargs['time_axis'])
+        begin = begin[:self.kwargs['window_size']]
+
+        self.metadata['previous'] = X[-self.kwargs['window_size']:]
+        return np.concatenate([begin, internal])
 
 
 class Concatenate(StatelessLayer):
     """Combine Nodes, creating n-length array for each observation."""
+    def __init__(self, axis=-1):
+        super().__init__(axis=axis)
+
     def transform(self, *arrays):
         arrays = list(arrays)
         for i, a in enumerate(arrays):
             if len(a.shape) == 1:
                 arrays[i] = np.expand_dims(a, -1)
-        return np.hstack(arrays)
+        if self.kwargs['axis'] == -1:
+            return np.stack(arrays, axis=-1)
+        else:
+            return np.concatenate(arrays, axis=self.kwargs['axis']+1)

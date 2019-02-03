@@ -29,6 +29,15 @@ class Node:
         self.is_output = False
         self.is_eager = False
 
+    def traverse(self, *path):
+        node = self
+        for step in path:
+            if step < 0:
+                node = node.inbound_nodes[-step-1]
+            elif step > 0:
+                node = node.outbound_nodes[step-1]
+        return node
+
 
 class InputNode(Node):
     """A pipeline node holding input data as a Numpy array.

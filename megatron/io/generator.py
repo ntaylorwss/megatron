@@ -1,6 +1,7 @@
 import math
 import numpy as np
 import pandas as pd
+from ..utils.generic import listify
 
 
 class PandasGenerator:

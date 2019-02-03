@@ -30,7 +30,10 @@ def name_node(node):
     if isinstance(node, InputNode):
         return node.name
     elif isinstance(node.layer, Lambda):
-        return 'Lambda: {}'.format(node.layer.transform_fn.__name__)
+        name = node.layer.transform_fn.__name__
+        if name == '<lambda>':
+            name = 'anon'
+        return 'Lambda: {}'.format(name)
     else:
         return node.layer.__class__.__name__
 

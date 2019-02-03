@@ -1,13 +1,14 @@
-FROM ntaylor22/tensorflow-cpu
+FROM tensorflow/tensorflow:latest-py3
 
 RUN rm -f /usr/bin/python && ln -s /usr/bin/python3.6 /usr/bin/python
 
 RUN apt-get update && apt-get install -y graphviz
 
 RUN useradd -ms /bin/bash megatron
-RUN mkdir /home/megatron/.jupyter && \
-    echo "c.NotebookApp.token = u''" > /home/megatron/.jupyter/jupyter_notebook_config.py
-RUN chown megatron:megatron /etc/jupyter/jupyter_notebook_config.py
+RUN mkdir /etc/jupyter /home/megatron/.jupyter
+ADD https://raw.githubusercontent.com/jupyter/docker-stacks/master/base-notebook/jupyter_notebook_config.py /etc/jupyter/
+RUN echo "c.NotebookApp.token = u''" > /home/megatron/.jupyter/jupyter_notebook_config.py && \
+    chown megatron:megatron /home/megatron/.jupyter/jupyter_notebook_config.py /etc/jupyter/jupyter_notebook_config.py
 USER megatron
 
 CMD jupyter notebook

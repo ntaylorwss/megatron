@@ -58,3 +58,12 @@ class Dot(StatelessLayer):
 
     def transform(self, X):
         return np.dot(X, self.kwargs['W'])
+
+
+class Normalize(StatelessLayer):
+    """Divide array by total to cause it to sum to one. If zero array, make uniform."""
+    def transform(self, X):
+        out = X.copy()
+        S = out.sum(axis=1)
+        out[S<0.0001, :] = np.ones(out.shape[1])
+        return out / out.sum(axis=1, keepdims=True)
