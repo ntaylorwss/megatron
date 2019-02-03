@@ -30,6 +30,23 @@ class Node:
         self.is_eager = False
 
     def traverse(self, *path):
+        """Return a Node from elsewhere in the graph by navigating to it from this Node.
+
+        A negative number indicates moving up to a parent, a positive number down to a child.
+        The number itself is a 1-based index into the parents/children, from left to right.
+        For example, a step of -2 will go to the second parent, while a step of 3 will go to
+        the third child.
+
+        Parameters
+        ----------
+        path : *ints
+            Arbitrary number of integers indicating the steps in the path.
+
+        Returns
+        -------
+        Node
+            the node at the end of the provided path.
+        """
         node = self
         for step in path:
             if step < 0:
@@ -161,7 +178,13 @@ class TransformationNode(Node):
         self.layer.fit(*inputs)
 
     def transform(self, prune=True):
-        """Apply and store result of transform method from Layer on inbound Nodes' data."""
+        """Apply and store result of transform method from Layer on inbound Nodes' data.
+
+        Parameters
+        ----------
+        prune : bool (default: True)
+            whether to erase data from intermediate nodes after they are fully used.
+        """
         inputs = [node.output for node in self.inbound_nodes]
         self.output = utils.generic.listify(self.layer.transform(*inputs))[self.layer_out_index]
         if any(in_node.is_eager for in_node in self.inbound_nodes):
