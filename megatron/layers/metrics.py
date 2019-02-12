@@ -1,5 +1,6 @@
 import numpy as np
-from ..nodes.core import MetricNode
+from ..nodes.auxiliary import MetricNode
+from .. import utils
 
 
 class Metric:
@@ -26,6 +27,7 @@ class Metric:
         name : str
             name to be associated with this MetricNode.
         """
+        nodes = utils.generic.listify(nodes)
         out_node = MetricNode(self, nodes, name)
         for node in nodes:
             node.outbound_nodes.append(out_node)

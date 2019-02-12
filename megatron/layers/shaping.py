@@ -133,3 +133,21 @@ class Concatenate(StatelessLayer):
             return np.stack(arrays, axis=-1)
         else:
             return np.concatenate(arrays, axis=self.kwargs['axis']+1)
+
+
+class Slice(StatelessLayer):
+    def __init__(self, *slices):
+        super().__init__(slices=slices)
+
+    def transform(self, X):
+        new_slices = []
+        for i, s in enumerate(self.kwargs['slices']):
+            if s is None:
+                new_slices.append(slice(None))
+            elif isinstance(s, int):
+                new_slices.append(s)
+            elif len(s) == 1:
+                new_slices.append(slice(s[0], None))
+            else:
+                new_slices.append(slice(*s))
+        return X[tuple(new_slices)]

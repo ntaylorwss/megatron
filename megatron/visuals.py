@@ -4,7 +4,7 @@
 import os
 from .utils.generic import listify
 from IPython.display import SVG
-from .nodes import InputNode
+from .nodes import InputNode, MetricNode, ExploreNode
 from .layers import Lambda
 
 # check for pydot
@@ -27,7 +27,7 @@ def _check_pydot():
 
 def name_node(node):
     """Get name for a node based on its type."""
-    if isinstance(node, InputNode):
+    if isinstance(node, (InputNode, MetricNode, ExploreNode)):
         return node.name
     elif isinstance(node.layer, Lambda):
         name = node.layer.transform_fn.__name__
@@ -60,7 +60,7 @@ def pipeline_to_dot(pipeline, rankdir='TB'):
     dot.set_node_defaults(shape='record')
 
     # add nodes
-    for node in pipeline.path:
+    for node in pipeline.nodes:
         node_id = str(id(node))
         label = name_node(node)
         # make input nodes green, output nodes blue
@@ -68,6 +68,10 @@ def pipeline_to_dot(pipeline, rankdir='TB'):
             color = '#b7e3ff'
         elif node in pipeline.outputs:
             color = '#aeffad'
+        elif isinstance(node, MetricNode):
+            color = '#ffba54'
+        elif isinstance(node, ExploreNode):
+            color = '#e6ef34'
         else:
             color = '#e8e8e8'
         pydot_node = pydot.Node(node_id, label=label, style='filled', fillcolor=color)

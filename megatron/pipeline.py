@@ -7,7 +7,8 @@ import dill as pickle
 from collections import defaultdict
 from . import utils
 from . import io
-from .nodes.core import InputNode, TransformationNode, KerasNode, MetricNode
+from .nodes.core import InputNode, TransformationNode, KerasNode
+from .nodes.auxiliary import MetricNode, ExploreNode
 from .layertools import wrappers
 
 
@@ -47,17 +48,21 @@ class Pipeline:
     storage: Connection (defeault: None)
         storage database for input and output data.
     """
-    def __init__(self, inputs, outputs, name,
-                 version=None, storage=None, overwrite=False):
+    def __init__(self, inputs, outputs, metrics=[], explorers=[],
+                 name=None, version=None, storage=None, overwrite=False):
         self.eager = False
         self.inputs = utils.flatten(utils.listify(inputs))
         self.outputs = utils.flatten(utils.listify(outputs))
+        self.metrics = utils.flatten(utils.listify(metrics))
+        self.explorers = utils.flatten(utils.listify(explorers))
+
         self.path = utils.pipeline.topsort(self.outputs)
-        self.nodes = self._split_path(self.path)
-        self.nodes['metric'] = self._get_metric_nodes(self.path)
+        self.metric_path = utils.pipeline.topsort(self.metrics)
+        self.explore_path = utils.pipeline.topsort(self.explorers)
+        self.nodes = list(set(self.path + self.metric_path + self.explore_path))
 
         # wipe output data and learned metadata in case of eager execution
-        for node in self.path:
+        for node in self.nodes:
             node.output = None
             if hasattr(node, 'metadata'):
                 node.metadata = {}
@@ -67,17 +72,17 @@ class Pipeline:
             node.is_output = True
 
         # remove edges that aren't in path
-        for node in self.path:
+        for node in self.nodes:
             node.inbound_nodes = [in_node for in_node in node.inbound_nodes
-                                  if in_node in self.path]
+                                  if in_node in self.nodes]
             node.outbound_nodes = [out_node for out_node in node.outbound_nodes
-                                   if out_node in self.path]
+                                   if out_node in self.nodes]
 
         # ensure input data matches with input nodes
-        missing_inputs = (set(self.path).intersection(self.inputs) - set(self.inputs))
+        missing_inputs = (set(self.nodes).intersection(self.inputs) - set(self.inputs))
         if len(missing_inputs) > 0:
             raise utils.errors.DisconnectedError(missing_inputs)
-        extra_inputs = set(self.path).intersection(self.inputs) - set(self.path)
+        extra_inputs = set(self.nodes).intersection(self.inputs) - set(self.nodes)
         if len(extra_inputs) > 0:
             utils.errors.ExtraInputsWarning(extra_inputs)
 
@@ -92,28 +97,9 @@ class Pipeline:
             self.storage = None
 
     def _reset_run(self, nodes=None):
-        nodes = nodes if nodes else self.path
+        nodes = nodes if nodes else self.nodes
         for node in nodes:
             node.outbounds_run = 0
-
-    def _split_path(self, path):
-        # split nodes up by type
-        nodes = {}
-        names_and_types = [('transformation', TransformationNode),
-                           ('input', InputNode),
-                           ('keras', KerasNode)]
-        for node_name, node_type in names_and_types:
-            nodes[node_name] = [node for node in path if isinstance(node, node_type)]
-        return nodes
-
-    def _get_metric_nodes(self, path):
-        # get a list of the MetricNodes in the pipeline
-        metrics = set()
-        for node in path:
-            node_metrics = [out_node for out_node in node.outbound_nodes
-                            if isinstance(out_node, MetricNode)]
-            metrics.update(node_metrics)
-        return list(metrics)
 
     def _load_inputs(self, input_data, nodes=None):
         # load data into its corresponding InputNodes
@@ -124,10 +110,12 @@ class Pipeline:
 
     def _fit_generator_node(self, node, input_generator, steps_per_epoch, epochs):
         # fit a single node that is not a Keras model to a generator
-        path_nodes = self._split_path(utils.pipeline.topsort(node)[:-1])
+        path_nodes = utils.pipeline.topsort(node)[:-1]
+        input_nodes = [node for node in path_nodes if isinstance(node, InputNode)]
+        transform_nodes = [node for node in path_nodes if isinstance(node, TransformationNode)]
         for i, batch in enumerate(input_generator):
-            self._load_inputs(batch, path_nodes['input'])
-            for parent_node in path_nodes['transformation']:
+            self._load_inputs(batch, input_nodes)
+            for parent_node in transform_nodes:
                 parent_node.transform(prune=False)
             node.partial_fit()
             if i == (steps_per_epoch * epochs): break
@@ -135,12 +123,14 @@ class Pipeline:
     def _fit_generator_keras(self, node, input_generator, steps_per_epoch, epochs):
         # fit a single node that is a Keras model to a generator
         def _generator(node, input_generator):
-            path_nodes = self._split_path(utils.pipeline.topsort(node)[:-1])
+            path_nodes = utils.pipeline.topsort(node)[:-1]
+            input_nodes = [node for node in path_nodes if isinstance(node, InputNode)]
+            transform_nodes = [node for node in path_nodes if isinstance(node, TransformationNode)]
             out_nodes = node.inbound_nodes
             while True:
                 for batch in input_generator:
-                    self._load_inputs(batch, path_nodes['input'])
-                    for node in path_nodes['transformation']:
+                    self._load_inputs(batch, input_nodes)
+                    for node in transform_nodes:
                         node.transform()
                     yield [node.output for node in out_nodes]
 
@@ -156,7 +146,8 @@ class Pipeline:
             the input data to be passed to InputNodes to begin execution.
         """
         self._load_inputs(input_data)
-        for node in self.nodes['transformation']:
+        for node in self.path:
+            if not isinstance(node, TransformationNode): continue
             node.partial_fit()
             node.transform()
         self._reset_run()
@@ -172,8 +163,9 @@ class Pipeline:
             number of passes to perform over the data.
         """
         self._load_inputs(input_data)
-        for node in self.nodes['transformation']:
-            node.fit(epochs=epochs) if node in self.nodes['keras'] else node.fit()
+        for node in self.path:
+            if not isinstance(node, TransformationNode): continue
+            node.fit(epochs=epochs) if node in self.path['keras'] else node.fit()
             node.transform()
         self._reset_run()
 
@@ -189,10 +181,11 @@ class Pipeline:
         epochs : int (default: 1)
             number of passes to perform over the data.
         """
-        if len(self.nodes['keras']) > 1:
+        if sum(isinstance(node, KerasNode) for node in self.path) > 1:
             raise ValueError("Multiple Keras nodes cannot be present when fitting to generator")
-        for node in self.nodes['transformation']:
-            if node in self.nodes['keras']:
+        for node in self.path:
+            if not isinstance(node, TransformationNode): continue
+            if isinstance(node, KerasNode):
                 self._fit_generator_keras(node, input_generator, steps_per_epoch, epochs)
             else:
                 self._fit_generator_node(node, input_generator, steps_per_epoch, epochs)
@@ -221,10 +214,11 @@ class Pipeline:
         self._load_inputs(input_data)
 
         # run transformation nodes to end of path
-        for node in self.nodes['transformation']:
+        for node in self.path:
+            if not isinstance(node, TransformationNode): continue
             node.transform(prune=prune)
         if prune:
-           self._reset_run()
+            self._reset_run()
 
         output_data = [node.output for node in self.outputs]
         if self.storage:
@@ -255,18 +249,37 @@ class Pipeline:
             the input data to be passed to InputNodes to begin execution.
         """
         self._load_inputs(input_data)
-        for node in self.nodes['transformation']:
-            node.transform(prune=prune)
-        for node in self.nodes['metric']:
-            node.evaluate()
+        for node in self.metric_path:
+            if isinstance(node, TransformationNode):
+                node.transform(prune=prune)
+            elif isinstance(node, MetricNode):
+                node.evaluate()
         self._reset_run()
-        return {node.name: node.output for node in self.nodes['metric']}
+        return {node.name: node.output
+                for node in self.metric_path if isinstance(node, MetricNode)}
 
     def evaluate_generator(self, input_generator, steps):
         """Execute the metric Nodes in the Pipeline for each batch in a generator."""
         for i, batch in enumerate(input_generator):
             if i == steps: StopIteration()
             yield self.evaluate(batch, prune=False)
+
+    def explore(self, input_data, prune=True):
+        self._load_inputs(input_data)
+        for node in self.explore_path:
+            if isinstance(node, TransformationNode):
+                node.transform(prune=prune)
+            elif isinstance(node, ExploreNode):
+                node.explore()
+        self._reset_run()
+        return {node.name: node.output
+                for node in self.explore_path if isinstance(node, ExploreNode)}
+
+    def explore_generator(self, input_generator, steps):
+        """Execute the explorer Nodes in the Pipeline for each batch in a generator."""
+        for i, batch in enumerate(input_generator):
+            if i == steps: StopIteration()
+            yield self.explore(batch, prune=False)
 
     def save(self, save_dir):
         """Store the Pipeline and its learned metadata without the outputs on disk.
@@ -280,7 +293,7 @@ class Pipeline:
         """
         # store ref to data outside of Pipeline and remove ref to data in TransformationNodes
         data = {}
-        for node in self.path:
+        for node in self.nodes:
             data[node] = node.output
             node.output = None
         if not os.path.exists(save_dir):
@@ -288,8 +301,11 @@ class Pipeline:
         # write to disk
         with open('{}/{}{}.pkl'.format(save_dir, self.name, self.version), 'wb') as f:
             # keep same cache_dir too for new pipeline when loaded
-            pipeline_info = {'inputs': self.inputs, 'path': self.path,
-                             'outputs': self.outputs, 'name': self.name, 'version': self.version}
+            pipeline_info = {'inputs': self.inputs, 'outputs': self.outputs,
+                             'path': self.path, 'metric_path': self.metric_path,
+                             'explore_path': self.explore_path,
+                             'metrics': self.metrics, 'explorers': self.explorers,
+                             'name': self.name, 'version': self.version}
             if self.storage:
                 storage_info = {'output_names': self.storage.output_names,
                                 'dtypes': self.storage.dtypes,
@@ -297,7 +313,7 @@ class Pipeline:
                 pipeline_info.update(storage_info)
             pickle.dump(pipeline_info, f)
         # reinsert data into Pipeline
-        for node in self.path:
+        for node in self.nodes:
             node.output = data[node]
 
 
@@ -313,12 +329,11 @@ def load_pipeline(filepath, storage_db=None):
     """
     with open(filepath, 'rb') as f:
         stored = pickle.load(f)
-    P = Pipeline(stored['inputs'], stored['outputs'], stored['name'],
-                 stored['version'], storage_db)
+    P = Pipeline(stored['inputs'], stored['outputs'], stored['metrics'], stored['explorers'],
+                 stored['name'], stored['version'], storage_db)
     if storage_db:
         # storage members that were calculated during writing
         P.storage.output_names = stored['output_names']
         P.storage.dtypes = stored['dtypes']
         P.storage.original_shapes = stored['original_shapes']
-    P.path = stored['path']
     return P
