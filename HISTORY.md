@@ -1,23 +1,36 @@
 # Release History
 
-## 0.4.3
+## 0.4.5
+### Changes
+- Add Slice layer.
+- Re-arrange nodes module.
+- Add exploration mode to the pipeline for EDA.
+- Separate out paths for transformation, evaluation, and exploration within the pipeline to avoid unnnecessary computation.
+- Update visualization module to include exploration nodes in their own colour.
+
+## 0.4.4
 ### Changes
 - Add Normalization layer.
 - Convert TimeSeries layer to Stateful so it can work across batches without loss of data.
 - Add traversal method to Nodes to be able to navigate between them.
 - Add 'anon' to label of Lambda layers that are anonymous functions.
 
+## 0.4.3
+### Changes
+- Add ability to overwrite storage for a pipeline name/version.
+- When executing eagerly, creating a pipeline destroys stored data and metadata.
+
+### Bug Fixes
+- Fix pipeline saving by re-structuring usage of dynamic classes in wrappers.
+
 ## 0.4.2
 ### Changes
 - Merge metrics module into layers.
-- Add ability to overwrite storage for a pipeline name/version.
-- When executing eagerly, creating a pipeline destroys stored data and metadata.
 
 ### Bug Fixes
 - Remove extra argument in CSVData.
 - Fix storage read method.
 - Re-work unused data pruning logic.
-- Fix pipeline saving by re-structuring usage of dynamic classes in wrappers.
 
 ## 0.4.1
 ### Changes
