@@ -25,19 +25,6 @@ def _check_pydot():
         raise OSError('PipelineViz must be installed with its executables included in the $PATH.')
 
 
-def name_node(node):
-    """Get name for a node based on its type."""
-    if isinstance(node, (InputNode, MetricNode, ExploreNode)):
-        return node.name
-    elif isinstance(node.layer, Lambda):
-        name = node.layer.transform_fn.__name__
-        if name == '<lambda>':
-            name = 'anon'
-        return 'Lambda: {}'.format(name)
-    else:
-        return node.layer.__class__.__name__
-
-
 def pipeline_to_dot(pipeline, rankdir='TB'):
     """Convert a megatron Pipeline to dot format for visualization.
 
@@ -62,7 +49,7 @@ def pipeline_to_dot(pipeline, rankdir='TB'):
     # add nodes
     for node in pipeline.nodes:
         node_id = str(id(node))
-        label = name_node(node)
+        label = node.name
         # make input nodes green, output nodes blue
         if isinstance(node, InputNode):
             color = '#b7e3ff'

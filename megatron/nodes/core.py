@@ -161,6 +161,7 @@ class TransformationNode(Node):
         self.layer = layer
         self.layer_out_index = layer_out_index
         self.num_path_outbounds = None
+        self.name = self.layer.name
 
     def _clear_inbounds(self):
         for in_node in self.inbound_nodes:

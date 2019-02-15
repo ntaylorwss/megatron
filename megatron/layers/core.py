@@ -179,8 +179,12 @@ class Lambda(StatelessLayer):
         keyword arguments to whatever custom function is passed in as transform_fn.
     """
     def __init__(self, transform_fn, n_outputs=1, **kwargs):
-        self.transform_fn = transform_fn
         super().__init__(n_outputs=n_outputs, **kwargs)
+        self.transform_fn = transform_fn
+        if self.transform_fn.__name__ == '<lambda>':
+            self.name = 'Lambda: anon'
+        else:
+            self.name = 'Lambda: {}'.format(self.transform_fn.__name__)
 
     def transform(self, *inputs):
         """Apply associated function to given input data.
