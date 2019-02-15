@@ -7,8 +7,8 @@ import dill as pickle
 from collections import defaultdict
 from . import utils
 from . import io
-from .nodes.core import InputNode, TransformationNode, KerasNode
-from .nodes.auxiliary import MetricNode, ExploreNode
+from .nodes.core import InputNode, TransformationNode
+from .nodes.auxiliary import MetricNode, ExploreNode, KerasNode
 from .layertools import wrappers
 
 
@@ -165,7 +165,10 @@ class Pipeline:
         self._load_inputs(input_data)
         for node in self.path:
             if not isinstance(node, TransformationNode): continue
-            node.fit(epochs=epochs) if node in self.path['keras'] else node.fit()
+            if isinstance(node, KerasNode):
+                node.fit(epochs=epochs)
+            else:
+                node.fit()
             node.transform()
         self._reset_run()
 

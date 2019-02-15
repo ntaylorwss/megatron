@@ -1,5 +1,16 @@
 # Release History
 
+## 0.5.0
+### Changes
+- Add Flatten layer.
+- Add Filter layer.
+- Give layers a name attribute rather than manipulate the class name.
+- Make more descriptive error messages; when a node fails, identify which node it is.
+- Make use of progress bar for full dataset fits as well as generator fits, for Keras models.
+
+### Bug Fixes
+- Fix dataset loaders, which previously only threw an error.
+
 ## 0.4.5
 ### Changes
 - Add Slice layer.

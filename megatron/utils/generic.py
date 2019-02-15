@@ -24,7 +24,14 @@ def initializer(func):
 
 
 def listify(x):
-    return x if isinstance(x, list) else [x]
+    if isinstance(x, list):
+        return x
+    elif isinstance(x, dict):
+        return list(x.values())
+    elif isinstance(x, set):
+        return list(x)
+    else:
+        return [x]
 
 
 def delistify(x):

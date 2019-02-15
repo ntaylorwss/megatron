@@ -60,8 +60,14 @@ class CSVGenerator:
         self.filepath = filepath
         self.batch_size = batch_size
         # take advantage of Pandas read_csv function to make it simpler and more robust
-        self.cursor = pd.read_csv(self.filepath, chunksize=self.batch_size)
+        if self.batch_size:
+            self.cursor = pd.read_csv(self.filepath, chunksize=self.batch_size)
+        else:
+            self.cursor = self._make_generator()
         self.exclude_cols = exclude_cols
+
+    def _make_generator(self):
+        yield pd.read_csv(self.filepath)
 
     def __iter__(self):
         return self

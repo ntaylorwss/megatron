@@ -175,7 +175,11 @@ class TransformationNode(Node):
     def fit(self):
         """Apply fit method from Layer to inbound Nodes' data."""
         inputs = [node.output for node in self.inbound_nodes]
-        self.layer.fit(*inputs)
+        try:
+            self.layer.fit(*inputs)
+        except Exception:
+            print("Error thrown by layer named {}".format(self.layer.name))
+            raise
 
     def transform(self, prune=True):
         """Apply and store result of transform method from Layer on inbound Nodes' data.
@@ -186,37 +190,15 @@ class TransformationNode(Node):
             whether to erase data from intermediate nodes after they are fully used.
         """
         inputs = [node.output for node in self.inbound_nodes]
-        self.output = utils.generic.listify(self.layer.transform(*inputs))[self.layer_out_index]
+        try:
+            self.output = utils.generic.listify(self.layer.transform(*inputs))[self.layer_out_index]
+        except Exception:
+            print("Error thrown by layer named {}".format(self.layer.name))
+            raise
+
         if any(in_node.is_eager for in_node in self.inbound_nodes):
             self.is_eager = True
         elif prune:
             for in_node in self.inbound_nodes:
                 in_node.outbounds_run += 1
             self._clear_inbounds()
-
-
-class KerasNode(TransformationNode):
-    """A particular TransformationNode that holds a Keras Layer."""
-    def partial_fit(self):
-        inputs = [node.output for node in self.inbound_nodes]
-        self.layer.fit(*inputs)
-        self._clear_inbounds()
-
-    def fit(self, epochs=1):
-        inputs = [node.output for node in self.inbound_nodes]
-        self.layer.fit(*inputs, epochs=epochs)
-        self._clear_inbounds()
-
-    def fit_generator(self, generator, steps_per_epoch, epochs=1):
-        """Execute Keras model's fit_generator method.
-
-        Parameters
-        ----------
-        generator : generator
-            data generator to be fit to. Should yield tuples of (observations, labels).
-        steps_per_epoch : int
-            number of batches that are considered one full epoch.
-        epochs : int
-            number of epochs to run for.
-        """
-        self.layer.fit_generator(generator, steps_per_epoch=steps_per_epoch, epochs=epochs)

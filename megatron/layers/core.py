@@ -28,6 +28,7 @@ class Layer:
     def __init__(self, n_outputs=1, **kwargs):
         self.n_outputs = n_outputs
         self.kwargs = kwargs
+        self.name = self.__class__.__name__
 
     def _call(self, nodes):
         """Creates a TransformationNode associated with this Layer and the given InputNode(s).

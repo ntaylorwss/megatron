@@ -1,4 +1,4 @@
-from .core import Node
+from .core import Node, TransformationNode
 
 
 class MetricNode(Node):
@@ -62,3 +62,30 @@ class ExploreNode(Node):
         """Apply explorer to inbound data and store result."""
         inputs = [node.output for node in self.inbound_nodes]
         self.output = self.layer.explore(*inputs)
+
+
+class KerasNode(TransformationNode):
+    """A particular TransformationNode that holds a Keras Layer."""
+    def partial_fit(self):
+        inputs = [node.output for node in self.inbound_nodes]
+        self.layer.fit(*inputs)
+        self._clear_inbounds()
+
+    def fit(self, epochs=1):
+        inputs = [node.output for node in self.inbound_nodes]
+        self.layer.fit(*inputs, epochs=epochs)
+        self._clear_inbounds()
+
+    def fit_generator(self, generator, steps_per_epoch, epochs=1):
+        """Execute Keras model's fit_generator method.
+
+        Parameters
+        ----------
+        generator : generator
+            data generator to be fit to. Should yield tuples of (observations, labels).
+        steps_per_epoch : int
+            number of batches that are considered one full epoch.
+        epochs : int
+            number of epochs to run for.
+        """
+        self.layer.fit_generator(generator, steps_per_epoch=steps_per_epoch, epochs=epochs)

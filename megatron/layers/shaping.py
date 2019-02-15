@@ -75,6 +75,12 @@ class Reshape(StatelessLayer):
         return np.reshape(X, self.kwargs['new_shape'])
 
 
+class Flatten(StatelessLayer):
+    """Reshape an array to be 1D."""
+    def transform(self, X):
+        return X.flatten()
+
+
 class SplitDict(StatelessLayer):
     def __init__(self, fields):
         super().__init__(n_outputs=len(fields), fields=fields)
@@ -120,7 +126,13 @@ class TimeSeries(StatefulLayer):
 
 
 class Concatenate(StatelessLayer):
-    """Combine Nodes, creating n-length array for each observation."""
+    """Combine Nodes along a given axis. Does not create a new axis.
+
+    Parameters
+    ----------
+    axis : int (default: -1)
+        axis along which to concatenate arrays. -1 means the last axis.
+    """
     def __init__(self, axis=-1):
         super().__init__(axis=axis)
 
@@ -130,12 +142,25 @@ class Concatenate(StatelessLayer):
             if len(a.shape) == 1:
                 arrays[i] = np.expand_dims(a, -1)
         if self.kwargs['axis'] == -1:
-            return np.stack(arrays, axis=-1)
+            return np.concatenate(arrays, axis=-1)
         else:
             return np.concatenate(arrays, axis=self.kwargs['axis']+1)
 
 
 class Slice(StatelessLayer):
+    """Apply Numpy array slicing. An arbitrary number of exclusive slices can be used.
+
+    Slices (passed as hyperparameters) are constructed by the following procedure:
+    - To slice from 0 to N: provide the integer N as the slice.
+    - To slice from N to the end: provide a 1-tuple of the integer N, e.g. (5,).
+    - To slice from M to N exclusive: provide a 2-tuple of the integers M and N, e.g. (3, 6).
+    - To slice from M to N with skip P: provide a 3-tuple of the integers M, N, and P.
+
+    Parameters
+    ----------
+    *slices : int(s) or tuple(s)
+        the slices to be applied. Must not overlap. Formatting discussed above.
+    """
     def __init__(self, *slices):
         super().__init__(slices=slices)
 
@@ -151,3 +176,9 @@ class Slice(StatelessLayer):
             else:
                 new_slices.append(slice(*s))
         return X[tuple(new_slices)]
+
+
+class Filter(StatelessLayer):
+    """Apply given mask to given array along the observation axis to filter out observations."""
+    def transform(self, X, mask):
+        return X[mask.astype(bool)]

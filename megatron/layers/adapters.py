@@ -1,13 +1,13 @@
 from .. import utils
 from .core import Layer
-from ..nodes.core import KerasNode
+from ..nodes.auxiliary import KerasNode
 
 
 class Sklearn(Layer):
     def __init__(self, sklearn_transformation):
         super().__init__()
         self.transformation = sklearn_transformation
-        self.__class__.__name__ = self.transformation.__class__.__name__
+        self.name = self.transformation.__class__.__name__
 
     @property
     def metadata(self):
@@ -36,6 +36,7 @@ class Keras(Layer):
         super().__init__(n_outputs=len(keras_model.outputs))
         self.model = keras_model
         self.n_inputs = len(self.model.inputs)
+        self.name = 'KerasModel'
 
     def _call(self, inbound_nodes, name=None):
         if name is None and self.n_outputs > 1:
@@ -77,8 +78,9 @@ class Keras(Layer):
         X, Y = self._split_inputs(list(inputs))
         self.model.train_on_batch(X, Y)
 
-    def fit(self, *inputs):
-        self.partial_fit(*inputs)
+    def fit(self, *inputs, epochs):
+        X, Y = self._split_inputs(list(inputs))
+        self.model.fit(X, Y, epochs=epochs)
 
     def fit_generator(self, generator, steps_per_epoch, epochs):
         def _split_generator(generator):
