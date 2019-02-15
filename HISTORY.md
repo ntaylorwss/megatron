@@ -1,5 +1,9 @@
 # Release History
 
+## 0.5.1
+### Bug Fixes
+- Node names are fixed, by delegating the responsiblity of naming solely to the node itself.
+
 ## 0.5.0
 ### Changes
 - Add Flatten layer.
