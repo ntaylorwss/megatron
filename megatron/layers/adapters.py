@@ -9,10 +9,6 @@ class Sklearn(Layer):
         self.transformation = sklearn_transformation
         self.name = self.transformation.__class__.__name__
 
-    @property
-    def metadata(self):
-        return self.transformation.__dict__
-
     def partial_fit(self, *inputs):
         if hasattr(self.transformation, 'partial_fit'):
             self.transformation.partial_fit(*inputs)
@@ -78,17 +74,18 @@ class Keras(Layer):
         X, Y = self._split_inputs(list(inputs))
         self.model.train_on_batch(X, Y)
 
-    def fit(self, *inputs, epochs):
+    def fit(self, *inputs, epochs=1, **kwargs):
         X, Y = self._split_inputs(list(inputs))
-        self.model.fit(X, Y, epochs=epochs)
+        self.model.fit(X, Y, epochs=epochs, **kwargs)
 
-    def fit_generator(self, generator, steps_per_epoch, epochs):
+    def fit_generator(self, generator, steps_per_epoch, epochs=1, **kwargs):
         def _split_generator(generator):
             for inputs in generator:
                 X, Y = self._split_inputs(inputs)
                 yield X, Y
         self.model.fit_generator(_split_generator(generator),
-                                 steps_per_epoch=steps_per_epoch, epochs=epochs)
+                                 steps_per_epoch=steps_per_epoch, epochs=epochs,
+                                 **kwargs)
 
     def transform(self, *inputs):
         # don't use the labels for this

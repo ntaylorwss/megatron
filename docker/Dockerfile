@@ -2,7 +2,7 @@ FROM tensorflow/tensorflow:latest-py3
 
 RUN rm -f /usr/bin/python && ln -s /usr/bin/python3.6 /usr/bin/python
 
-RUN apt-get update && apt-get install -y graphviz
+RUN apt-get update && apt-get install -y graphviz python3-tk
 
 RUN useradd -ms /bin/bash megatron
 RUN mkdir /etc/jupyter /home/megatron/.jupyter

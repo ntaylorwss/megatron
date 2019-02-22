@@ -16,15 +16,19 @@ class PandasGenerator:
     exclude_cols : list of str (default: [])
         any columns that should not be loaded as Input.
     """
-    def __init__(self, dataframe, batch_size, exclude_cols=[]):
-        self.batch_size = batch_size
+    def __init__(self, dataframe, batch_size=32, exclude_cols=[]):
         self.dataframe = dataframe
-        self.n = 0
-        if self.batch_size:
+        self.batch_size = batch_size
+        if self.batch_size is None:
+            self.n_batches = 1
+        elif self.batch_size > 0:
             self.n_batches = math.ceil(self.dataframe.shape[0] / self.batch_size)
         else:
-            self.n_batches = 1
+            raise ValueError("Batch size must be at least 1")
+        self.n = 0
         self.exclude_cols = exclude_cols
+        if len(set(self.exclude_cols) - set(self.dataframe.columns)) > 0:
+            raise ValueError("Attempting to exclude a column not present in the data")
 
     def __iter__(self):
         return self
@@ -56,18 +60,26 @@ class CSVGenerator:
     exclude_cols : list of str (default: [])
         any columns that should not be loaded as Input.
     """
-    def __init__(self, filepath, batch_size, exclude_cols=[]):
+    def __init__(self, filepath, batch_size=32, exclude_cols=[]):
         self.filepath = filepath
         self.batch_size = batch_size
-        # take advantage of Pandas read_csv function to make it simpler and more robust
-        if self.batch_size:
-            self.cursor = pd.read_csv(self.filepath, chunksize=self.batch_size)
-        else:
-            self.cursor = self._make_generator()
+        self.cursor = self._make_generator()
         self.exclude_cols = exclude_cols
+        with open(self.filepath, 'r') as f:
+            data_cols = pd.read_csv(self.filepath, nrows=3).columns.values.tolist()
+        if len(set(self.exclude_cols) - set(data_cols)) > 0:
+            raise ValueError("Attempting to exclude a column not present in the data")
 
     def _make_generator(self):
-        yield pd.read_csv(self.filepath)
+        if self.batch_size is None:
+            # must always be a generator, so for the full dataset, just yield it once
+            def singular_generator():
+                yield pd.read_csv(self.filepath)
+            return singular_generator()
+        elif self.batch_size > 0:
+            return pd.read_csv(self.filepath, chunksize=self.batch_size)
+        else:
+            raise ValueError("Batch size must be at least 1")
 
     def __iter__(self):
         return self
@@ -77,6 +89,7 @@ class CSVGenerator:
             out = next(self.cursor).drop(self.exclude_cols, axis=1)
         except StopIteration:
             self.cursor = pd.read_csv(self.filepath, chunksize=self.batch_size)
+            out = next(self.cursor).drop(self.exclude_cols, axis=1)
         return dict(zip(out.columns, out.values.T))
 
 
@@ -94,10 +107,11 @@ class SQLGenerator:
     limit : int
         number of observations to use from the query in total.
     """
-    def __init__(self, connection, query, batch_size, limit=None):
-        self.batch_size = batch_size
+    def __init__(self, connection, query, batch_size=32, limit=None):
         self.connection = connection
         self.query = query
+        self.batch_size = batch_size
+
         if limit:
             self.query += ' LIMIT {}'.format(nrows)
         self.cursor = self.connection.execute(self.query)

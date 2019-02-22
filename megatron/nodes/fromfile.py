@@ -41,14 +41,12 @@ def from_csv(filepath, exclude_cols=[], eager=False, nrows=None):
     """
     exclude_cols = set(exclude_cols)
     if eager:
-        with open(filepath) as f:
-            data = pd.read_csv(f, nrows=nrows)
-            cols = data.columns
-            nodes = [InputNode(col)(data[col].values) for col in cols if not col in exclude_cols]
+        data = pd.read_csv(f, nrows=nrows)
+        cols = data.columns
+        nodes = [InputNode(col)(data[col].values) for col in cols if not col in exclude_cols]
     else:
-        with open(filepath) as f:
-            cols = pd.read_csv(f, nrows=2).columns
-            nodes = [InputNode(col) for col in cols if not col in exclude_cols]
+        cols = pd.read_csv(f, nrows=2).columns
+        nodes = [InputNode(col) for col in cols if not col in exclude_cols]
     return {node.name: node for node in nodes}
 
 
