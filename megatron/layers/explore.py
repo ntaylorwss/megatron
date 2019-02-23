@@ -92,6 +92,8 @@ class Scatter(Explorer):
 class Correlate(Explorer):
     def explore(self, *inputs):
         if len(inputs) == 1:
+            if len(inputs[0].shape) != 2:
+                raise ValueError("Single input must be 2D")
             return np.corrcoef(inputs[0], rowvar=False)
         else:
             X = np.stack(inputs, axis=1)
