@@ -49,9 +49,12 @@ class Downsample(StatelessLayer):
         super().__init__(new_shape=new_shape)
 
     def transform(self, X):
-        if any(self.kwargs['new_shape'][i] > X.shape[i]
+        if len(self.kwargs['new_shape']) != len(X.shape):
+            raise ValueError("New shape must be same number of dimensions as current shape.")
+        elif any(self.kwargs['new_shape'][i] > X.shape[i]
                for i in range(len(self.kwargs['new_shape']))):
             raise ValueError("New shape is larger than current in at least one dimension.")
+
         return skimage.transform.resize(X, self.new_shape)
 
 
@@ -70,4 +73,7 @@ class Upsample(StatelessLayer):
         if any(self.kwargs['new_shape'][i] < X.shape[i]
                for i in range(len(self.kwargs['new_shape']))):
             raise ValueError("New shape is smaller than current in at least one dimension.")
+        elif len(self.kwargs['new_shape']) != len(X.shape):
+            raise ValueError("New shape must be same number of dimensions as current shape.")
+
         return skimage.transform.resize(X, self.kwargs['new_shape'])
