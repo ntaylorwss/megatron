@@ -4,7 +4,12 @@ from .core import StatelessLayer, StatefulLayer
 
 class Add(StatelessLayer):
     """Add up arrays element-wise."""
+    def __init__(self):
+        super().__init__()
+
     def transform(self, *arrays):
+        if len(set([a.shape for a in arrays])) > 1:
+            raise ValueError("Arrays must all be same shape to be added")
         return np.sum(arrays, axis=0)
 
 
@@ -14,7 +19,7 @@ class Subtract(StatelessLayer):
         return X1 - X2
 
 
-class Multiply(StatelessLayer):
+class ScalarMultiply(StatelessLayer):
     """Multiply array by a given scalar.
 
     Parameters
@@ -27,6 +32,12 @@ class Multiply(StatelessLayer):
 
     def transform(self, X):
         return self.kwargs['factor'] * X
+
+
+class ElementWiseMultiply(StatelessLayer):
+    """Multiply two same-sized arrays element-by-element."""
+    def transform(self, X, Y):
+        return X * Y
 
 
 class Divide(StatelessLayer):
@@ -45,7 +56,7 @@ class Divide(StatelessLayer):
         return np.divide(X1.astype(np.float16), X2, out=impute_array.astype(np.float16), where=X2!=0)
 
 
-class Dot(StatelessLayer):
+class StaticDot(StatelessLayer):
     """Multiply array by a given matrix, as matrix mulitplication.
 
     Parameters
@@ -60,10 +71,20 @@ class Dot(StatelessLayer):
         return np.dot(X, self.kwargs['W'])
 
 
+class Dot(StatelessLayer):
+    """Multiply multiple arrays together as matrix multiplication."""
+    def transform(self, *arrays):
+        return np.linalg.multi_dot(arrays)
+
+
 class Normalize(StatelessLayer):
     """Divide array by total to cause it to sum to one. If zero array, make uniform."""
     def transform(self, X):
+        if len(X.shape) != 2:
+            raise ValueError("Data must be 2-dimensional")
         out = X.copy()
         S = out.sum(axis=1)
+        if np.isinf(S).any():
+            raise ValueError("Sum of at least one observation is infinity, cannot normalize")
         out[S<0.0001, :] = np.ones(out.shape[1])
         return out / out.sum(axis=1, keepdims=True)

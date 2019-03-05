@@ -1,7 +1,9 @@
 import numpy as np
 from .core import StatelessLayer
+from ..layertools.wrappers import _vectorized_func
 
 try:
+    import nltk
     from nltk.corpus import stopwords
 except ImportError:
     pass
@@ -17,11 +19,9 @@ class RemoveStopwords(StatelessLayer):
     """
     def __init__(self, language='english'):
         super().__init__(language=language)
+        self.transform = np.vectorize(self._transform)
+        nltk.download('stopwords', quiet=True)
 
-    def transform(self, X):
+    def _transform(self, X):
         stops = set(stopwords.words(self.kwargs['language']))
         return ' '.join(word for word in X.split(' ') if word not in stops)
-
-
-# function will not apply natively to an array of strings; must vectorize
-RemoveStopwords.transform = np.vectorize(RemoveStopwords.transform)

@@ -1,7 +1,8 @@
 import numpy as np
+import warnings
 from .core import StatelessLayer
 try:
-    import skimage
+    import skimage.transform
 except ImportError:
     pass
 
@@ -17,6 +18,9 @@ class RGBtoGrey(StatelessLayer):
         super().__init__(method=method, keep_dim=keep_dim)
 
     def transform(self, X):
+        if len(X.shape) != 3:
+            raise ValueError("Input image must have 3 dimensions")
+
         if self.kwargs['method'] == 'lightness':
             out = (X.max(axis=2) + X.min(axis=2)) / 2.
         elif self.kwargs['method'] == 'average':
@@ -32,9 +36,21 @@ class RGBtoGrey(StatelessLayer):
 
 
 class RGBtoBinary(StatelessLayer):
-    """Convert image to binary mask where a 1 indicates a non-black cell."""
+    """Convert image to binary mask where a 1 indicates a non-black cell.
+
+    Parameters
+    ----------
+    keep_dim : bool
+        if True, resulting image will stay 3D and will have 1 color channel. Otherwise 2D.
+    """
+    def __init__(self, keep_dim=True):
+        super().__init__(keep_dim=keep_dim)
+
     def transform(self, X):
-        return (X.max(axis=2) > 0).astype(int)[:, :, np.newaxis]
+        out = (X.max(axis=2) > 0).astype(int)
+        if self.kwargs['keep_dim']:
+            out = out[:, :, np.newaxis]
+        return out
 
 
 class Downsample(StatelessLayer):
@@ -51,11 +67,13 @@ class Downsample(StatelessLayer):
     def transform(self, X):
         if len(self.kwargs['new_shape']) != len(X.shape):
             raise ValueError("New shape must be same number of dimensions as current shape.")
-        elif any(self.kwargs['new_shape'][i] > X.shape[i]
-               for i in range(len(self.kwargs['new_shape']))):
+        elif any(kw_dim > data_dim for kw_dim, data_dim in zip(self.kwargs['new_shape'], X.shape)):
             raise ValueError("New shape is larger than current in at least one dimension.")
 
-        return skimage.transform.resize(X, self.new_shape)
+        with warnings.catch_warnings():
+            warnings.simplefilter("ignore")
+            out = skimage.transform.resize(X, self.kwargs['new_shape'])
+        return out
 
 
 class Upsample(StatelessLayer):
@@ -70,10 +88,12 @@ class Upsample(StatelessLayer):
         super().__init__(new_shape=new_shape)
 
     def transform(self, X):
-        if any(self.kwargs['new_shape'][i] < X.shape[i]
-               for i in range(len(self.kwargs['new_shape']))):
-            raise ValueError("New shape is smaller than current in at least one dimension.")
-        elif len(self.kwargs['new_shape']) != len(X.shape):
+        if len(self.kwargs['new_shape']) != len(X.shape):
             raise ValueError("New shape must be same number of dimensions as current shape.")
+        elif any(kw_dim < data_dim for kw_dim, data_dim in zip(self.kwargs['new_shape'], X.shape)):
+            raise ValueError("New shape is smaller than current in at least one dimension.")
 
-        return skimage.transform.resize(X, self.kwargs['new_shape'])
+        with warnings.catch_warnings():
+            warnings.simplefilter("ignore")
+            out = skimage.transform.resize(X, self.kwargs['new_shape'])
+        return out

@@ -1,6 +1,5 @@
 import unittest
 import numpy as np
-from megatron.utils.errors import ShapeError
 from megatron.layers.image import RGBtoGrey, RGBtoBinary, Downsample, Upsample
 
 
@@ -11,7 +10,7 @@ class test_RGBtoGrey(unittest.TestCase):
         self.X_bad = np.ones((48, 48)) * 128
 
     def test_transform(self):
-        self.assertRaises(ShapeError, RGBtoGrey, self.X_bad)
+        self.assertRaises(ValueError, RGBtoGrey().transform, self.X_bad)
 
         outputs = {k: self.transformers[k].transform(self.X_good)
                    for k in ['lightness', 'average', 'luminosity']}
@@ -38,10 +37,10 @@ class test_RGBtoBinary(unittest.TestCase):
             self.X_bad[i, i] = 0
 
     def test_transform(self):
-        self.assertRaises(ShapeError, self.transformer.transform, self.X_bad)
+        self.assertRaises(ValueError, self.transformer.transform, self.X_bad)
 
         output = self.transformer.transform(self.X_good)
-        correct_output = np.eye(48)
+        correct_output = (1 - np.eye(48))[:, :, np.newaxis]
         assert np.array_equal(output, correct_output)
 
 
@@ -54,7 +53,7 @@ class test_Downsample(unittest.TestCase):
         self.X_1D = np.random.random(48)
 
     def test_transform(self):
-        self.assertRaises(ShapeError, self.transformer_2D.transform, self.X_1D)
+        self.assertRaises(ValueError, self.transformer_2D.transform, self.X_1D)
         self.assertRaises(ValueError, Downsample((50, 50)).transform, self.X_2D)
         self.assertRaises(ValueError, Downsample((40,)).transform, self.X_2D)
 
@@ -76,7 +75,7 @@ class test_Upsample(unittest.TestCase):
         self.X_1D = np.random.random(48)
 
     def test_transform(self):
-        self.assertRaises(ShapeError, self.transformer.transform, self.X_1D)
+        self.assertRaises(ValueError, self.transformer_2D.transform, self.X_1D)
         self.assertRaises(ValueError, Upsample((40, 40)).transform, self.X_2D)
         self.assertRaises(ValueError, Upsample((50,)).transform, self.X_2D)
 

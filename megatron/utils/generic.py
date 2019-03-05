@@ -52,3 +52,11 @@ def flatten(L):
             else:
                 yield l
     return list(_flatten(L))
+
+
+def all_equal(*items):
+    first = items[0]
+    for item in items[1:]:
+        if item != first:
+            return False
+    return True

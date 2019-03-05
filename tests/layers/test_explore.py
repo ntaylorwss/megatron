@@ -49,7 +49,7 @@ class test_Describe(unittest.TestCase):
 
 class test_Correlate(unittest.TestCase):
     def setUp(self):
-        self.X_2D = np.ones((100, 5)) * np.arange(1, 6)
+        self.X_2D = (np.ones((100, 5)).T * np.arange(1, 101)).T
         self.X_1D = np.arange(100)
         self.Y_1D = np.arange(100)
         self.explorer = Correlate()
