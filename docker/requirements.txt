@@ -10,4 +10,4 @@ sphinxcontrib-napoleon==0.7
 sphinx_rtd_theme==0.4.3
 dill==0.2.9
 pymongo==3.7.2
-nltk==3.4
+nltk==3.4.5
